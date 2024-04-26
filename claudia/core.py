@@ -6,6 +6,8 @@ __all__ = ['models', 'g', 'tags', 'mk_msg', 'mk_msgs', 'contents', 'AnthClient',
 
 # %% ../00_core.ipynb 5
 import xml.etree.ElementTree as ET, json
+try: from IPython.display import Markdown
+except: Markdown=None
 
 from anthropic import Anthropic
 from fastcore.utils import *
@@ -47,7 +49,8 @@ class AnthClient:
 # %% ../00_core.ipynb 14
 def hl_md(s, lang='xml'):
     "Syntax highlight `s` using `lang`"
-    return Markdown(f'```{lang}\n{s}\n```')
+    if Markdown: return Markdown(f'```{lang}\n{s}\n```')
+    else: print(s)
 
 # %% ../00_core.ipynb 15
 def to_xml(node, hl=False):
