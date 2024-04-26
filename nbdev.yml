@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "claudia"
+  site-url: "https://AnswerDotAI.github.io/claudia"
+  description: "Claudia is Claude's friend"
+  repo-branch: main
+  repo-url: "https://github.com/AnswerDotAI/claudia"
