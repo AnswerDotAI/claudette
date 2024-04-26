@@ -67,7 +67,7 @@ def xt(tag, c=None, **kw):
 # %% ../00_core.ipynb 16
 g = globals()
 tags = 'div','img','h1','h2','h3','h4','h5','p','hr','span','html'
-for o in tags: g[o] = partial(t, o)
+for o in tags: g[o] = partial(xt, o)
 
 # %% ../00_core.ipynb 19
 def json_to_xml(d, rnm):
