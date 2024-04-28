@@ -20,63 +20,63 @@ except: Markdown,HTML=None,None
 from fastcore.docments import docments
 from fastcore.utils import *
 
-# %% ../00_core.ipynb 7
+# %% ../00_core.ipynb 8
 models = 'claude-3-opus-20240229','claude-3-sonnet-20240229','claude-3-haiku-20240307'
 
-# %% ../00_core.ipynb 9
+# %% ../00_core.ipynb 10
 empty = Parameter.empty
 
-# %% ../00_core.ipynb 17
+# %% ../00_core.ipynb 20
 def mk_msg(content, role='user', **kw):
     "Helper to create a `dict` appropriate for a Claude message."
     if hasattr(content, 'content'): content,role = content.content,content.role
     if isinstance(content, abc.Mapping): content=content['content']
     return dict(role=role, content=content, **kw)
 
-# %% ../00_core.ipynb 21
+# %% ../00_core.ipynb 24
 def find_block(r, blk_type=TextBlock):
     "Find the first block of type `blk_type` in `r.content`."
     return first(o for o in r.content if isinstance(o,blk_type))
 
-# %% ../00_core.ipynb 24
+# %% ../00_core.ipynb 27
 def contents(r):
     "Helper to get the contents from Claude response `r`."
     blk = find_block(r)
     if not blk: blk = r.content[0]
     return blk.text.strip() if hasattr(blk,'text') else blk
 
-# %% ../00_core.ipynb 27
+# %% ../00_core.ipynb 30
 def mk_msgs(msgs, **kw):
     "Helper to set 'assistant' role on alternate messages."
     if isinstance(msgs,str): msgs=[msgs]
     return [mk_msg(o, ('user','assistant')[i%2], **kw) for i,o in enumerate(msgs)]
 
-# %% ../00_core.ipynb 37
+# %% ../00_core.ipynb 40
 def usage(inp=0, out=0):
     "Slightly more concise version of `Usage`."
     return Usage(input_tokens=inp, output_tokens=out)
 
-# %% ../00_core.ipynb 40
+# %% ../00_core.ipynb 43
 @patch(as_prop=True)
 def total(self:Usage): return self.input_tokens+self.output_tokens
 
-# %% ../00_core.ipynb 43
+# %% ../00_core.ipynb 46
 @patch
 def __repr__(self:Usage): return f'In: {self.input_tokens}; Out: {self.output_tokens}; Total: {self.total}'
 
-# %% ../00_core.ipynb 46
+# %% ../00_core.ipynb 49
 @patch
 def __add__(self:Usage, b):
     return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens)
 
-# %% ../00_core.ipynb 50
+# %% ../00_core.ipynb 53
 class Client:
     def __init__(self, model, cli=None):
         "Basic Anthropic messages client."
         self.model,self.use = model,Usage(input_tokens=0,output_tokens=0)
         self.c = (cli or Anthropic())
 
-# %% ../00_core.ipynb 53
+# %% ../00_core.ipynb 56
 @patch
 def _r(self:Client, r:ToolsBetaMessage):
     "Store the result of the message and accrue total usage."
@@ -84,7 +84,7 @@ def _r(self:Client, r:ToolsBetaMessage):
     self.use += r.usage
     return r
 
-# %% ../00_core.ipynb 56
+# %% ../00_core.ipynb 59
 @patch
 def __call__(self:Client, msgs, sp='', temp=0, maxtok=4096, stop=None, **kw):
     "Make a call to Claude without streaming."
@@ -92,7 +92,7 @@ def __call__(self:Client, msgs, sp='', temp=0, maxtok=4096, stop=None, **kw):
         model=self.model, messages=mk_msgs(msgs), max_tokens=maxtok, system=sp, temperature=temp, stop_sequences=stop, **kw)
     return self._r(r)
 
-# %% ../00_core.ipynb 60
+# %% ../00_core.ipynb 63
 @patch
 def stream(self:Client, msgs, sp='', temp=0, maxtok=4096, stop=None, **kw):
     "Make a call to Claude, streaming the result."
@@ -101,14 +101,14 @@ def stream(self:Client, msgs, sp='', temp=0, maxtok=4096, stop=None, **kw):
         yield from s.text_stream
         return self._r(s.get_final_message())
 
-# %% ../00_core.ipynb 72
+# %% ../00_core.ipynb 75
 def _types(t:type)->tuple[str,Optional[str]]:
     "Tuple of json schema type name and (if appropriate) array item name."
     tmap = {int:"integer", float:"number", str:"string", bool:"boolean", list:"array", dict:"object"}
     if getattr(t, '__origin__', None) in  (list,tuple): return "array", tmap.get(t.__args__[0], "object")
     else: return tmap.get(t, "object"), None
 
-# %% ../00_core.ipynb 75
+# %% ../00_core.ipynb 78
 def _param(name, info):
     "json schema parameter given `name` and `info` from docments full dict."
     paramt,itemt = _types(info.anno)
@@ -117,7 +117,7 @@ def _param(name, info):
     if info.default is not empty: pschema["default"] = info.default
     return pschema
 
-# %% ../00_core.ipynb 78
+# %% ../00_core.ipynb 81
 def get_schema(f:callable)->dict:
     "Convert function `f` into a JSON schema `dict` for tool use."
     d = docments(f, full=True)
@@ -132,12 +132,12 @@ def get_schema(f:callable)->dict:
     if ret.docment: desc += f'\n- description: {ret.docment}'
     return dict(name=f.__name__, description=desc, input_schema=paramd)
 
-# %% ../00_core.ipynb 89
+# %% ../00_core.ipynb 92
 def mk_ns(*funcs:list[callable]) -> dict[str,callable]:
     "Create a `dict` of name to function in `funcs`, to use as a namespace"
     return {f.__name__:f for f in funcs}
 
-# %% ../00_core.ipynb 91
+# %% ../00_core.ipynb 94
 def call_func(tr, ns=None):
     "Call the function in the tool response `tr`, using namespace `ns`."
     if ns is None: ns=globals()
@@ -145,7 +145,7 @@ def call_func(tr, ns=None):
     fc = find_block(r, tool_use_block.ToolUseBlock)
     return ns[fc.name](**fc.input)
 
-# %% ../00_core.ipynb 94
+# %% ../00_core.ipynb 97
 def mk_toolres(r, res=None, ns=None):
     "Create a `tool_result` message from response `r`."
     if not hasattr(r, 'content'): return r
@@ -155,7 +155,7 @@ def mk_toolres(r, res=None, ns=None):
     tr = dict(type="tool_result", tool_use_id=tool.id, content=str(res))
     return mk_msg([tr])
 
-# %% ../00_core.ipynb 101
+# %% ../00_core.ipynb 104
 class Chat:
     def __init__(self, model=None, cli=None, sp='', tools=None):
         "Anthropic chat client."
@@ -163,13 +163,13 @@ class Chat:
         self.c = (cli or Client(model))
         self.h,self.sp,self.tools = [],sp,tools
 
-# %% ../00_core.ipynb 114
+# %% ../00_core.ipynb 117
 def hl_md(s, lang='xml'):
     "Syntax highlight `s` using `lang`."
     if Markdown: return Markdown(f'```{lang}\n{s}\n```')
     print(s)
 
-# %% ../00_core.ipynb 115
+# %% ../00_core.ipynb 118
 def to_xml(node, hl=False):
     "Convert `node` to an XML string."
     def mk_el(tag, cs, attrs):
@@ -183,18 +183,18 @@ def to_xml(node, hl=False):
     res = ET.tostring(root, encoding='unicode')
     return hl_md(res) if hl else res
 
-# %% ../00_core.ipynb 116
+# %% ../00_core.ipynb 119
 def xt(tag, c=None, **kw):
     "Helper to create appropriate data structure for `to_xml`."
     kw = {k.lstrip('_'):str(v) for k,v in kw.items()}
     return tag,c,kw
 
-# %% ../00_core.ipynb 117
+# %% ../00_core.ipynb 120
 g = globals()
 tags = 'div','img','h1','h2','h3','h4','h5','p','hr','span','html'
 for o in tags: g[o] = partial(xt, o)
 
-# %% ../00_core.ipynb 120
+# %% ../00_core.ipynb 123
 def json_to_xml(d:dict, rnm:str)->str:
     "Convert `d` to XML with root name `rnm`."
     root = ET.Element(rnm)
