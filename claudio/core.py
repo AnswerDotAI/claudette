@@ -55,25 +55,14 @@ def __add__(self:Usage, b):
 @patch(as_prop=True)
 def total(self:Usage): return self.input_tokens+self.output_tokens
 
-@patch
-def __repr__(self:Usage): return f'In: {self.input_tokens}; Out: {self.output_tokens}; Total: {self.total}'
-
-@patch
-def _repr_html_(self:ToolsBetaMessage):
-    det = '</li>\n<li>'.join(f'{k}: {v}' for k,v in self.dict().items())
-    return f"""{contents(self)}
-<details><ul><li>
-{det}
-</ul></li></details>"""
-
-# %% ../00_core.ipynb 15
+# %% ../00_core.ipynb 16
 class Client:
     def __init__(self, model, cli=None):
         "Basic Anthropic messages client"
         self.model,self.use = model,Usage(input_tokens=0,output_tokens=0)
         self.c = (cli or Anthropic())
 
-# %% ../00_core.ipynb 18
+# %% ../00_core.ipynb 19
 @patch
 def _r(self:Client, r:ToolsBetaMessage):
     "Store the result of the message and accrue total usage"
@@ -81,7 +70,7 @@ def _r(self:Client, r:ToolsBetaMessage):
     self.use += r.usage
     return r
 
-# %% ../00_core.ipynb 20
+# %% ../00_core.ipynb 21
 @patch
 def __call__(self:Client, msgs, sp='', temp=0, maxtok=4096, stop=None, **kw):
     "Make a call to Claude without streaming"
@@ -89,7 +78,7 @@ def __call__(self:Client, msgs, sp='', temp=0, maxtok=4096, stop=None, **kw):
         model=self.model, messages=mk_msgs(msgs), max_tokens=maxtok, system=sp, temperature=temp, stop_sequences=stop, **kw)
     return self._r(r)
 
-# %% ../00_core.ipynb 23
+# %% ../00_core.ipynb 24
 @patch
 def stream(self:Client, msgs, sp='', temp=0, maxtok=4096, stop=None, **kw):
     "Make a call to Claude, streaming the result"
@@ -98,14 +87,14 @@ def stream(self:Client, msgs, sp='', temp=0, maxtok=4096, stop=None, **kw):
         yield from s.text_stream
         return self._r(s.get_final_message())
 
-# %% ../00_core.ipynb 27
-def _types(t:type)->tuple[str,str|None]:
+# %% ../00_core.ipynb 28
+def _types(t:type)->tuple[str,Optional[str]]:
     "Tuple of json schema type name and (if appropriate) array item name"
     tmap = {int:"integer", float:"number", str:"string", bool:"boolean", list:"array", dict:"object"}
     if getattr(t, '__origin__', None) in  (list,tuple): return "array", tmap.get(t.__args__[0], "object")
     else: return tmap.get(t, "object"), None
 
-# %% ../00_core.ipynb 31
+# %% ../00_core.ipynb 32
 def _param(name, info):
     "json schema parameter given `name` and `info` from docments full dict"
     paramt,itemt = _types(info.anno)
@@ -114,7 +103,7 @@ def _param(name, info):
     if info.default is not empty: pschema["default"] = info.default
     return pschema
 
-# %% ../00_core.ipynb 33
+# %% ../00_core.ipynb 34
 def get_schema(f):
     d = docments(f, full=True)
     ret = d.pop('return')
@@ -128,16 +117,16 @@ def get_schema(f):
     if ret.docment: desc += f'\n- description: {ret.docment}'
     return dict(name=f.__name__, description=desc, input_schema=paramd)
 
-# %% ../00_core.ipynb 38
+# %% ../00_core.ipynb 39
 def mk_ns(*funcs:list[callable]) -> dict[str,callable]:
     "Create a `dict` of name to function in `funcs`, to use as a namespace"
     return {f.__name__:f for f in funcs}
 
-# %% ../00_core.ipynb 39
+# %% ../00_core.ipynb 40
 def find_tool(r) -> tool_use_block.ToolUseBlock:
     return first(o for o in r.content if isinstance(o,tool_use_block.ToolUseBlock))
 
-# %% ../00_core.ipynb 40
+# %% ../00_core.ipynb 41
 def call_func(tr, ns=None):
     "Call the function in the tool response `tr`, using namespace `ns`"
     if ns is None: ns=globals()
@@ -145,7 +134,7 @@ def call_func(tr, ns=None):
     fc = find_tool(r)
     return ns[fc.name](**fc.input)
 
-# %% ../00_core.ipynb 44
+# %% ../00_core.ipynb 45
 def mk_toolres(r, res=None, ns=None):
     "Create a `tool_result` message from response `r`"
     if not hasattr(r, 'content'): return r
@@ -155,7 +144,7 @@ def mk_toolres(r, res=None, ns=None):
     tr = dict(type="tool_result", tool_use_id=tool.id, content=str(res))
     return mk_msg([tr])
 
-# %% ../00_core.ipynb 49
+# %% ../00_core.ipynb 50
 class Chat:
     def __init__(self, model=None, cli=None):
         "Anthropic chat client"
@@ -171,13 +160,13 @@ class Chat:
         self.h.append(mk_msg(res, role='assistant'))
         return res
 
-# %% ../00_core.ipynb 56
+# %% ../00_core.ipynb 57
 def hl_md(s, lang='xml'):
     "Syntax highlight `s` using `lang`"
     if Markdown: return Markdown(f'```{lang}\n{s}\n```')
     print(s)
 
-# %% ../00_core.ipynb 57
+# %% ../00_core.ipynb 58
 def to_xml(node, hl=False):
     "Convert `node` to an XML string"
     def mk_el(tag, cs, attrs):
@@ -191,18 +180,18 @@ def to_xml(node, hl=False):
     res = ET.tostring(root, encoding='unicode')
     return hl_md(res) if hl else res
 
-# %% ../00_core.ipynb 58
+# %% ../00_core.ipynb 59
 def xt(tag, c=None, **kw):
     "Helper to create appropriate data structure for `to_xml`"
     kw = {k.lstrip('_'):str(v) for k,v in kw.items()}
     return tag,c,kw
 
-# %% ../00_core.ipynb 59
+# %% ../00_core.ipynb 60
 g = globals()
 tags = 'div','img','h1','h2','h3','h4','h5','p','hr','span','html'
 for o in tags: g[o] = partial(xt, o)
 
-# %% ../00_core.ipynb 62
+# %% ../00_core.ipynb 63
 def json_to_xml(d:dict, rnm:str)->str:
     "Convert `d` to XML with root name `rnm`"
     root = ET.Element(rnm)
