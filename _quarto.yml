@@ -15,8 +15,8 @@ format:
     highlight-style: arrow
     grid:
       sidebar-width: 150px
-      body-width: 1000px
-      margin-width: 200px
+      body-width: 1400px
+      margin-width: 150px
       gutter-width: 1.0rem
 
 website:
