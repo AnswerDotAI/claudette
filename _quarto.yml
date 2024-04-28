@@ -1,0 +1,29 @@
+project:
+  type: website
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    code-tools: true
+    code-block-bg: true
+    code-block-border-left: "#31BAE9"
+    highlight-style: arrow
+    grid:
+      sidebar-width: 150px
+      body-width: 1000px
+      margin-width: 200px
+      gutter-width: 1.0rem
+
+website:
+  twitter-card: true
+  open-graph: true
+  repo-actions: [issue]
+  navbar:
+    background: primary
+    search: true
+  sidebar:
+    style: floating
+
+metadata-files: [nbdev.yml, sidebar.yml]
