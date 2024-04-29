@@ -2,20 +2,18 @@
 
 # %% auto 0
 __all__ = ['models', 'empty', 'g', 'tags', 'find_block', 'contents', 'usage', 'mk_msgs', 'mk_msg', 'Client', 'get_schema',
-           'mk_ns', 'call_func', 'mk_toolres', 'Chat', 'hl_md', 'to_xml', 'xt', 'json_to_xml']
+           'mk_ns', 'call_func', 'mk_toolres', 'Chat', 'img_msg', 'text_msg', 'msg_part', 'list_msg', 'hl_md', 'to_xml',
+           'xt', 'json_to_xml']
 
 # %% ../00_core.ipynb 6
-import tokenize, ast, inspect, inspect, typing
-import xml.etree.ElementTree as ET, json
+import inspect, typing, mimetypes, base64, json, xml.etree.ElementTree as ET
 from collections import abc
+try: from IPython import display
+except: display=None
 
 from anthropic import Anthropic
 from anthropic.types import Usage, TextBlock, Message
 from anthropic.types.beta.tools import ToolsBetaMessage, tool_use_block
-from inspect import Parameter
-from io import BytesIO
-try: from IPython.display import Markdown,HTML
-except: Markdown,HTML=None,None
 
 from fastcore.docments import docments
 from fastcore.utils import *
@@ -24,7 +22,7 @@ from fastcore.utils import *
 models = 'claude-3-opus-20240229','claude-3-sonnet-20240229','claude-3-haiku-20240307'
 
 # %% ../00_core.ipynb 10
-empty = Parameter.empty
+empty = inspect.Parameter.empty
 
 # %% ../00_core.ipynb 21
 def find_block(r, blk_type=TextBlock):
@@ -37,6 +35,18 @@ def contents(r):
     blk = find_block(r)
     if not blk: blk = r.content[0]
     return blk.text.strip() if hasattr(blk,'text') else blk
+
+# %% ../00_core.ipynb 27
+@patch
+def _repr_markdown_(self:(ToolsBetaMessage,Message)):
+    det = '\n- '.join(f'{k}: {v}' for k,v in self.dict().items())
+    return f"""{contents(self)}
+
+<details>
+
+{det}
+
+</details>"""
 
 # %% ../00_core.ipynb 32
 def usage(inp=0, out=0):
@@ -163,13 +173,66 @@ class Chat:
         self.c = (cli or Client(model))
         self.h,self.sp,self.tools = [],sp,tools
 
-# %% ../00_core.ipynb 123
+# %% ../00_core.ipynb 112
+def _add_prefill(prefill, r):
+    "Add `prefill` to the start of response `r`, since Claude doesn't include it otherwise"
+    if not prefill: return
+    blk = find_block(r)
+    blk.text = prefill + blk.text
+
+# %% ../00_core.ipynb 114
+@patch
+def __call__(self:Chat, pr, temp=0, maxtok=4096, stop=None, ns=None, prefill='', **kw):
+    if ns is None: ns=self.tools
+    if isinstance(pr,str): pr = pr.strip()
+    self.h.append(mk_toolres(pr, ns=ns))
+    if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
+    res = self.c(self.h + ([prefill.strip()] if prefill else []), sp=self.sp, temp=temp, maxtok=maxtok, stop=stop, **kw)
+    _add_prefill(prefill, res)
+    self.h.append(mk_msg(res, role='assistant'))
+    return res
+
+# %% ../00_core.ipynb 120
+@patch
+def stream(self:Chat, pr, temp=0, maxtok=4096, stop=None, prefill='', **kw):
+    "Add a prompt and get a response from the chat dialog, streaming the result"
+    if isinstance(pr,str): pr = pr.strip()
+    self.h.append(pr)
+    if prefill: yield(prefill)
+    yield from self.c.stream(self.h + ([prefill.strip()] if prefill else []), sp=self.sp, temp=temp, maxtok=maxtok, stop=stop, **kw)
+    _add_prefill(prefill, self.c.result)
+    self.h.append(mk_msg(self.c.result, role='assistant'))
+
+# %% ../00_core.ipynb 134
+def img_msg(data:bytes)->dict:
+    "Convert image `data` into an encoded `dict`"
+    img = base64.b64encode(data).decode("utf-8")
+    mtype = mimetypes.guess_type(fn)[0]
+    r = dict(type="base64", media_type=mtype, data=img)
+    return {"type": "image", "source": r}
+
+# %% ../00_core.ipynb 136
+def text_msg(s:str)->dict:
+    "Convert `s` to a text message"
+    return {"type": "text", "text": s}
+
+# %% ../00_core.ipynb 140
+def msg_part(src)->dict:
+    "Create appropriate `dict` based on `src` type"
+    return (text_msg if isinstance(src,str) else img_msg)(src)
+
+# %% ../00_core.ipynb 142
+def list_msg(*parts:list)->list:
+    "Create a parts `list` automatically from image and text data"
+    return [msg_part(o) for o in parts]
+
+# %% ../00_core.ipynb 151
 def hl_md(s, lang='xml'):
     "Syntax highlight `s` using `lang`."
-    if Markdown: return Markdown(f'```{lang}\n{s}\n```')
+    if display: return display.Markdown(f'```{lang}\n{s}\n```')
     print(s)
 
-# %% ../00_core.ipynb 124
+# %% ../00_core.ipynb 152
 def to_xml(node, hl=False):
     "Convert `node` to an XML string."
     def mk_el(tag, cs, attrs):
@@ -183,18 +246,18 @@ def to_xml(node, hl=False):
     res = ET.tostring(root, encoding='unicode')
     return hl_md(res) if hl else res
 
-# %% ../00_core.ipynb 125
+# %% ../00_core.ipynb 153
 def xt(tag, c=None, **kw):
     "Helper to create appropriate data structure for `to_xml`."
     kw = {k.lstrip('_'):str(v) for k,v in kw.items()}
     return tag,c,kw
 
-# %% ../00_core.ipynb 126
+# %% ../00_core.ipynb 154
 g = globals()
 tags = 'div','img','h1','h2','h3','h4','h5','p','hr','span','html'
 for o in tags: g[o] = partial(xt, o)
 
-# %% ../00_core.ipynb 129
+# %% ../00_core.ipynb 157
 def json_to_xml(d:dict, rnm:str)->str:
     "Convert `d` to XML with root name `rnm`."
     root = ET.Element(rnm)

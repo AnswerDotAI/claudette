@@ -10,8 +10,9 @@
   margin-bottom: 0;
 }
 
-.cell-output > pre, .cell-output > .sourceCode > pre, .cell-output-stdout > pre {
-  margin-left: 0.8rem;
+.cell-output > pre, .cell-output > .sourceCode > pre, .cell-output-stdout > pre, .cell-output-markdown {
+  margin-left: 0.4rem;
+  padding-left: 0.4rem;
   margin-top: 0;
   background: none;
   border-left: 2px solid lightsalmon;
