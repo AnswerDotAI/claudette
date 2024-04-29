@@ -44,7 +44,7 @@ def _repr_markdown_(self:(ToolsBetaMessage,Message)):
 
 <details>
 
-{det}
+- {det}
 
 </details>"""
 
