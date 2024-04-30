@@ -2,8 +2,8 @@ project:
   output-dir: _docs
 
 website:
-  title: "claudio"
-  site-url: "https://AnswerDotAI.github.io/claudio"
-  description: "Claudio is Claude's friend"
+  title: "claudette"
+  site-url: "https://AnswerDotAI.github.io/claudette"
+  description: "Claudette is Claude's friend"
   repo-branch: main
-  repo-url: "https://github.com/AnswerDotAI/claudio"
+  repo-url: "https://github.com/AnswerDotAI/claudette"
