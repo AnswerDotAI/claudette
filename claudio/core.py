@@ -17,27 +17,27 @@ from anthropic.types.beta.tools import ToolsBetaMessage, tool_use_block
 from fastcore.docments import docments
 from fastcore.utils import *
 
-# %% ../00_core.ipynb 7
+# %% ../00_core.ipynb 8
 empty = inspect.Parameter.empty
 
-# %% ../00_core.ipynb 9
+# %% ../00_core.ipynb 10
 models = 'claude-3-opus-20240229','claude-3-sonnet-20240229','claude-3-haiku-20240307'
 
-# %% ../00_core.ipynb 21
+# %% ../00_core.ipynb 22
 def find_block(r:abc.Mapping, # The message to look in
                blk_type:type=TextBlock  # The type of block to find
               ):
     "Find the first block of type `blk_type` in `r.content`."
     return first(o for o in r.content if isinstance(o,blk_type))
 
-# %% ../00_core.ipynb 24
+# %% ../00_core.ipynb 25
 def contents(r):
     "Helper to get the contents from Claude response `r`."
     blk = find_block(r)
     if not blk: blk = r.content[0]
     return blk.text.strip() if hasattr(blk,'text') else blk
 
-# %% ../00_core.ipynb 27
+# %% ../00_core.ipynb 28
 @patch
 def _repr_markdown_(self:(ToolsBetaMessage,Message)):
     det = '\n- '.join(f'{k}: {v}' for k,v in self.dict().items())
@@ -49,40 +49,41 @@ def _repr_markdown_(self:(ToolsBetaMessage,Message)):
 
 </details>"""
 
-# %% ../00_core.ipynb 32
+# %% ../00_core.ipynb 33
 def usage(inp=0, # Number of input tokens
           out=0  # Number of output tokens
          ):
     "Slightly more concise version of `Usage`."
     return Usage(input_tokens=inp, output_tokens=out)
 
-# %% ../00_core.ipynb 35
+# %% ../00_core.ipynb 36
 @patch(as_prop=True)
 def total(self:Usage): return self.input_tokens+self.output_tokens
 
-# %% ../00_core.ipynb 38
+# %% ../00_core.ipynb 39
 @patch
 def __repr__(self:Usage): return f'In: {self.input_tokens}; Out: {self.output_tokens}; Total: {self.total}'
 
-# %% ../00_core.ipynb 41
+# %% ../00_core.ipynb 42
 @patch
 def __add__(self:Usage, b):
+    "Add together each of `input_tokens` and `output_tokens`"
     return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens)
 
-# %% ../00_core.ipynb 51
+# %% ../00_core.ipynb 52
 def mk_msgs(msgs:list, **kw):
     "Helper to set 'assistant' role on alternate messages."
     if isinstance(msgs,str): msgs=[msgs]
     return [mk_msg(o, ('user','assistant')[i%2], **kw) for i,o in enumerate(msgs)]
 
-# %% ../00_core.ipynb 58
+# %% ../00_core.ipynb 59
 class Client:
     def __init__(self, model, cli=None):
         "Basic Anthropic messages client."
         self.model,self.use = model,Usage(input_tokens=0,output_tokens=0)
         self.c = (cli or Anthropic())
 
-# %% ../00_core.ipynb 61
+# %% ../00_core.ipynb 62
 @patch
 def _r(self:Client, r:ToolsBetaMessage):
     "Store the result of the message and accrue total usage."
@@ -90,7 +91,7 @@ def _r(self:Client, r:ToolsBetaMessage):
     self.use += r.usage
     return r
 
-# %% ../00_core.ipynb 64
+# %% ../00_core.ipynb 65
 @patch
 def __call__(self:Client,
              msgs:list, # List of messages in the dialog
@@ -104,7 +105,7 @@ def __call__(self:Client,
         model=self.model, messages=mk_msgs(msgs), max_tokens=maxtok, system=sp, temperature=temp, stop_sequences=stop, **kw)
     return self._r(r)
 
-# %% ../00_core.ipynb 70
+# %% ../00_core.ipynb 69
 @patch
 def stream(self:Client,
            msgs:list, # List of messages in the dialog
@@ -119,14 +120,14 @@ def stream(self:Client,
         yield from s.text_stream
         return self._r(s.get_final_message())
 
-# %% ../00_core.ipynb 81
+# %% ../00_core.ipynb 80
 def _types(t:type)->tuple[str,Optional[str]]:
     "Tuple of json schema type name and (if appropriate) array item name."
     tmap = {int:"integer", float:"number", str:"string", bool:"boolean", list:"array", dict:"object"}
     if getattr(t, '__origin__', None) in  (list,tuple): return "array", tmap.get(t.__args__[0], "object")
     else: return tmap.get(t, "object"), None
 
-# %% ../00_core.ipynb 84
+# %% ../00_core.ipynb 83
 def _param(name, info):
     "json schema parameter given `name` and `info` from docments full dict."
     paramt,itemt = _types(info.anno)
@@ -135,7 +136,7 @@ def _param(name, info):
     if info.default is not empty: pschema["default"] = info.default
     return pschema
 
-# %% ../00_core.ipynb 87
+# %% ../00_core.ipynb 86
 def get_schema(f:callable)->dict:
     "Convert function `f` into a JSON schema `dict` for tool use."
     d = docments(f, full=True)
@@ -150,12 +151,12 @@ def get_schema(f:callable)->dict:
     if ret.docment: desc += f'\n- description: {ret.docment}'
     return dict(name=f.__name__, description=desc, input_schema=paramd)
 
-# %% ../00_core.ipynb 98
+# %% ../00_core.ipynb 97
 def _mk_ns(*funcs:list[callable]) -> dict[str,callable]:
     "Create a `dict` of name to function in `funcs`, to use as a namespace"
     return {f.__name__:f for f in funcs}
 
-# %% ../00_core.ipynb 100
+# %% ../00_core.ipynb 99
 def call_func(tr:abc.Mapping, # Tool use request response from Claude
               ns:Optional[abc.Mapping]=None # Namespace to search for tools, defaults to `globals()`
              ):
@@ -165,7 +166,7 @@ def call_func(tr:abc.Mapping, # Tool use request response from Claude
     fc = find_block(r, tool_use_block.ToolUseBlock)
     return ns[fc.name](**fc.input)
 
-# %% ../00_core.ipynb 103
+# %% ../00_core.ipynb 102
 def mk_toolres(r:abc.Mapping, # Tool use request response from Claude
                res=None,  # The result of calling the tool (calculated with `call_func` by default)
                ns:Optional[abc.Mapping]=None # Namespace to search for tools
@@ -178,7 +179,7 @@ def mk_toolres(r:abc.Mapping, # Tool use request response from Claude
     tr = dict(type="tool_result", tool_use_id=tool.id, content=str(res))
     return mk_msg([tr])
 
-# %% ../00_core.ipynb 110
+# %% ../00_core.ipynb 109
 class Chat:
     def __init__(self,
                  model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
@@ -190,14 +191,14 @@ class Chat:
         self.c = (cli or Client(model))
         self.h,self.sp,self.tools = [],sp,tools
 
-# %% ../00_core.ipynb 113
+# %% ../00_core.ipynb 112
 def _add_prefill(prefill, r):
     "Add `prefill` to the start of response `r`, since Claude doesn't include it otherwise"
     if not prefill: return
     blk = find_block(r)
     blk.text = prefill + blk.text
 
-# %% ../00_core.ipynb 115
+# %% ../00_core.ipynb 114
 @patch
 def __call__(self:Chat,
              pr,  # Prompt / message
@@ -217,7 +218,7 @@ def __call__(self:Chat,
     self.h.append(mk_msg(res, role='assistant'))
     return res
 
-# %% ../00_core.ipynb 121
+# %% ../00_core.ipynb 120
 @patch
 def stream(self:Chat,
            pr,  # Prompt / message
@@ -235,7 +236,7 @@ def stream(self:Chat,
     _add_prefill(prefill, self.c.result)
     self.h.append(mk_msg(self.c.result, role='assistant'))
 
-# %% ../00_core.ipynb 135
+# %% ../00_core.ipynb 134
 def img_msg(data:bytes)->dict:
     "Convert image `data` into an encoded `dict`"
     img = base64.b64encode(data).decode("utf-8")
@@ -243,19 +244,19 @@ def img_msg(data:bytes)->dict:
     r = dict(type="base64", media_type=mtype, data=img)
     return {"type": "image", "source": r}
 
-# %% ../00_core.ipynb 137
+# %% ../00_core.ipynb 136
 def text_msg(s:str)->dict:
     "Convert `s` to a text message"
     return {"type": "text", "text": s}
 
-# %% ../00_core.ipynb 141
+# %% ../00_core.ipynb 140
 def _mk_content(src):
     "Create appropriate content data structure based on type of content"
     if isinstance(src,str): return text_msg(src)
     if isinstance(src,bytes): return img_msg(src)
     return src
 
-# %% ../00_core.ipynb 144
+# %% ../00_core.ipynb 143
 def mk_msg(content, # A string, list, or dict containing the contents of the message
            role='user', # Must be 'user' or 'assistant'
            **kw):
@@ -266,7 +267,7 @@ def mk_msg(content, # A string, list, or dict containing the contents of the mes
     content = [_mk_content(o) for o in content]
     return dict(role=role, content=content, **kw)
 
-# %% ../00_core.ipynb 154
+# %% ../00_core.ipynb 153
 def xt(tag:str, # XML tag name
        c:Optional[list]=None, # Children
        **kw):
@@ -274,18 +275,18 @@ def xt(tag:str, # XML tag name
     kw = {k.lstrip('_'):str(v) for k,v in kw.items()}
     return tag,c,kw
 
-# %% ../00_core.ipynb 157
+# %% ../00_core.ipynb 156
 g = globals()
 tags = 'div img h1 h2 h3 h4 h5 p hr span html'.split()
 for o in tags: g[o] = partial(xt, o)
 
-# %% ../00_core.ipynb 160
+# %% ../00_core.ipynb 159
 def hl_md(s, lang='xml'):
     "Syntax highlight `s` using `lang`."
     if display: return display.Markdown(f'```{lang}\n{s}\n```')
     print(s)
 
-# %% ../00_core.ipynb 163
+# %% ../00_core.ipynb 162
 def to_xml(node:tuple, # XML structure in `xt` format
            hl=False # Syntax highlight response?
           ):
@@ -301,7 +302,7 @@ def to_xml(node:tuple, # XML structure in `xt` format
     res = ET.tostring(root, encoding='unicode')
     return hl_md(res) if hl else res
 
-# %% ../00_core.ipynb 166
+# %% ../00_core.ipynb 165
 def json_to_xml(d:dict, # JSON dictionary to convert
                 rnm:str # Root name
                )->str:
