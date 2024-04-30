@@ -1,5 +1,6 @@
 .gitattributes
 _proc/
+index_files/
 sidebar.yml
 Gemfile.lock
 token

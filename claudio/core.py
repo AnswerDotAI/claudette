@@ -209,6 +209,7 @@ def __call__(self:Chat,
              ns:Optional[abc.Mapping]=None, # Namespace to search for tools, defaults to `globals()`
              prefill='', # Optional prefill to pass to Claude as start of its response
              **kw):
+    "Add prompt `pr` to dialog and get a response from Claude"
     if ns is None: ns=self.tools
     if isinstance(pr,str): pr = pr.strip()
     self.h.append(mk_toolres(pr, ns=ns))
@@ -228,7 +229,7 @@ def stream(self:Chat,
            stop:Optional[list[str]]=None, # Stop sequences
            prefill='', # Optional prefill to pass to Claude as start of its response
            **kw):
-    "Add a prompt and get a response from the chat dialog, streaming the result"
+    "Add prompt `pr` to dialog and stream the response from Claude"
     if isinstance(pr,str): pr = pr.strip()
     self.h.append(pr)
     if prefill: yield(prefill)
