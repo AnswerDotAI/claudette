@@ -14,7 +14,7 @@ format:
     code-block-border-left: "#31BAE9"
     highlight-style: arrow
     grid:
-      sidebar-width: 150px
+      sidebar-width: 180px
       body-width: 1800px
       margin-width: 150px
       gutter-width: 1.0rem
