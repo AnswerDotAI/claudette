@@ -321,7 +321,7 @@ Claudia expects images as a list of bytes, so we read in the file:
 img = fn.read_bytes()
 ```
 
-Prompts to Claudia can be lists, containing text, messages, or both, eg:
+Prompts to Claudia can be lists, containing text, images, or both, eg:
 
 ``` python
 chat([img, "In brief, what color flowers are in this image?"])
