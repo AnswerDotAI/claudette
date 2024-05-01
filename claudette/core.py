@@ -15,6 +15,7 @@ from anthropic.types import Usage, TextBlock, Message
 from anthropic.types.beta.tools import ToolsBetaMessage, tool_use_block
 
 from fastcore.docments import docments
+from fastcore import imghdr
 from fastcore.utils import *
 
 # %% ../00_core.ipynb 8
@@ -163,7 +164,7 @@ def call_func(tr:abc.Mapping, # Tool use request response from Claude
     "Call the function in the tool response `tr`, using namespace `ns`."
     if ns is None: ns=globals()
     if not isinstance(ns, abc.Mapping): ns = _mk_ns(*ns)
-    fc = find_block(r, tool_use_block.ToolUseBlock)
+    fc = find_block(tr, tool_use_block.ToolUseBlock)
     return ns[fc.name](**fc.input)
 
 # %% ../00_core.ipynb 102
@@ -190,6 +191,9 @@ class Chat:
         assert model or cli
         self.c = (cli or Client(model))
         self.h,self.sp,self.tools = [],sp,tools
+    
+    @property
+    def use(self): return self.c.use
 
 # %% ../00_core.ipynb 112
 def _add_prefill(prefill, r):
@@ -202,7 +206,6 @@ def _add_prefill(prefill, r):
 @patch
 def __call__(self:Chat,
              pr,  # Prompt / message
-             sp='', # The system prompt
              temp=0, # Temperature
              maxtok=4096, # Maximum tokens
              stop:Optional[list[str]]=None, # Stop sequences
@@ -241,7 +244,7 @@ def stream(self:Chat,
 def img_msg(data:bytes)->dict:
     "Convert image `data` into an encoded `dict`"
     img = base64.b64encode(data).decode("utf-8")
-    mtype = mimetypes.guess_type(fn)[0]
+    mtype = mimetypes.types_map['.'+imghdr.what(None, h=data)]
     r = dict(type="base64", media_type=mtype, data=img)
     return {"type": "image", "source": r}
 
