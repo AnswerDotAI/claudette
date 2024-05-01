@@ -35,7 +35,20 @@ Claude API before, you should be able to read the source code. Click
 to read it, or clone the git repo and execute the notebook yourself to
 see every step of the creation process in action. The tutorial below
 includes links to API details which will take you to relevant parts of
-the source.
+the source. The reason this project is a new kind of literal program is
+because we take seriously Knuth’s call to action, that we have a “*moral
+commitment*” to never write an “*illiterate program*” – and so we have a
+commitment to making literate programming and easy and pleasant
+experience. (For more on this, see [this
+talk](https://www.youtube.com/watch?v=rX1yGxJijsI) from Hamel Husain
+
+> “*Let us change our traditional attitude to the construction of
+> programs: Instead of imagining that our main task is to instruct a
+> **computer** what to do, let us concentrate rather on explaining to
+> **human beings** what we want a computer to do.*” Donald E. Knuth,
+> [Literate
+> Programming](https://www.cs.tufts.edu/~nr/cs257/archive/literate-programming/01-knuth-lp.pdf)
+> (1984)
 
 ## Install
 
