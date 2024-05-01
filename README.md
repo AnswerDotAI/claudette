@@ -104,7 +104,7 @@ know if there’s anything I can assist you with.
 
 <details>
 
-- id: msg_014NefMSbFitWxdTko9tKEKX
+- id: msg_01VHGuYq67vgFLH9dDwScZcF
 - content: \[{‘text’: “It’s nice to meet you, Jeremy! I’m an AI
   assistant created by Anthropic. I’m here to help with any questions or
   tasks you may have. Please let me know if there’s anything I can
@@ -127,7 +127,7 @@ Your name is Jeremy, as you told me earlier.
 
 <details>
 
-- id: msg_011pPc9c1Ffp3hstXa3YeBqL
+- id: msg_01GxYyFQa4HtBKMEKQk73GVk
 - content: \[{‘text’: ‘Your name is Jeremy, as you told me earlier.’,
   ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
@@ -147,7 +147,7 @@ collapsible section. Alternatively you can `print` the details:
 print(r)
 ```
 
-    ToolsBetaMessage(id='msg_011pPc9c1Ffp3hstXa3YeBqL', content=[TextBlock(text='Your name is Jeremy, as you told me earlier.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 78; Out: 14; Total: 92)
+    ToolsBetaMessage(id='msg_01GxYyFQa4HtBKMEKQk73GVk', content=[TextBlock(text='Your name is Jeremy, as you told me earlier.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 78; Out: 14; Total: 92)
 
 Claude supports adding an extra `assistant` message at the end, which
 contains the *prefill* – i.e. the text we want Claude to assume the
@@ -163,7 +163,7 @@ life, the universe, and everything is 42.”
 
 <details>
 
-- id: msg_01MQD9pjCeFgGqYANd87sFGm
+- id: msg_01VYDycdhZ64357FdSiWjKj7
 - content: \[{‘text’: ‘According to Douglas Adams, “The answer to the
   ultimate question of life, the universe, and everything is 42.”’,
   ‘type’: ‘text’}\]
@@ -243,13 +243,13 @@ r = chat(pr)
 r
 ```
 
-ToolUseBlock(id=‘toolu_01CYvnKdG44ripwguvhGLGHg’, input={‘a’: 604542,
+ToolUseBlock(id=‘toolu_01Ru65j1Y4fFGYzjdav5zvSg’, input={‘a’: 604542,
 ‘b’: 6458932}, name=‘sums’, type=‘tool_use’)
 
 <details>
 
-- id: msg_0117ChGx1xwQwZ4buUw7JcAj
-- content: \[{‘id’: ‘toolu_01CYvnKdG44ripwguvhGLGHg’, ‘input’: {‘a’:
+- id: msg_014NCFjhVLj69zqkdxAM5EXj
+- content: \[{‘id’: ‘toolu_01Ru65j1Y4fFGYzjdav5zvSg’, ‘input’: {‘a’:
   604542, ‘b’: 6458932}, ‘name’: ‘sums’, ‘type’: ‘tool_use’}\]
 - model: claude-3-haiku-20240307
 - role: assistant
@@ -273,7 +273,7 @@ The sum of 604542 and 6458932 is 7063474.
 
 <details>
 
-- id: msg_01AtW6phwQkREmEPkpVptT4L
+- id: msg_01NxFT6mAeCYH8xnkRA1ru8V
 - content: \[{‘text’: ‘The sum of 604542 and 6458932 is 7063474.’,
   ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
@@ -332,7 +332,7 @@ be daisies or a similar type of flower.
 
 <details>
 
-- id: msg_01HfWtPU9LaKkZ1fHzrRXrhV
+- id: msg_017i7Su5rfcdcz3FmiEQ9CvD
 - content: \[{‘text’: ‘The image contains purple or lavender-colored
   flowers, which appear to be daisies or a similar type of flower.’,
   ‘type’: ‘text’}\]
@@ -344,6 +344,20 @@ be daisies or a similar type of flower.
 - usage: {‘input_tokens’: 185, ‘output_tokens’: 28}
 
 </details>
+
+The image is included as input tokens.
+
+``` python
+chat.use
+```
+
+    In: 185; Out: 28; Total: 213
+
+Alternatively, Claudette supports creating a multi-stage chat with
+separate image and text prompts. For instance, you can pass just the
+image as the initial prompt (in which case Claude will make some general
+comments about what it sees), and then follow up with questions in
+additional prompts:
 
 ``` python
 chat = Chat(model)
@@ -359,7 +373,7 @@ playful nature of this young pup.
 
 <details>
 
-- id: msg_019SqKotgxtJqyShF8mtmNKi
+- id: msg_01K36rQXar93QVV5PzzaAoPr
 - content: \[{‘text’: ‘The image shows a cute puppy lying in the grass.
   The puppy appears to be a Cavalier King Charles Spaniel, with a fluffy
   brown and white coat. The puppy is looking directly at the camera with
@@ -376,14 +390,6 @@ playful nature of this young pup.
 
 </details>
 
-The image is included as input tokens.
-
-``` python
-chat.use
-```
-
-    In: 173; Out: 91; Total: 264
-
 ``` python
 chat('What direction is the puppy facing?')
 ```
@@ -393,7 +399,7 @@ the viewer.
 
 <details>
 
-- id: msg_01GwEm3AGtpyq7ddwhVLntjc
+- id: msg_013CqCFmEzPvc6mW5kAP8fki
 - content: \[{‘text’: ‘The puppy in the image is facing towards the
   camera, looking directly at the viewer.’, ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
@@ -415,7 +421,7 @@ silky fur in those colors.
 
 <details>
 
-- id: msg_01U7BBHw5M85SpoMUtQ5rfN8
+- id: msg_01XfDZDRyaNMW58TVJ9znXjR
 - content: \[{‘text’: ‘The puppy in the image has a brown and white coat
   color. It appears to be a Cavalier King Charles Spaniel breed, with
   the characteristic long, silky fur in those colors.’, ‘type’:
