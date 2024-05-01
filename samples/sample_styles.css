@@ -1,0 +1,4 @@
+.cell { margin-bottom: 1rem; }
+.cell > .sourceCode { margin-bottom: 0; }
+.cell-output > pre { margin-bottom: 0; }
+

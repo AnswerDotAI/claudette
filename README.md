@@ -314,7 +314,7 @@ Claude can handle image data as well. As everyone knows, when testing
 image APIs you have to use a cute puppy.
 
 ``` python
-fn = Path('puppy.jpg')
+fn = Path('samples/puppy.jpg')
 display.Image(filename=fn, width=200)
 ```
 
@@ -469,8 +469,8 @@ if you don’t find them useful – you can always just use plain strings
 for XML directly.
 
 An XML node contains a tag, optional children, and optional attributes.
-[`xt`](https://AnswerDotAI.github.io/claudette/core.html#xt) creates a
-tuple of these three things, which we will use to general XML shortly.
+[`xt`](https://AnswerDotAI.github.io/claudette/helpers.html#xt) creates
+a tuple of these three things, which we will use to general XML shortly.
 Attributes are passed as kwargs; since these might conflict with
 reserved words in Python, you can optionally add a `_` prefix and it’ll
 be stripped off.
@@ -482,11 +482,11 @@ xt('x-custom', ['hi'], _class='bar')
     ('x-custom', ['hi'], {'class': 'bar'})
 
 Claudette has functions defined for some common HTML elements to create
-[`xt`](https://AnswerDotAI.github.io/claudette/core.html#xt) tuples more
-easily, including these:
+[`xt`](https://AnswerDotAI.github.io/claudette/helpers.html#xt) tuples
+more easily, including these:
 
 ``` python
-from claudette.core import div,img,h1,h2,p,hr,html
+from claudette.helpers import div,img,h1,h2,p,hr,html
 ```
 
 ``` python
@@ -513,9 +513,9 @@ a
      {})
 
 To convert a tuple data structure created with
-[`xt`](https://AnswerDotAI.github.io/claudette/core.html#xt) and friends
-into XML, use
-[`to_xml`](https://AnswerDotAI.github.io/claudette/core.html#to_xml),
+[`xt`](https://AnswerDotAI.github.io/claudette/helpers.html#xt) and
+friends into XML, use
+[`to_xml`](https://AnswerDotAI.github.io/claudette/helpers.html#to_xml),
 adding the `hl` parameter to optionally add syntax highlighting:
 
 ``` python
@@ -535,9 +535,9 @@ to_xml(a, hl=True)
 ```
 
 JSON doesn’t map as nicely to XML as the
-[`xt`](https://AnswerDotAI.github.io/claudette/core.html#xt) data
+[`xt`](https://AnswerDotAI.github.io/claudette/helpers.html#xt) data
 structure, but for simple XML trees it can be convenient. The
-[`json_to_xml`](https://AnswerDotAI.github.io/claudette/core.html#json_to_xml)
+[`json_to_xml`](https://AnswerDotAI.github.io/claudette/helpers.html#json_to_xml)
 function handles that conversion:
 
 ``` python
