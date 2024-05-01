@@ -213,6 +213,11 @@ def sums(
 
 To ensure it gets used, we can use a system prompt:
 
+> [!NOTE]
+>
+> You don’t need a system prompt for tool usage in Claude. Our intention
+> is to demonstrate the API.
+
 ``` python
 sp = "If asked to add things up, use the `sums` function instead of doing it yourself. Never mention what tools you use."
 ```
