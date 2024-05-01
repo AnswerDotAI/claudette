@@ -446,8 +446,8 @@ chat.use
 
 ## XML helpers
 
-(\*Most people can probably ignore this section – if you find yourself
-using XML a lot and you want a smoother experience, then read on…)
+*(Most people can probably ignore this section – if you find yourself
+using XML a lot and you want a smoother experience, then read on…)*
 
 Claude works well with XML inputs, but XML can be a bit clunky to work
 with manually. Therefore, Claudette includes a couple of more
