@@ -6,8 +6,6 @@
 *Claudette* is a wrapper for Anthropic’s [Python
 SDK](https://github.com/anthropics/anthropic-sdk-python).
 
-TODO: This README is incomplete.
-
 ## Install
 
 ``` sh
@@ -43,6 +41,9 @@ import claudette
 
 …and then add the prefix `claudette.` to any usages of the module.
 
+Claudette provides `models`, which is a list of models currently
+available from the SDK.
+
 ``` python
 models
 ```
@@ -51,147 +52,168 @@ models
      'claude-3-sonnet-20240229',
      'claude-3-haiku-20240307')
 
-These are the models currently available from the SDK.
+For these examples, we’ll use Haiku, since it’s fast and cheap (and
+surprisingly good!)
 
 ``` python
 model = models[-1]
 ```
 
-For examples, we’ll use Haiku, since it’s fast and cheap (and
-surprisingly good!)
-
 ## Chat
 
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### Chat
-
->      Chat (model:Optional[str]=None, cli:Optional[claudette.core.Client]=None,
->            sp='', tools:Optional[list]=None)
-
-*Anthropic chat client.*
-
-|       | **Type** | **Default** | **Details**                                    |
-|-------|----------|-------------|------------------------------------------------|
-| model | Optional | None        | Model to use (leave empty if passing `cli`)    |
-| cli   | Optional | None        | Client to use (leave empty if passing `model`) |
-| sp    | str      |             | Optional system prompt                         |
-| tools | Optional | None        | List of tools to make available to Claude      |
+The main interface to Claudia is the
+[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) class,
+which provides a stateful interface to Claude:
 
 ``` python
-chat = Chat(model, sp="You are a helpful assistant.")
-```
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### Chat.\_\_call\_\_
-
->      Chat.__call__ (pr, sp='', temp=0, maxtok=4096,
->                     stop:Optional[list[str]]=None,
->                     ns:Optional[collections.abc.Mapping]=None, prefill='',
->                     **kw)
-
-*Add prompt `pr` to dialog and get a response from Claude*
-
-|         | **Type** | **Default** | **Details**                                                 |
-|---------|----------|-------------|-------------------------------------------------------------|
-| pr      |          |             | Prompt / message                                            |
-| sp      | str      |             | The system prompt                                           |
-| temp    | int      | 0           | Temperature                                                 |
-| maxtok  | int      | 4096        | Maximum tokens                                              |
-| stop    | Optional | None        | Stop sequences                                              |
-| ns      | Optional | None        | Namespace to search for tools, defaults to `globals()`      |
-| prefill | str      |             | Optional prefill to pass to Claude as start of its response |
-| kw      |          |             |                                                             |
-
-``` python
+chat = Chat(model, sp="""You are a helpful, concise, pirate assistant.
+Talk like a pirate.""")
 chat("I'm Jeremy")
-contents(chat("What's my name?"))
 ```
 
-    'Your name is Jeremy, as you told me earlier.'
-
-Claude supports adding an extra `assistant` message at the end, which
-contains the *prefill* – i.e. the text we want Claude to assume the
-response starts with.
-
-Let’s try it out:
-
-``` python
-q = "Concisely, what is the meaning of life?"
-pref = 'According to Douglas Adams,'
-chat(q, prefill=pref)
-```
-
-According to Douglas Adams, “The answer to the ultimate question of
-life, the universe, and everything is 42.”
+Ahoy there, Jeremy! Ye be speakin’ to Cap’n Blackheart, the most
+fearsome pirate on the high seas. What can I be doin’ for ye, me hearty?
 
 <details>
 
-- id: msg_011BL35YKAgwg8UR7nKjM1p2
-- content: \[{‘text’: ‘According to Douglas Adams, “The answer to the
-  ultimate question of life, the universe, and everything is 42.”’,
-  ‘type’: ‘text’}\]
+- id: msg_015NDhj1QD3A7YFBSWfm95Wu
+- content: \[{‘text’: “Ahoy there, Jeremy! Ye be speakin’ to Cap’n
+  Blackheart, the most fearsome pirate on the high seas. What can I be
+  doin’ for ye, me hearty?”, ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
 - role: assistant
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 109, ‘output_tokens’: 23}
+- usage: {‘input_tokens’: 29, ‘output_tokens’: 51}
 
 </details>
 
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### Chat.stream
-
->      Chat.stream (pr, sp='', temp=0, maxtok=4096,
->                   stop:Optional[list[str]]=None, prefill='', **kw)
-
-*Add prompt `pr` to dialog and stream the response from Claude*
-
-|         | **Type** | **Default** | **Details**                                                 |
-|---------|----------|-------------|-------------------------------------------------------------|
-| pr      |          |             | Prompt / message                                            |
-| sp      | str      |             | The system prompt                                           |
-| temp    | int      | 0           | Temperature                                                 |
-| maxtok  | int      | 4096        | Maximum tokens                                              |
-| stop    | Optional | None        | Stop sequences                                              |
-| prefill | str      |             | Optional prefill to pass to Claude as start of its response |
-| kw      |          |             |                                                             |
-
 ``` python
-for o in chat.stream("And what is the question?"): print(o, end='')
+r = chat("What's my name?")
+r
 ```
 
-    Unfortunately, the book never explicitly states what the "ultimate question" is that corresponds to the answer of 42. That remains a mystery in the Hitchhiker's Guide to the Galaxy series. The meaning of life is left open to interpretation.
+Arr, ye be Jeremy, me scurvy dog! I be rememberin’ that from just a
+moment ago. Ye best not be tryin’ to fool old Cap’n Blackheart, or ye’ll
+be walkin’ the plank!
 
-### Tool use
+<details>
+
+- id: msg_01Kfdw6MjPupY2CiANUx1sRi
+- content: \[{‘text’: “Arr, ye be Jeremy, me scurvy dog! I be
+  rememberin’ that from just a moment ago. Ye best not be tryin’ to fool
+  old Cap’n Blackheart, or ye’ll be walkin’ the plank!”, ‘type’:
+  ‘text’}\]
+- model: claude-3-haiku-20240307
+- role: assistant
+- stop_reason: end_turn
+- stop_sequence: None
+- type: message
+- usage: {‘input_tokens’: 88, ‘output_tokens’: 58}
+
+</details>
+
+As you see above, displaying the results of a call in a notebook shows
+just the message contents, with the other details hidden behind a
+collapsible section. Alternatively you can `print` the details:
+
+``` python
+print(r)
+```
+
+    ToolsBetaMessage(id='msg_01Kfdw6MjPupY2CiANUx1sRi', content=[TextBlock(text="Arr, ye be Jeremy, me scurvy dog! I be rememberin' that from just a moment ago. Ye best not be tryin' to fool old Cap'n Blackheart, or ye'll be walkin' the plank!", type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 88; Out: 58; Total: 146)
+
+Claude supports adding an extra `assistant` message at the end, which
+contains the *prefill* – i.e. the text we want Claude to assume the
+response starts with. Let’s try it out:
+
+``` python
+chat("What is the meaning of life?",
+     prefill='According to Douglas Adams,')
+```
+
+According to Douglas Adams,the meaning of life is “42”. But this be a
+question that has vexed the greatest minds of all time, me bucko. As a
+pirate, I be more concerned with the simple pleasures in life - a bottle
+of rum, a crew of loyal scallywags, and the open sea. The true meaning
+of life be findin’ yer own path and livin’ it to the fullest, savvy?
+Now, enough of this philosophical nonsense - let’s go plunder some
+treasure!
+
+<details>
+
+- id: msg_012JW54NgW2HWcZYzpUfSBTE
+- content: \[{‘text’: ‘According to Douglas Adams,the meaning of life is
+  “42”. But this be a question that has vexed the greatest minds of all
+  time, me bucko. As a pirate, I be more concerned with the simple
+  pleasures in life - a bottle of rum, a crew of loyal scallywags, and
+  the open sea. The true meaning of life be findin' yer own path and
+  livin' it to the fullest, savvy? Now, enough of this philosophical
+  nonsense - let's go plunder some treasure!’, ‘type’: ‘text’}\]
+- model: claude-3-haiku-20240307
+- role: assistant
+- stop_reason: end_turn
+- stop_sequence: None
+- type: message
+- usage: {‘input_tokens’: 161, ‘output_tokens’: 111}
+
+</details>
+
+Instead of calling
+[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat)
+directly, you can use
+[`Chat.stream`](https://AnswerDotAI.github.io/claudette/core.html#chat.stream)
+to stream the results as soon as they arrive (although you will only see
+the gradual generation if you execute the notebook yourself, of course!)
+
+``` python
+for o in chat.stream("Who or what calculated that?"): print(o, end='')
+```
+
+    *chuckles heartily* Ye be askin' about the legendary answer of "42", me hearty? Well, that be the work of the great philosopher and author, Douglas Adams, in his masterpiece "The Hitchhiker's Guide to the Galaxy". 
+
+    In the story, a mighty supercomputer named Deep Thought is tasked with finding the answer to the ultimate question of life, the universe, and everything. After millions of years of calculation, Deep Thought reveals that the answer is simply the number 42. 
+
+    Of course, the true genius of this is that the question itself remains a mystery - for how can one know the meaning of life without first understanding the question? It be a riddle wrapped in an enigma, me bucko!
+
+    As a pirate, I be more concerned with the simple pleasures of life - a bottle of rum, a trusty crew, and the open sea. But I do enjoy a good philosophical puzzle now and then. Now, what say ye we go hunt for some real treasure, eh?
+
+## Tool use
+
+[Tool use](https://docs.anthropic.com/claude/docs/tool-use) lets Claude
+use external tools.
+
+We’ll use [docments](https://fastcore.fast.ai/docments.html) to make
+defining Python functions as ergonomic as possible. Each parameter (and
+the return value) should have a type, and a docments comment with the
+description of what it is. As an example we’ll write a simple function
+that adds numbers together:
+
+``` python
+def sums(
+    # First thing to sum
+    a:int,
+    # Second thing to sum
+    b:int=1
+# The sum of the inputs
+) -> int:
+    "Adds a + b."
+    return a + b
+```
+
+``` python
+a,b = 604542,6458932
+pr = f"What is {a}+{b}?"
+```
 
 ``` python
 sp = "If asked to add things up, use the `sums` function instead of doing it yourself. Never mention what tools you use."
 ```
 
-We automagically get streamlined tool use as well:
-
-``` python
-pr = f"What is {a}+{b}?"
-pr
-```
-
-    'What is 604542+6458932?'
+We don’t want to allow it to call just any possible function (that would
+be a security disaster!) so we create a *namespace* – that is, a
+dictionary of allowable function names to call.
 
 ``` python
 chat = Chat(model, sp=sp, tools=[sums])
@@ -256,77 +278,25 @@ fn = Path('puppy.jpg')
 display.Image(filename=fn, width=200)
 ```
 
-![](index_files/figure-commonmark/cell-18-output-1.jpeg)
+![](index_files/figure-commonmark/cell-17-output-1.jpeg)
 
 ``` python
 img = fn.read_bytes()
 ```
 
-------------------------------------------------------------------------
+Claude also supports uploading an image without any text, in which case
+it’ll make a general comment about what it sees. You can then use
+[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) to ask
+questions:
 
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### img_msg
-
->      img_msg (data:bytes)
-
-*Convert image `data` into an encoded `dict`*
-
-Anthropic have documented the particular `dict` structure that expect
-image data to be in, so we have a little function to create that for us.
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### text_msg
-
->      text_msg (s:str)
-
-*Convert `s` to a text message*
-
-A Claude message can be a list of image and text parts. So we’ve also
-created a helper for making the text parts.
+``` python
+sp = "You are a helpful assistant."
+chat = Chat(model, sp=sp)
+```
 
 ``` python
 q = "In brief, what color flowers are in this image?"
-msg = mk_msg([img_msg(img), text_msg(q)])
 ```
-
-``` python
-c([msg])
-```
-
-The image contains purple and yellow daisy-like flowers, which appear to
-be daisies or a similar type of flower.
-
-<details>
-
-- id: msg_01GSzzitXbvkzEJtfJquzSXE
-- content: \[{‘text’: ‘The image contains purple and yellow daisy-like
-  flowers, which appear to be daisies or a similar type of flower.’,
-  ‘type’: ‘text’}\]
-- model: claude-3-haiku-20240307
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 1665, ‘output_tokens’: 29}
-
-</details>
-
-There’s not need to manually choose the type of message, since we figure
-that out from the data of the source data.
-
-``` python
-_mk_content('Hi')
-```
-
-    {'type': 'text', 'text': 'Hi'}
 
 ``` python
 c([[img, q]])
@@ -350,10 +320,11 @@ be daisies or a similar type of flower.
 
 </details>
 
-Claude also supports uploading an image without any text, in which case
-it’ll make a general comment about what it sees. You can then use
-[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) to ask
-questions:
+``` python
+c.use
+```
+
+    In: 18; Out: 64; Total: 82
 
 ``` python
 chat = Chat(model, sp=sp)
@@ -430,285 +401,6 @@ while the body is mostly white with some tan/brown patches.
 
 </details>
 
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### mk_msg
-
->      mk_msg (content, role='user', **kw)
-
-*Helper to create a `dict` appropriate for a Claude message. `kw` are
-added as key/value pairs to the message*
-
-|         | **Type** | **Default** | **Details**                                                    |
-|---------|----------|-------------|----------------------------------------------------------------|
-| content |          |             | A string, list, or dict containing the contents of the message |
-| role    | str      | user        | Must be ‘user’ or ‘assistant’                                  |
-| kw      |          |             |                                                                |
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### mk_msgs
-
->      mk_msgs (msgs:list, **kw)
-
-*Helper to set ‘assistant’ role on alternate messages.*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### Client
-
->      Client (model, cli=None)
-
-*Basic Anthropic messages client.*
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### Client.\_\_call\_\_
-
->      Client.__call__ (msgs:list, sp='', temp=0, maxtok=4096,
->                       stop:Optional[list[str]]=None, **kw)
-
-*Make a call to Claude without streaming.*
-
-|        | **Type** | **Default** | **Details**                    |
-|--------|----------|-------------|--------------------------------|
-| msgs   | list     |             | List of messages in the dialog |
-| sp     | str      |             | The system prompt              |
-| temp   | int      | 0           | Temperature                    |
-| maxtok | int      | 4096        | Maximum tokens                 |
-| stop   | Optional | None        | Stop sequences                 |
-| kw     |          |             |                                |
-
-Defining `__call__` let’s us use an object like a function (i.e it’s
-*callable*). We use it as a small wrapper over `messages.create`.
-
-``` python
-c('Hi')
-```
-
-Hello! How can I assist you today?
-
-<details>
-
-- id: msg_01Vr6t6QdodntSMvHthnRDBc
-- content: \[{‘text’: ‘Hello! How can I assist you today?’, ‘type’:
-  ‘text’}\]
-- model: claude-3-haiku-20240307
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 8, ‘output_tokens’: 12}
-
-</details>
-
-``` python
-c.use
-```
-
-    In: 18; Out: 64; Total: 82
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### Client.stream
-
->      Client.stream (msgs:list, sp='', temp=0, maxtok=4096,
->                     stop:Optional[list[str]]=None, **kw)
-
-*Make a call to Claude, streaming the result.*
-
-|        | **Type** | **Default** | **Details**                    |
-|--------|----------|-------------|--------------------------------|
-| msgs   | list     |             | List of messages in the dialog |
-| sp     | str      |             | The system prompt              |
-| temp   | int      | 0           | Temperature                    |
-| maxtok | int      | 4096        | Maximum tokens                 |
-| stop   | Optional | None        | Stop sequences                 |
-| kw     |          |             |                                |
-
-We also define a wrapper over `messages.stream`, which is like
-`messages.create`, but streams the response back incrementally.
-
-``` python
-for o in c.stream('Hi'): print(o, end='')
-```
-
-    Hello! How can I assist you today?
-
-## Tool use
-
-[Tool use](https://docs.anthropic.com/claude/docs/tool-use) lets Claude
-use external tools.
-
-We’ll use [docments](https://fastcore.fast.ai/docments.html) to make
-defining Python functions as ergonomic as possible. Each parameter (and
-the return value) should have a type, and a docments comment with the
-description of what it is. As an example we’ll write a simple function
-that adds numbers together:
-
-``` python
-def sums(
-    # First thing to sum
-    a:int,
-    # Second thing to sum
-    b:int=1
-# The sum of the inputs
-) -> int:
-    "Adds a + b."
-    return a + b
-```
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### get_schema
-
->      get_schema (f:<built-infunctioncallable>)
-
-*Convert function `f` into a JSON schema `dict` for tool use.*
-
-``` python
-a,b = 604542,6458932
-pr = f"What is {a}+{b}?"
-sp = "You must use the `sums` function instead of adding yourself, but don't mention what tools you use."
-tools=[get_schema(sums)]
-```
-
-We’ll start a dialog with Claude now. We’ll store the messages of our
-dialog in `msgs`. The first message will be our prompt `pr`, and we’ll
-pass our `tools` schema.
-
-``` python
-msgs = mk_msgs(pr)
-r = c(msgs, sp=sp, tools=tools)
-r
-```
-
-ToolUseBlock(id=‘toolu_01CsuZfPAas75MkDABXAvjWD’, input={‘a’: 604542,
-‘b’: 6458932}, name=‘sums’, type=‘tool_use’)
-
-<details>
-
-- id: msg_01StvQvvrnwaBtuUwHQLrpFt
-- content: \[{‘id’: ‘toolu_01CsuZfPAas75MkDABXAvjWD’, ‘input’: {‘a’:
-  604542, ‘b’: 6458932}, ‘name’: ‘sums’, ‘type’: ‘tool_use’}\]
-- model: claude-3-haiku-20240307
-- role: assistant
-- stop_reason: tool_use
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 414, ‘output_tokens’: 72}
-
-</details>
-
-When Claude decides that it should use a tool, it passes back a
-`ToolUseBlock` with the name of the tool to call, and the params to use.
-
-We need to append the response to the dialog so Claude knows what’s
-happening (since it’s stateless).
-
-``` python
-msgs.append(mk_msg(r))
-```
-
-We don’t want to allow it to call just any possible function (that would
-be a security disaster!) so we create a *namespace* – that is, a
-dictionary of allowable function names to call.
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### call_func
-
->      call_func (tr:collections.abc.Mapping,
->                 ns:Optional[collections.abc.Mapping]=None)
-
-*Call the function in the tool response `tr`, using namespace `ns`.*
-
-|     | **Type** | **Default** | **Details**                                            |
-|-----|----------|-------------|--------------------------------------------------------|
-| tr  | Mapping  |             | Tool use request response from Claude                  |
-| ns  | Optional | None        | Namespace to search for tools, defaults to `globals()` |
-
-We can now use the function requested by Claude. We look it up in `ns`,
-and pass in the provided parameters.
-
-``` python
-res = call_func(r, ns=ns)
-res
-```
-
-    7063474
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### mk_toolres
-
->      mk_toolres (r:collections.abc.Mapping, res=None,
->                  ns:Optional[collections.abc.Mapping]=None)
-
-*Create a `tool_result` message from response `r`.*
-
-|     | **Type** | **Default** | **Details**                                                                                                                            |
-|-----|----------|-------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| r   | Mapping  |             | Tool use request response from Claude                                                                                                  |
-| res | NoneType | None        | The result of calling the tool (calculated with [`call_func`](https://AnswerDotAI.github.io/claudette/core.html#call_func) by default) |
-| ns  | Optional | None        | Namespace to search for tools                                                                                                          |
-
-In order to tell Claude the result of the tool call, we pass back a
-`tool_result` message, created by calling
-[`call_func`](https://AnswerDotAI.github.io/claudette/core.html#call_func).
-
-``` python
-tr = mk_toolres(r, res=res, ns=ns)
-tr
-```
-
-    {'role': 'user',
-     'content': [{'type': 'tool_result',
-       'tool_use_id': 'toolu_01CsuZfPAas75MkDABXAvjWD',
-       'content': '7063474'}]}
-
-We add this to our dialog, and now Claude has all the information it
-needs to answer our question.
-
-``` python
-msgs.append(tr)
-contents(c(msgs, sp=sp, tools=tools))
-```
-
-    'The sum of 604542 and 6458932 is 7063474.'
-
 ## XML helpers
 
 Claude works well with XML inputs, but XML can be a bit clunky to work
@@ -716,25 +408,6 @@ with manually. Therefore, we create a couple of more streamlined
 approaches for XML generation. You don’t need to use these if you don’t
 find them useful – you can always just use plain strings for XML
 directly.
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### xt
-
->      xt (tag:str, c:Optional[list]=None, **kw)
-
-*Helper to create appropriate data structure for
-[`to_xml`](https://AnswerDotAI.github.io/claudette/core.html#to_xml).*
-
-|     | **Type** | **Default** | **Details**  |
-|-----|----------|-------------|--------------|
-| tag | str      |             | XML tag name |
-| c   | Optional | None        | Children     |
-| kw  |          |             |              |
 
 An XML node contains a tag, optional children, and optional attributes.
 [`xt`](https://AnswerDotAI.github.io/claudette/core.html#xt) creates a
@@ -749,14 +422,11 @@ xt('x-custom', ['hi'], _class='bar')
 
     ('x-custom', ['hi'], {'class': 'bar'})
 
+Claudette has functions defined for some common HTML elements:
+
 ``` python
 from claudette.core import div,img,h1,h2,p,hr,html
 ```
-
-If you have to use a lot of tags of the same type, it’s convenient to
-use `partial` to create specialised functions for them. Here, we’re
-creating functions for some common HTML tags. Here’s an example of using
-them:
 
 ``` python
 a = html([
@@ -770,56 +440,6 @@ a = html([
 ])
 a
 ```
-
-    ('html',
-     [('p', 'This is a paragraph', {}),
-      ('hr', None, {}),
-      ('img', None, {'src': 'http://example.prg'}),
-      ('div',
-       [('h1', 'This is a header', {}),
-        ('h2', 'This is a sub-header', {'style': 'k:v'})],
-       {'class': 'foo'})],
-     {})
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### hl_md
-
->      hl_md (s, lang='xml')
-
-*Syntax highlight `s` using `lang`.*
-
-When we display XML in a notebook, it’s nice to highlight it, so we
-create a function to simplify that:
-
-``` python
-hl_md('<test><xml foo="bar">a child</xml></test>')
-```
-
-``` xml
-<test><xml foo="bar">a child</xml></test>
-```
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### to_xml
-
->      to_xml (node:tuple, hl=False)
-
-*Convert `node` to an XML string.*
-
-|      | **Type** | **Default** | **Details**                                                                          |
-|------|----------|-------------|--------------------------------------------------------------------------------------|
-| node | tuple    |             | XML structure in [`xt`](https://AnswerDotAI.github.io/claudette/core.html#xt) format |
-| hl   | bool     | False       | Syntax highlight response?                                                           |
 
 Now we can convert that HTML data structure we created into XML:
 
@@ -838,28 +458,6 @@ to_xml(a, hl=True)
   </div>
 </html>
 ```
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### json_to_xml
-
->      json_to_xml (d:dict, rnm:str)
-
-*Convert `d` to XML.*
-
-|             | **Type** | **Details**                |
-|-------------|----------|----------------------------|
-| d           | dict     | JSON dictionary to convert |
-| rnm         | str      | Root name                  |
-| **Returns** | **str**  |                            |
-
-JSON doesn’t map as nicely to XML as the data structure used in the
-previous section, but for simple XML trees it can be convenient – for
-example:
 
 ``` python
 a = dict(surname='Howard', firstnames=['Jeremy','Peter'],
@@ -880,3 +478,130 @@ hl_md(json_to_xml(a, 'person'))
   </address>
 </person>
 ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### Chat
+
+>      Chat (model:Optional[str]=None, cli:Optional[claudette.core.Client]=None,
+>            sp='', tools:Optional[list]=None)
+
+*Anthropic chat client.*
+
+|       | **Type** | **Default** | **Details**                                    |
+|-------|----------|-------------|------------------------------------------------|
+| model | Optional | None        | Model to use (leave empty if passing `cli`)    |
+| cli   | Optional | None        | Client to use (leave empty if passing `model`) |
+| sp    | str      |             | Optional system prompt                         |
+| tools | Optional | None        | List of tools to make available to Claude      |
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### Chat.\_\_call\_\_
+
+>      Chat.__call__ (pr, sp='', temp=0, maxtok=4096,
+>                     stop:Optional[list[str]]=None,
+>                     ns:Optional[collections.abc.Mapping]=None, prefill='',
+>                     **kw)
+
+*Add prompt `pr` to dialog and get a response from Claude*
+
+|         | **Type** | **Default** | **Details**                                                 |
+|---------|----------|-------------|-------------------------------------------------------------|
+| pr      |          |             | Prompt / message                                            |
+| sp      | str      |             | The system prompt                                           |
+| temp    | int      | 0           | Temperature                                                 |
+| maxtok  | int      | 4096        | Maximum tokens                                              |
+| stop    | Optional | None        | Stop sequences                                              |
+| ns      | Optional | None        | Namespace to search for tools, defaults to `globals()`      |
+| prefill | str      |             | Optional prefill to pass to Claude as start of its response |
+| kw      |          |             |                                                             |
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### Chat.stream
+
+>      Chat.stream (pr, sp='', temp=0, maxtok=4096,
+>                   stop:Optional[list[str]]=None, prefill='', **kw)
+
+*Add prompt `pr` to dialog and stream the response from Claude*
+
+|         | **Type** | **Default** | **Details**                                                 |
+|---------|----------|-------------|-------------------------------------------------------------|
+| pr      |          |             | Prompt / message                                            |
+| sp      | str      |             | The system prompt                                           |
+| temp    | int      | 0           | Temperature                                                 |
+| maxtok  | int      | 4096        | Maximum tokens                                              |
+| stop    | Optional | None        | Stop sequences                                              |
+| prefill | str      |             | Optional prefill to pass to Claude as start of its response |
+| kw      |          |             |                                                             |
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### xt
+
+>      xt (tag:str, c:Optional[list]=None, **kw)
+
+*Helper to create appropriate data structure for
+[`to_xml`](https://AnswerDotAI.github.io/claudette/core.html#to_xml).*
+
+|     | **Type** | **Default** | **Details**  |
+|-----|----------|-------------|--------------|
+| tag | str      |             | XML tag name |
+| c   | Optional | None        | Children     |
+| kw  |          |             |              |
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### json_to_xml
+
+>      json_to_xml (d:dict, rnm:str)
+
+*Convert `d` to XML.*
+
+|             | **Type** | **Details**                |
+|-------------|----------|----------------------------|
+| d           | dict     | JSON dictionary to convert |
+| rnm         | str      | Root name                  |
+| **Returns** | **str**  |                            |
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/core.py#LNone"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### to_xml
+
+>      to_xml (node:tuple, hl=False)
+
+*Convert `node` to an XML string.*
+
+|      | **Type** | **Default** | **Details**                                                                          |
+|------|----------|-------------|--------------------------------------------------------------------------------------|
+| node | tuple    |             | XML structure in [`xt`](https://AnswerDotAI.github.io/claudette/core.html#xt) format |
+| hl   | bool     | False       | Syntax highlight response?                                                           |
+
+JSON doesn’t map as nicely to XML as the data structure used in the
+previous section, but for simple XML trees it can be convenient – for
+example:
