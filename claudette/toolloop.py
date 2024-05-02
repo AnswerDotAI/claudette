@@ -3,11 +3,11 @@
 # %% auto 0
 __all__ = []
 
-# %% ../02_toolloop.ipynb 3
+# %% ../02_toolloop.ipynb 2
 from .core import *
 from fastcore.utils import *
 
-# %% ../02_toolloop.ipynb 19
+# %% ../02_toolloop.ipynb 16
 @patch
 def toolloop(self:Chat,
              pr, # Prompt to pass to Claude
@@ -19,10 +19,9 @@ def toolloop(self:Chat,
              **kw):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
     r = self(pr, temp=temp, maxtok=maxtok, stop=stop, **kw)
-    i=0
-    while r.stop_reason=='tool_use' and i<max_steps:
+    for i in range(max_steps):
+        if r.stop_reason!='tool_use': break
         if show_trace: print(r)
         r = self(r, temp=temp, maxtok=maxtok, stop=stop, **kw)
-        i += 1
     if show_trace: print(r)
     return r
