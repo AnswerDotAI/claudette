@@ -117,7 +117,7 @@ know if there’s anything I can assist you with.
 
 <details>
 
-- id: msg_01MrA53HKqhsXCj1vpBVD4Ur
+- id: msg_01BtZSuhryCP1NpWwerwSXJt
 - content: \[{‘text’: “It’s nice to meet you, Jeremy! I’m an AI
   assistant created by Anthropic. I’m here to help with any questions or
   tasks you may have. Please let me know if there’s anything I can
@@ -136,19 +136,18 @@ r = chat("What's my name?")
 r
 ```
 
-Your name is Jeremy, as you told me earlier.
+Your name is Jeremy.
 
 <details>
 
-- id: msg_01NdJsRQEqmMGRVAhhcX2VX4
-- content: \[{‘text’: ‘Your name is Jeremy, as you told me earlier.’,
-  ‘type’: ‘text’}\]
+- id: msg_01W5zdkMprwYdN7zLNv5gZQK
+- content: \[{‘text’: ‘Your name is Jeremy.’, ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
 - role: assistant
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 78, ‘output_tokens’: 14}
+- usage: {‘input_tokens’: 78, ‘output_tokens’: 8}
 
 </details>
 
@@ -160,7 +159,7 @@ collapsible section. Alternatively you can `print` the details:
 print(r)
 ```
 
-    ToolsBetaMessage(id='msg_01NdJsRQEqmMGRVAhhcX2VX4', content=[TextBlock(text='Your name is Jeremy, as you told me earlier.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 78; Out: 14; Total: 92)
+    ToolsBetaMessage(id='msg_01W5zdkMprwYdN7zLNv5gZQK', content=[TextBlock(text='Your name is Jeremy.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 78; Out: 8; Total: 86)
 
 Claude supports adding an extra `assistant` message at the end, which
 contains the *prefill* – i.e. the text we want Claude to assume the
@@ -176,7 +175,7 @@ life, the universe, and everything is 42.”
 
 <details>
 
-- id: msg_01Jx9juF3FuRgonHDqBWYXhK
+- id: msg_01GKFGiZLu4wwrDe882a6MNx
 - content: \[{‘text’: ‘According to Douglas Adams, “The answer to the
   ultimate question of life, the universe, and everything is 42.”’,
   ‘type’: ‘text’}\]
@@ -185,7 +184,7 @@ life, the universe, and everything is 42.”
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 112, ‘output_tokens’: 23}
+- usage: {‘input_tokens’: 106, ‘output_tokens’: 23}
 
 </details>
 
@@ -224,10 +223,12 @@ def sums(
     return a + b
 ```
 
-To ensure it gets used, we can use a system prompt:
+Sometimes Claude will say something like “according to the `sums` tool
+the answer is” – generally we’d rather it just tells the user the
+answer, so we can use a system prompt to help with this:
 
 ``` python
-sp = "If asked to add things up, use the `sums` function instead of doing it yourself. Never mention what tools you use."
+sp = "Never mention what tools you use."
 ```
 
 We’ll get Claude to add up some long numbers:
@@ -256,20 +257,20 @@ r = chat(pr)
 r
 ```
 
-ToolUseBlock(id=‘toolu_01Ru65j1Y4fFGYzjdav5zvSg’, input={‘a’: 604542,
+ToolUseBlock(id=‘toolu_01JgEPbVF5JiwehJPWzFMLse’, input={‘a’: 604542,
 ‘b’: 6458932}, name=‘sums’, type=‘tool_use’)
 
 <details>
 
-- id: msg_014NCFjhVLj69zqkdxAM5EXj
-- content: \[{‘id’: ‘toolu_01Ru65j1Y4fFGYzjdav5zvSg’, ‘input’: {‘a’:
+- id: msg_01LAipBzuv5bB9QezDXgJY41
+- content: \[{‘id’: ‘toolu_01JgEPbVF5JiwehJPWzFMLse’, ‘input’: {‘a’:
   604542, ‘b’: 6458932}, ‘name’: ‘sums’, ‘type’: ‘tool_use’}\]
 - model: claude-3-haiku-20240307
 - role: assistant
 - stop_reason: tool_use
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 418, ‘output_tokens’: 72}
+- usage: {‘input_tokens’: 398, ‘output_tokens’: 72}
 
 </details>
 
@@ -286,7 +287,7 @@ The sum of 604542 and 6458932 is 7063474.
 
 <details>
 
-- id: msg_01NxFT6mAeCYH8xnkRA1ru8V
+- id: msg_01WX3khUpmrdG8F1e9yz6nmW
 - content: \[{‘text’: ‘The sum of 604542 and 6458932 is 7063474.’,
   ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
@@ -294,7 +295,7 @@ The sum of 604542 and 6458932 is 7063474.
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 505, ‘output_tokens’: 23}
+- usage: {‘input_tokens’: 485, ‘output_tokens’: 23}
 
 </details>
 
@@ -323,7 +324,7 @@ def mults(
     return a * b
 ```
 
-Now with a single call we can calculate `(a+b)/2` – by passing
+Now with a single call we can calculate `(a+b)*2` – by passing
 `show_trace` we can see each response from Claude in the process:
 
 ``` python
