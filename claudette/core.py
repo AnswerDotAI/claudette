@@ -158,27 +158,25 @@ def _mk_ns(*funcs:list[callable]) -> dict[str,callable]:
     return {f.__name__:f for f in funcs}
 
 # %% ../00_core.ipynb 99
-def call_func(tr:abc.Mapping, # Tool use request response from Claude
+def call_func(fc:tool_use_block.ToolUseBlock, # Tool use block from Claude's message
               ns:Optional[abc.Mapping]=None # Namespace to search for tools, defaults to `globals()`
              ):
     "Call the function in the tool response `tr`, using namespace `ns`."
     if ns is None: ns=globals()
     if not isinstance(ns, abc.Mapping): ns = _mk_ns(*ns)
-    fc = find_block(tr, tool_use_block.ToolUseBlock)
     return ns[fc.name](**fc.input)
 
 # %% ../00_core.ipynb 102
 def mk_toolres(r:abc.Mapping, # Tool use request response from Claude
-               res=None,  # The result of calling the tool (calculated with `call_func` by default)
                ns:Optional[abc.Mapping]=None # Namespace to search for tools
               ):
     "Create a `tool_result` message from response `r`."
     if not hasattr(r, 'content'): return r
-    tool = first(o for o in r.content if isinstance(o,tool_use_block.ToolUseBlock))
-    if not tool: return r
-    if res is None: res = call_func(r, ns)
-    tr = dict(type="tool_result", tool_use_id=tool.id, content=str(res))
-    return mk_msg([tr])
+    res = []
+    for o in r.content:
+        if isinstance(o,tool_use_block.ToolUseBlock):
+            res.append(dict(type="tool_result", tool_use_id=o.id, content=str(call_func(o, ns))))
+    return mk_msg(res) if res else r
 
 # %% ../00_core.ipynb 109
 class Chat:
@@ -209,13 +207,11 @@ def __call__(self:Chat,
              temp=0, # Temperature
              maxtok=4096, # Maximum tokens
              stop:Optional[list[str]]=None, # Stop sequences
-             ns:Optional[abc.Mapping]=None, # Namespace to search for tools, defaults to `globals()`
              prefill='', # Optional prefill to pass to Claude as start of its response
              **kw):
     "Add prompt `pr` to dialog and get a response from Claude"
-    if ns is None: ns=self.tools
     if isinstance(pr,str): pr = pr.strip()
-    self.h.append(mk_toolres(pr, ns=ns))
+    self.h.append(mk_toolres(pr, ns=self.tools))
     if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
     res = self.c(self.h + ([prefill.strip()] if prefill else []), sp=self.sp, temp=temp, maxtok=maxtok, stop=stop, **kw)
     _add_prefill(prefill, res)

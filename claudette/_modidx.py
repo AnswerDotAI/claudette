@@ -40,4 +40,5 @@ d = { 'settings': { 'branch': 'main',
                                    'claudette.helpers.json_to_xml': ('helpers.html#json_to_xml', 'claudette/helpers.py'),
                                    'claudette.helpers.mk_doctype': ('helpers.html#mk_doctype', 'claudette/helpers.py'),
                                    'claudette.helpers.to_xml': ('helpers.html#to_xml', 'claudette/helpers.py'),
-                                   'claudette.helpers.xt': ('helpers.html#xt', 'claudette/helpers.py')}}}
+                                   'claudette.helpers.xt': ('helpers.html#xt', 'claudette/helpers.py')},
+            'claudette.toolloop': {'claudette.toolloop.Chat.toolloop': ('toolloop.html#chat.toolloop', 'claudette/toolloop.py')}}}
