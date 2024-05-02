@@ -10,6 +10,7 @@ from collections import namedtuple
 
 from .core import *
 from fastcore.utils import *
+from fastcore.meta import delegates
 from IPython import display
 
 # %% ../01_helpers.ipynb 6
@@ -112,7 +113,7 @@ def files2ctx(
     contents = [o.read_text() for o in fnames]
     return docs_xml(contents, fnames, prefix=prefix)
 
-# %% ../01_helpers.ipynb 44
+# %% ../01_helpers.ipynb 43
 @delegates(globtastic)
 def folder2ctx(
     folder:Union[str,Path], # Folder name containing files to add to context

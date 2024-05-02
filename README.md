@@ -40,7 +40,7 @@ because we take seriously Knuth’s call to action, that we have a “*moral
 commitment*” to never write an “*illiterate program*” – and so we have a
 commitment to making literate programming and easy and pleasant
 experience. (For more on this, see [this
-talk](https://www.youtube.com/watch?v=rX1yGxJijsI) from Hamel Husain
+talk](https://www.youtube.com/watch?v=rX1yGxJijsI) from Hamel Husain.)
 
 > “*Let us change our traditional attitude to the construction of
 > programs: Instead of imagining that our main task is to instruct a
@@ -117,7 +117,7 @@ know if there’s anything I can assist you with.
 
 <details>
 
-- id: msg_01VHGuYq67vgFLH9dDwScZcF
+- id: msg_01MrA53HKqhsXCj1vpBVD4Ur
 - content: \[{‘text’: “It’s nice to meet you, Jeremy! I’m an AI
   assistant created by Anthropic. I’m here to help with any questions or
   tasks you may have. Please let me know if there’s anything I can
@@ -140,7 +140,7 @@ Your name is Jeremy, as you told me earlier.
 
 <details>
 
-- id: msg_01GxYyFQa4HtBKMEKQk73GVk
+- id: msg_01NdJsRQEqmMGRVAhhcX2VX4
 - content: \[{‘text’: ‘Your name is Jeremy, as you told me earlier.’,
   ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
@@ -160,7 +160,7 @@ collapsible section. Alternatively you can `print` the details:
 print(r)
 ```
 
-    ToolsBetaMessage(id='msg_01GxYyFQa4HtBKMEKQk73GVk', content=[TextBlock(text='Your name is Jeremy, as you told me earlier.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 78; Out: 14; Total: 92)
+    ToolsBetaMessage(id='msg_01NdJsRQEqmMGRVAhhcX2VX4', content=[TextBlock(text='Your name is Jeremy, as you told me earlier.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 78; Out: 14; Total: 92)
 
 Claude supports adding an extra `assistant` message at the end, which
 contains the *prefill* – i.e. the text we want Claude to assume the
@@ -176,7 +176,7 @@ life, the universe, and everything is 42.”
 
 <details>
 
-- id: msg_01VYDycdhZ64357FdSiWjKj7
+- id: msg_01Jx9juF3FuRgonHDqBWYXhK
 - content: \[{‘text’: ‘According to Douglas Adams, “The answer to the
   ultimate question of life, the universe, and everything is 42.”’,
   ‘type’: ‘text’}\]
@@ -308,6 +308,58 @@ chat.use
 
     In: 923; Out: 95; Total: 1018
 
+We can do everything needed to use tools in a single step, by using
+[`Chat.toolloop`](https://AnswerDotAI.github.io/claudette/toolloop.html#chat.toolloop).
+This can even call multiple tools as needed solve a problem. For
+example, let’s define a tool to handle multiplication:
+
+``` python
+def mults(
+    a:int,  # First thing to multiply
+    b:int=1 # Second thing to multiply
+) -> int: # The product of the inputs
+    "Multiplies a * b."
+    print(f"Finding the product of {a} and {b}")
+    return a * b
+```
+
+Now with a single call we can calculate `(a+b)/2` – by passing
+`show_trace` we can see each response from Claude in the process:
+
+``` python
+chat = Chat(model, sp=sp, tools=[sums,mults])
+pr = f'Calculate ({a}+{b})*2'
+pr
+```
+
+    'Calculate (604542+6458932)*2'
+
+``` python
+chat.toolloop(pr, show_trace=True)
+```
+
+    ToolsBetaMessage(id='msg_017rs6nqX3cFgnoTgb6x7frj', content=[TextBlock(text="Okay, let's calculate that step-by-step:", type='text'), ToolUseBlock(id='toolu_0121PUsNMncXygjWoRn9rxJC', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')], model='claude-3-haiku-20240307', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 528; Out: 86; Total: 614)
+    Finding the sum of 604542 and 6458932
+    ToolsBetaMessage(id='msg_01BtiycbFqt6jRRxHaKZd63U', content=[TextBlock(text="Now we'll multiply that sum by 2:", type='text'), ToolUseBlock(id='toolu_011EeL6GwgSYx7Y6D89Jk1QB', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')], model='claude-3-haiku-20240307', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 628; Out: 83; Total: 711)
+    Finding the product of 7063474 and 2
+    ToolsBetaMessage(id='msg_01HS7iZubJZWmDLnusWMrZuS', content=[TextBlock(text='So the final result is 14,126,948.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 725; Out: 16; Total: 741)
+
+So the final result is 14,126,948.
+
+<details>
+
+- id: msg_01HS7iZubJZWmDLnusWMrZuS
+- content: \[{‘text’: ‘So the final result is 14,126,948.’, ‘type’:
+  ‘text’}\]
+- model: claude-3-haiku-20240307
+- role: assistant
+- stop_reason: end_turn
+- stop_sequence: None
+- type: message
+- usage: {‘input_tokens’: 725, ‘output_tokens’: 16}
+
+</details>
+
 ## Images
 
 Claude can handle image data as well. As everyone knows, when testing
@@ -318,7 +370,7 @@ fn = Path('samples/puppy.jpg')
 display.Image(filename=fn, width=200)
 ```
 
-![](index_files/figure-commonmark/cell-18-output-1.jpeg)
+![](index_files/figure-commonmark/cell-21-output-1.jpeg)
 
 We create a
 [`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) object
