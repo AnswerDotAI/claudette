@@ -65,7 +65,7 @@ def json_to_xml(d:dict, # JSON dictionary to convert
 # %% ../helpers.ipynb 23
 doctype = namedtuple('doctype', ['source', 'content'])
 
-# %% ../helpers.ipynb 26
+# %% ../helpers.ipynb 27
 def mk_doctype(content:str,  # The document content
            source:Optional[str]=None # URL, filename, etc; defaults to `md5(content)` if not provided
           ) -> namedtuple:
