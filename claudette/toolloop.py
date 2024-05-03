@@ -15,13 +15,15 @@ def toolloop(self:Chat,
              temp=0, # Temperature
              maxtok=4096, # Maximum tokens
              stop:Optional[list[str]]=None, # Stop sequences
-             show_trace:bool=False, # Print tool use steps
+             trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
+             cont_func:callable=None, # Function that stops loop if returns False
              **kw):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
     r = self(pr, temp=temp, maxtok=maxtok, stop=stop, **kw)
     for i in range(max_steps):
         if r.stop_reason!='tool_use': break
-        if show_trace: print(r)
+        if trace_func: trace_func(r)
         r = self(r, temp=temp, maxtok=maxtok, stop=stop, **kw)
-    if show_trace: print(r)
+        if not cont_func(self.h[-2]['content']): i=max_steps
+    if trace_func: trace_func(r)
     return r

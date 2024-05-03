@@ -213,7 +213,8 @@ def __call__(self:Chat,
     if isinstance(pr,str): pr = pr.strip()
     self.h.append(mk_toolres(pr, ns=self.tools))
     if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
-    res = self.c(self.h + ([prefill.strip()] if prefill else []), sp=self.sp, temp=temp, maxtok=maxtok, stop=stop, **kw)
+    pref = [prefill.strip()] if prefill else []
+    res = self.c(self.h+pref, sp=self.sp, temp=temp, maxtok=maxtok, stop=stop, **kw)
     _add_prefill(prefill, res)
     self.h.append(mk_msg(res, role='assistant'))
     return res
