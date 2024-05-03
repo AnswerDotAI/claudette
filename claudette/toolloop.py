@@ -16,7 +16,7 @@ def toolloop(self:Chat,
              maxtok=4096, # Maximum tokens
              stop:Optional[list[str]]=None, # Stop sequences
              trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
-             cont_func:callable=None, # Function that stops loop if returns False
+             cont_func:Optional[callable]=noop, # Function that stops loop if returns False
              **kw):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
     r = self(pr, temp=temp, maxtok=maxtok, stop=stop, **kw)
@@ -24,6 +24,6 @@ def toolloop(self:Chat,
         if r.stop_reason!='tool_use': break
         if trace_func: trace_func(r)
         r = self(r, temp=temp, maxtok=maxtok, stop=stop, **kw)
-        if not cont_func(self.h[-2]['content']): i=max_steps
+        if not (cont_func or noop)(self.h[-2]['content']): break
     if trace_func: trace_func(r)
     return r
