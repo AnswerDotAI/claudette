@@ -36,4 +36,7 @@ d = { 'settings': { 'branch': 'main',
                                 'claudette.core.mk_toolres': ('core.html#mk_toolres', 'claudette/core.py'),
                                 'claudette.core.text_msg': ('core.html#text_msg', 'claudette/core.py'),
                                 'claudette.core.usage': ('core.html#usage', 'claudette/core.py')},
-            'claudette.toolloop': {'claudette.toolloop.Chat.toolloop': ('toolloop.html#chat.toolloop', 'claudette/toolloop.py')}}}
+            'claudette.toolloop': { 'claudette.toolloop.Chat.toolloop': ('toolloop.html#chat.toolloop', 'claudette/toolloop.py'),
+                                    'claudette.toolloop.CodeChat': ('toolloop.html#codechat', 'claudette/toolloop.py'),
+                                    'claudette.toolloop.CodeChat.__init__': ('toolloop.html#codechat.__init__', 'claudette/toolloop.py'),
+                                    'claudette.toolloop.CodeChat.run_cell': ('toolloop.html#codechat.run_cell', 'claudette/toolloop.py')}}}

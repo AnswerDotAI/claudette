@@ -35,7 +35,7 @@ def find_block(r:abc.Mapping, # The message to look in
 def contents(r):
     "Helper to get the contents from Claude response `r`."
     blk = find_block(r)
-    if not blk: blk = r.content[0]
+    if not blk and r.content: blk = r.content[0]
     return blk.text.strip() if hasattr(blk,'text') else blk
 
 # %% ../00_core.ipynb 28
@@ -124,15 +124,16 @@ def stream(self:Client,
 # %% ../00_core.ipynb 80
 def _types(t:type)->tuple[str,Optional[str]]:
     "Tuple of json schema type name and (if appropriate) array item name."
+    if t is empty: raise TypeError('Missing type')
     tmap = {int:"integer", float:"number", str:"string", bool:"boolean", list:"array", dict:"object"}
     if getattr(t, '__origin__', None) in  (list,tuple): return "array", tmap.get(t.__args__[0], "object")
-    else: return tmap.get(t, "object"), None
+    else: return tmap[t], None
 
 # %% ../00_core.ipynb 83
 def _param(name, info):
     "json schema parameter given `name` and `info` from docments full dict."
     paramt,itemt = _types(info.anno)
-    pschema = dict(type=paramt, description=info.docment)
+    pschema = dict(type=paramt, description=info.docment or "")
     if itemt: pschema["items"] = {"type": itemt}
     if info.default is not empty: pschema["default"] = info.default
     return pschema
@@ -142,15 +143,16 @@ def get_schema(f:callable)->dict:
     "Convert function `f` into a JSON schema `dict` for tool use."
     d = docments(f, full=True)
     ret = d.pop('return')
+    d.pop('self', None) # Ignore `self` for methods
     paramd = {
         'type': "object",
-        'properties': {n:_param(n,o) for n,o in d.items()},
-        'required': [n for n,o in d.items() if o.default is empty]
+        'properties': {n:_param(n,o) for n,o in d.items() if n[0]!='_'},
+        'required': [n for n,o in d.items() if o.default is empty and n[0]!='_']
     }
     desc = f.__doc__
     if ret.anno is not empty: desc += f'\n\nReturns:\n- type: {_types(ret.anno)[0]}'
     if ret.docment: desc += f'\n- description: {ret.docment}'
-    return dict(name=f.__name__, description=desc, input_schema=paramd)
+    return dict(name=f.__name__, description=desc or "", input_schema=paramd)
 
 # %% ../00_core.ipynb 97
 def _mk_ns(*funcs:list[callable]) -> dict[str,callable]:
@@ -159,26 +161,32 @@ def _mk_ns(*funcs:list[callable]) -> dict[str,callable]:
 
 # %% ../00_core.ipynb 99
 def call_func(fc:tool_use_block.ToolUseBlock, # Tool use block from Claude's message
-              ns:Optional[abc.Mapping]=None # Namespace to search for tools, defaults to `globals()`
+              ns:Optional[abc.Mapping]=None, # Namespace to search for tools, defaults to `globals()`
+              obj:Optional=None # Object to search for tools
              ):
     "Call the function in the tool response `tr`, using namespace `ns`."
     if ns is None: ns=globals()
     if not isinstance(ns, abc.Mapping): ns = _mk_ns(*ns)
-    return ns[fc.name](**fc.input)
+    func = getattr(obj, fc.name, None)
+    if not func: func = ns[fc.name]
+    return func(**fc.input)
 
 # %% ../00_core.ipynb 102
-def mk_toolres(r:abc.Mapping, # Tool use request response from Claude
-               ns:Optional[abc.Mapping]=None # Namespace to search for tools
-              ):
+def mk_toolres(
+    r:abc.Mapping, # Tool use request response from Claude
+    ns:Optional[abc.Mapping]=None, # Namespace to search for tools
+    obj:Optional=None # Class to search for tools
+    ):
     "Create a `tool_result` message from response `r`."
     if not hasattr(r, 'content'): return r
     res = []
     for o in r.content:
         if isinstance(o,tool_use_block.ToolUseBlock):
-            res.append(dict(type="tool_result", tool_use_id=o.id, content=str(call_func(o, ns))))
+            cts = str(call_func(o, ns=ns, obj=obj))
+            res.append(dict(type="tool_result", tool_use_id=o.id, content=cts))
     return mk_msg(res) if res else r
 
-# %% ../00_core.ipynb 109
+# %% ../00_core.ipynb 113
 class Chat:
     def __init__(self,
                  model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
@@ -193,14 +201,14 @@ class Chat:
     @property
     def use(self): return self.c.use
 
-# %% ../00_core.ipynb 112
+# %% ../00_core.ipynb 116
 def _add_prefill(prefill, r):
     "Add `prefill` to the start of response `r`, since Claude doesn't include it otherwise"
     if not prefill: return
     blk = find_block(r)
     blk.text = prefill + blk.text
 
-# %% ../00_core.ipynb 114
+# %% ../00_core.ipynb 118
 @patch
 def __call__(self:Chat,
              pr,  # Prompt / message
@@ -211,7 +219,7 @@ def __call__(self:Chat,
              **kw):
     "Add prompt `pr` to dialog and get a response from Claude"
     if isinstance(pr,str): pr = pr.strip()
-    self.h.append(mk_toolres(pr, ns=self.tools))
+    self.h.append(mk_toolres(pr, ns=self.tools, obj=self))
     if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
     pref = [prefill.strip()] if prefill else []
     res = self.c(self.h+pref, sp=self.sp, temp=temp, maxtok=maxtok, stop=stop, **kw)
@@ -219,7 +227,7 @@ def __call__(self:Chat,
     self.h.append(mk_msg(res, role='assistant'))
     return res
 
-# %% ../00_core.ipynb 120
+# %% ../00_core.ipynb 124
 @patch
 def stream(self:Chat,
            pr,  # Prompt / message
@@ -237,7 +245,7 @@ def stream(self:Chat,
     _add_prefill(prefill, self.c.result)
     self.h.append(mk_msg(self.c.result, role='assistant'))
 
-# %% ../00_core.ipynb 134
+# %% ../00_core.ipynb 138
 def img_msg(data:bytes)->dict:
     "Convert image `data` into an encoded `dict`"
     img = base64.b64encode(data).decode("utf-8")
@@ -245,19 +253,19 @@ def img_msg(data:bytes)->dict:
     r = dict(type="base64", media_type=mtype, data=img)
     return {"type": "image", "source": r}
 
-# %% ../00_core.ipynb 136
+# %% ../00_core.ipynb 140
 def text_msg(s:str)->dict:
     "Convert `s` to a text message"
     return {"type": "text", "text": s}
 
-# %% ../00_core.ipynb 140
+# %% ../00_core.ipynb 144
 def _mk_content(src):
     "Create appropriate content data structure based on type of content"
     if isinstance(src,str): return text_msg(src)
     if isinstance(src,bytes): return img_msg(src)
     return src
 
-# %% ../00_core.ipynb 143
+# %% ../00_core.ipynb 147
 def mk_msg(content, # A string, list, or dict containing the contents of the message
            role='user', # Must be 'user' or 'assistant'
            **kw):
@@ -265,5 +273,5 @@ def mk_msg(content, # A string, list, or dict containing the contents of the mes
     if hasattr(content, 'content'): content,role = content.content,content.role
     if isinstance(content, abc.Mapping): content=content['content']
     if not isinstance(content, list): content=[content]
-    content = [_mk_content(o) for o in content]
+    content = [_mk_content(o) for o in content] if content else '.'
     return dict(role=role, content=content, **kw)
