@@ -137,14 +137,10 @@ def call_func(fc:tool_use_block.ToolUseBlock, # Tool use block from Claude's mes
     if not isinstance(ns, abc.Mapping): ns = _mk_ns(*ns)
     func = getattr(obj, fc.name, None)
     if not func: func = ns[fc.name]
-    return func(**fc.input)
+    res = func(**fc.input)
+    return dict(type="tool_result", tool_use_id=fc.id, content=str(res))    
 
 # %% ../00_core.ipynb 85
-def _call_tool(o, ns, obj):
-    cts = str(call_func(o, ns=ns, obj=obj))
-    return dict(type="tool_result", tool_use_id=o.id, content=cts)
-
-# %% ../00_core.ipynb 86
 def mk_toolres(
     r:abc.Mapping, # Tool use request response from Claude
     ns:Optional[abc.Mapping]=None, # Namespace to search for tools
@@ -153,11 +149,11 @@ def mk_toolres(
     "Create a `tool_result` message from response `r`."
     cts = getattr(r, 'content', [])
     res = [mk_msg(r)]
-    tcs = [_call_tool(o, ns, obj) for o in cts if isinstance(o,tool_use_block.ToolUseBlock)]
+    tcs = [call_func(o, ns=ns, obj=obj) for o in cts if isinstance(o,tool_use_block.ToolUseBlock)]
     if tcs: res.append(mk_msg(tcs))
     return res
 
-# %% ../00_core.ipynb 96
+# %% ../00_core.ipynb 95
 class Chat:
     def __init__(self,
                  model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
@@ -172,14 +168,14 @@ class Chat:
     @property
     def use(self): return self.c.use
 
-# %% ../00_core.ipynb 99
+# %% ../00_core.ipynb 98
 def _add_prefill(prefill, r):
     "Add `prefill` to the start of response `r`, since Claude doesn't include it otherwise"
     if not prefill: return
     blk = find_block(r)
     blk.text = prefill + blk.text
 
-# %% ../00_core.ipynb 101
+# %% ../00_core.ipynb 100
 @patch
 def __call__(self:Chat,
              pr=None,  # Prompt / message
@@ -198,7 +194,7 @@ def __call__(self:Chat,
     self.h += mk_toolres(res, ns=self.tools, obj=self)
     return res
 
-# %% ../00_core.ipynb 107
+# %% ../00_core.ipynb 106
 @patch
 def stream(self:Chat,
            pr=None,  # Prompt / message
@@ -218,7 +214,7 @@ def stream(self:Chat,
     _add_prefill(prefill, self.c.result)
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
 
-# %% ../00_core.ipynb 121
+# %% ../00_core.ipynb 120
 def img_msg(data:bytes)->dict:
     "Convert image `data` into an encoded `dict`"
     img = base64.b64encode(data).decode("utf-8")
@@ -226,19 +222,19 @@ def img_msg(data:bytes)->dict:
     r = dict(type="base64", media_type=mtype, data=img)
     return {"type": "image", "source": r}
 
-# %% ../00_core.ipynb 123
+# %% ../00_core.ipynb 122
 def text_msg(s:str)->dict:
     "Convert `s` to a text message"
     return {"type": "text", "text": s}
 
-# %% ../00_core.ipynb 127
+# %% ../00_core.ipynb 126
 def _mk_content(src):
     "Create appropriate content data structure based on type of content"
     if isinstance(src,str): return text_msg(src)
     if isinstance(src,bytes): return img_msg(src)
     return src
 
-# %% ../00_core.ipynb 130
+# %% ../00_core.ipynb 129
 def mk_msg(content, # A string, list, or dict containing the contents of the message
            role='user', # Must be 'user' or 'assistant'
            **kw):
