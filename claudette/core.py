@@ -188,6 +188,8 @@ def __call__(self:Chat,
              stream=False, # Stream response?
              prefill='', # Optional prefill to pass to Claude as start of its response
              **kw):
+    if pr and self.h and self.h[-1].get('role','')=='user':
+        self() # There's already a user request pending, so complete it
     if pr: self.h.append(mk_msg(pr))
     if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
     res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
