@@ -93,7 +93,7 @@ def _r(self:Client, r:ToolsBetaMessage, prefill=''):
     "Store the result of the message and accrue total usage."
     if prefill:
         blk = find_block(r)
-        blk.text = prefill + blk.text
+        blk.text = prefill + (blk.text or '')
     self.result = r
     self.use += r.usage
     return r
