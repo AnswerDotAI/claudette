@@ -6,27 +6,26 @@ __all__ = []
 # %% ../01_toolloop.ipynb 2
 from .core import *
 from fastcore.utils import *
+from fastcore.meta import delegates
 
 from anthropic.types import TextBlock, Message
 from anthropic.types.beta.tools import ToolsBetaMessage, tool_use_block
 
 # %% ../01_toolloop.ipynb 16
 @patch
+@delegates(Chat.__call__)
 def toolloop(self:Chat,
              pr, # Prompt to pass to Claude
              max_steps=10, # Maximum number of tool requests to loop through
-             temp=0, # Temperature
-             maxtok=4096, # Maximum tokens
-             stop:Optional[list[str]]=None, # Stop sequences
              trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
              cont_func:Optional[callable]=noop, # Function that stops loop if returns False
-             **kw):
+             **kwargs):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
-    r = self(pr, temp=temp, maxtok=maxtok, stop=stop, **kw)
+    r = self(pr, **kwargs)
     for i in range(max_steps):
         if r.stop_reason!='tool_use': break
         if trace_func: trace_func(r)
-        r = self(temp=temp, maxtok=maxtok, stop=stop, **kw)
+        r = self(**kwargs)
         if not (cont_func or noop)(self.h[-2]['content']): break
     if trace_func: trace_func(r)
     return r

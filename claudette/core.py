@@ -13,10 +13,12 @@ except: display=None
 from anthropic import Anthropic
 from anthropic.types import Usage, TextBlock, Message
 from anthropic.types.beta.tools import ToolsBetaMessage, tool_use_block
+from anthropic.resources.beta.tools import messages
 
 from toolslm.funccall import *
 
 from fastcore import imghdr
+from fastcore.meta import delegates
 from fastcore.utils import *
 
 # %% ../00_core.ipynb 8
@@ -87,47 +89,50 @@ class Client:
 
 # %% ../00_core.ipynb 62
 @patch
-def _r(self:Client, r:ToolsBetaMessage):
+def _r(self:Client, r:ToolsBetaMessage, prefill=''):
     "Store the result of the message and accrue total usage."
+    if prefill:
+        blk = find_block(r)
+        blk.text = prefill + blk.text
     self.result = r
     self.use += r.usage
     return r
 
-# %% ../00_core.ipynb 65
+# %% ../00_core.ipynb 66
 @patch
+def _stream(self:Client, msgs:list, prefill='', **kwargs):
+    with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs), **kwargs) as s:
+        if prefill: yield(prefill)
+        yield from s.text_stream
+        self._r(s.get_final_message(), prefill)
+
+# %% ../00_core.ipynb 68
+@patch
+@delegates(messages.Messages.create)
 def __call__(self:Client,
              msgs:list, # List of messages in the dialog
              sp='', # The system prompt
              temp=0, # Temperature
              maxtok=4096, # Maximum tokens
-             stop:Optional[list[str]]=None, # Stop sequences
-             **kw):
-    "Make a call to Claude without streaming."
-    r = self.c.beta.tools.messages.create(
-        model=self.model, messages=mk_msgs(msgs), max_tokens=maxtok, system=sp, temperature=temp, stop_sequences=stop, **kw)
-    return self._r(r)
+             prefill='', # Optional prefill to pass to Claude as start of its response
+             stream:bool=False, # Stream response?
+             **kwargs):
+    "Make a call to Claude."
+    pref = [prefill.strip()] if prefill else []
+    if not isinstance(msgs,list): msgs = [msgs]
+    msgs = mk_msgs(msgs+pref)
+    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
+    res = self.c.beta.tools.messages.create(
+        model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
+    self._r(res, prefill)
+    return self.result
 
-# %% ../00_core.ipynb 69
-@patch
-def stream(self:Client,
-           msgs:list, # List of messages in the dialog
-           sp='', # The system prompt
-           temp=0, # Temperature
-           maxtok=4096, # Maximum tokens
-           stop:Optional[list[str]]=None, # Stop sequences
-           **kw):
-    "Make a call to Claude, streaming the result."
-    with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs), max_tokens=maxtok,
-                                system=sp, temperature=temp, stop_sequences=stop, **kw) as s:
-        yield from s.text_stream
-        return self._r(s.get_final_message())
-
-# %% ../00_core.ipynb 80
+# %% ../00_core.ipynb 88
 def _mk_ns(*funcs:list[callable]) -> dict[str,callable]:
     "Create a `dict` of name to function in `funcs`, to use as a namespace"
     return {f.__name__:f for f in funcs}
 
-# %% ../00_core.ipynb 82
+# %% ../00_core.ipynb 90
 def call_func(fc:tool_use_block.ToolUseBlock, # Tool use block from Claude's message
               ns:Optional[abc.Mapping]=None, # Namespace to search for tools, defaults to `globals()`
               obj:Optional=None # Object to search for tools
@@ -140,7 +145,7 @@ def call_func(fc:tool_use_block.ToolUseBlock, # Tool use block from Claude's mes
     res = func(**fc.input)
     return dict(type="tool_result", tool_use_id=fc.id, content=str(res))    
 
-# %% ../00_core.ipynb 85
+# %% ../00_core.ipynb 93
 def mk_toolres(
     r:abc.Mapping, # Tool use request response from Claude
     ns:Optional[abc.Mapping]=None, # Namespace to search for tools
@@ -153,7 +158,7 @@ def mk_toolres(
     if tcs: res.append(mk_msg(tcs))
     return res
 
-# %% ../00_core.ipynb 95
+# %% ../00_core.ipynb 103
 class Chat:
     def __init__(self,
                  model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
@@ -168,53 +173,29 @@ class Chat:
     @property
     def use(self): return self.c.use
 
-# %% ../00_core.ipynb 98
-def _add_prefill(prefill, r):
-    "Add `prefill` to the start of response `r`, since Claude doesn't include it otherwise"
-    if not prefill: return
-    blk = find_block(r)
-    blk.text = prefill + blk.text
+# %% ../00_core.ipynb 106
+@patch
+def _stream(self:Chat, res):
+    yield from res
+    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
 
-# %% ../00_core.ipynb 100
+# %% ../00_core.ipynb 107
 @patch
 def __call__(self:Chat,
              pr=None,  # Prompt / message
              temp=0, # Temperature
              maxtok=4096, # Maximum tokens
-             stop:Optional[list[str]]=None, # Stop sequences
+             stream=False, # Stream response?
              prefill='', # Optional prefill to pass to Claude as start of its response
              **kw):
-    "Add prompt `pr` to dialog and get a response from Claude"
-    if isinstance(pr,str): pr = pr.strip()
     if pr: self.h.append(mk_msg(pr))
     if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
-    pref = [prefill.strip()] if prefill else []
-    res = self.c(self.h+pref, sp=self.sp, temp=temp, maxtok=maxtok, stop=stop, **kw)
-    _add_prefill(prefill, res)
-    self.h += mk_toolres(res, ns=self.tools, obj=self)
+    res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
+    if stream: return self._stream(res)
+    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
     return res
 
-# %% ../00_core.ipynb 106
-@patch
-def stream(self:Chat,
-           pr=None,  # Prompt / message
-           sp='', # The system prompt
-           temp=0, # Temperature
-           maxtok=4096, # Maximum tokens
-           stop:Optional[list[str]]=None, # Stop sequences
-           prefill='', # Optional prefill to pass to Claude as start of its response
-           **kw):
-    "Add prompt `pr` to dialog and stream the response from Claude"
-    if isinstance(pr,str): pr = pr.strip()
-    if pr: self.h.append(mk_msg(pr))
-    if prefill: yield(prefill)
-    if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
-    pref = [prefill.strip()] if prefill else []
-    yield from self.c.stream(self.h + ([prefill.strip()] if prefill else []), sp=self.sp, temp=temp, maxtok=maxtok, stop=stop, **kw)
-    _add_prefill(prefill, self.c.result)
-    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
-
-# %% ../00_core.ipynb 120
+# %% ../00_core.ipynb 126
 def img_msg(data:bytes)->dict:
     "Convert image `data` into an encoded `dict`"
     img = base64.b64encode(data).decode("utf-8")
@@ -222,19 +203,19 @@ def img_msg(data:bytes)->dict:
     r = dict(type="base64", media_type=mtype, data=img)
     return {"type": "image", "source": r}
 
-# %% ../00_core.ipynb 122
+# %% ../00_core.ipynb 128
 def text_msg(s:str)->dict:
     "Convert `s` to a text message"
     return {"type": "text", "text": s}
 
-# %% ../00_core.ipynb 126
+# %% ../00_core.ipynb 132
 def _mk_content(src):
     "Create appropriate content data structure based on type of content"
     if isinstance(src,str): return text_msg(src)
     if isinstance(src,bytes): return img_msg(src)
     return src
 
-# %% ../00_core.ipynb 129
+# %% ../00_core.ipynb 135
 def mk_msg(content, # A string, list, or dict containing the contents of the message
            role='user', # Must be 'user' or 'assistant'
            **kw):

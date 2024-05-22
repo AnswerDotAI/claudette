@@ -15,8 +15,7 @@ to do a lot of stuff manually. That’s a lot of extra work and
 boilerplate! Claudette automates pretty much everything that can be
 automated, whilst providing full control. Amongst the features provided:
 
-- A [`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat)
-  class that creates stateful dialogs
+- A `Chat` class that creates stateful dialogs
 - Support for *prefill*, which tells Claude what to use as the first few
   words of its response
 - Convenient image support
@@ -102,9 +101,8 @@ model = models[-1]
 
 ## Chat
 
-The main interface to Claudia is the
-[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) class,
-which provides a stateful interface to Claude:
+The main interface to Claudia is the `Chat` class, which provides a
+stateful interface to Claude:
 
 ``` python
 chat = Chat(model, sp="""You are a helpful and concise assistant.""")
@@ -117,7 +115,7 @@ know if there’s anything I can assist you with.
 
 <details>
 
-- id: msg_01BtZSuhryCP1NpWwerwSXJt
+- id: msg_01EjhYadGnCCLvkexGeCCgvA
 - content: \[{‘text’: “It’s nice to meet you, Jeremy! I’m an AI
   assistant created by Anthropic. I’m here to help with any questions or
   tasks you may have. Please let me know if there’s anything I can
@@ -140,7 +138,7 @@ Your name is Jeremy.
 
 <details>
 
-- id: msg_01W5zdkMprwYdN7zLNv5gZQK
+- id: msg_01AWejHwja71nsarE5DKCTgo
 - content: \[{‘text’: ‘Your name is Jeremy.’, ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
 - role: assistant
@@ -159,7 +157,7 @@ collapsible section. Alternatively you can `print` the details:
 print(r)
 ```
 
-    ToolsBetaMessage(id='msg_01W5zdkMprwYdN7zLNv5gZQK', content=[TextBlock(text='Your name is Jeremy.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 78; Out: 8; Total: 86)
+    ToolsBetaMessage(id='msg_01AWejHwja71nsarE5DKCTgo', content=[TextBlock(text='Your name is Jeremy.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 78; Out: 8; Total: 86)
 
 Claude supports adding an extra `assistant` message at the end, which
 contains the *prefill* – i.e. the text we want Claude to assume the
@@ -175,7 +173,7 @@ life, the universe, and everything is 42.”
 
 <details>
 
-- id: msg_01GKFGiZLu4wwrDe882a6MNx
+- id: msg_01HgD1ymaAzDxmTwbjjJq3rn
 - content: \[{‘text’: ‘According to Douglas Adams, “The answer to the
   ultimate question of life, the universe, and everything is 42.”’,
   ‘type’: ‘text’}\]
@@ -188,15 +186,12 @@ life, the universe, and everything is 42.”
 
 </details>
 
-Instead of calling
-[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat)
-directly, you can use
-[`Chat.stream`](https://AnswerDotAI.github.io/claudette/core.html#chat.stream)
-to stream the results as soon as they arrive (although you will only see
-the gradual generation if you execute the notebook yourself, of course!)
+You can add `stream=True` to stream the results as soon as they arrive
+(although you will only see the gradual generation if you execute the
+notebook yourself, of course!)
 
 ``` python
-for o in chat.stream("Concisely, what book was that in?", prefill='It was in'):
+for o in chat("Concisely, what book was that in?", prefill='It was in', stream=True):
     print(o, end='')
 ```
 
@@ -241,8 +236,7 @@ pr
 
     'What is 604542+6458932?'
 
-To use tools, pass a list of them to
-[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat):
+To use tools, pass a list of them to `Chat`:
 
 ``` python
 chat = Chat(model, sp=sp, tools=[sums])
@@ -257,13 +251,15 @@ r = chat(pr)
 r
 ```
 
-ToolUseBlock(id=‘toolu_01JgEPbVF5JiwehJPWzFMLse’, input={‘a’: 604542,
+    Finding the sum of 604542 and 6458932
+
+ToolUseBlock(id=‘toolu_01FsSYBgRzcSWBzUfXPHVAEj’, input={‘a’: 604542,
 ‘b’: 6458932}, name=‘sums’, type=‘tool_use’)
 
 <details>
 
-- id: msg_01LAipBzuv5bB9QezDXgJY41
-- content: \[{‘id’: ‘toolu_01JgEPbVF5JiwehJPWzFMLse’, ‘input’: {‘a’:
+- id: msg_014wPisMcJqAYPWpVX4ZGbaH
+- content: \[{‘id’: ‘toolu_01FsSYBgRzcSWBzUfXPHVAEj’, ‘input’: {‘a’:
   604542, ‘b’: 6458932}, ‘name’: ‘sums’, ‘type’: ‘tool_use’}\]
 - model: claude-3-haiku-20240307
 - role: assistant
@@ -274,28 +270,26 @@ ToolUseBlock(id=‘toolu_01JgEPbVF5JiwehJPWzFMLse’, input={‘a’: 604542,
 
 </details>
 
-Claudette handles all that for us – we just have to pass along the
-message, and it all happens automatically:
+Claudette handles all that for us – we just call it again, and it all
+happens automatically:
 
 ``` python
-chat(r)
+chat()
 ```
 
-    Finding the sum of 604542 and 6458932
-
-The sum of 604542 and 6458932 is 7063474.
+The sum of 604,542 and 6,458,932 is 7,063,474.
 
 <details>
 
-- id: msg_01WX3khUpmrdG8F1e9yz6nmW
-- content: \[{‘text’: ‘The sum of 604542 and 6458932 is 7063474.’,
+- id: msg_01H4g1VTiFHTHV9EL35Rb9HE
+- content: \[{‘text’: ‘The sum of 604,542 and 6,458,932 is 7,063,474.’,
   ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
 - role: assistant
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 485, ‘output_tokens’: 23}
+- usage: {‘input_tokens’: 485, ‘output_tokens’: 28}
 
 </details>
 
@@ -307,12 +301,11 @@ You can see how many tokens have been used at any time by checking the
 chat.use
 ```
 
-    In: 923; Out: 95; Total: 1018
+    In: 883; Out: 100; Total: 983
 
 We can do everything needed to use tools in a single step, by using
-[`Chat.toolloop`](https://AnswerDotAI.github.io/claudette/toolloop.html#chat.toolloop).
-This can even call multiple tools as needed solve a problem. For
-example, let’s define a tool to handle multiplication:
+`Chat.toolloop`. This can even call multiple tools as needed solve a
+problem. For example, let’s define a tool to handle multiplication:
 
 ``` python
 def mults(
@@ -336,28 +329,28 @@ pr
     'Calculate (604542+6458932)*2'
 
 ``` python
-chat.toolloop(pr, show_trace=True)
+chat.toolloop(pr, trace_func=print)
 ```
 
-    ToolsBetaMessage(id='msg_017rs6nqX3cFgnoTgb6x7frj', content=[TextBlock(text="Okay, let's calculate that step-by-step:", type='text'), ToolUseBlock(id='toolu_0121PUsNMncXygjWoRn9rxJC', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')], model='claude-3-haiku-20240307', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 528; Out: 86; Total: 614)
     Finding the sum of 604542 and 6458932
-    ToolsBetaMessage(id='msg_01BtiycbFqt6jRRxHaKZd63U', content=[TextBlock(text="Now we'll multiply that sum by 2:", type='text'), ToolUseBlock(id='toolu_011EeL6GwgSYx7Y6D89Jk1QB', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')], model='claude-3-haiku-20240307', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 628; Out: 83; Total: 711)
+    ToolsBetaMessage(id='msg_01SXeCYNCQ6Vb1VYobVLbWgU', content=[TextBlock(text='Here is the calculation:', type='text'), ToolUseBlock(id='toolu_0169pKwJyjHPG5VCSPYkvvMo', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')], model='claude-3-haiku-20240307', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 508; Out: 78; Total: 586)
     Finding the product of 7063474 and 2
-    ToolsBetaMessage(id='msg_01HS7iZubJZWmDLnusWMrZuS', content=[TextBlock(text='So the final result is 14,126,948.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 725; Out: 16; Total: 741)
+    ToolsBetaMessage(id='msg_01Lrv6bgkWAvtLFKZoU6CTgh', content=[ToolUseBlock(id='toolu_016io96DFsXyVrLDSzHQ87RB', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')], model='claude-3-haiku-20240307', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 600; Out: 72; Total: 672)
+    ToolsBetaMessage(id='msg_01LBaXtqa9erqyCq7QZshxS3', content=[TextBlock(text='Therefore, the result of (604542 + 6458932) * 2 is 14126948.', type='text')], model='claude-3-haiku-20240307', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 686; Out: 29; Total: 715)
 
-So the final result is 14,126,948.
+Therefore, the result of (604542 + 6458932) \* 2 is 14126948.
 
 <details>
 
-- id: msg_01HS7iZubJZWmDLnusWMrZuS
-- content: \[{‘text’: ‘So the final result is 14,126,948.’, ‘type’:
-  ‘text’}\]
+- id: msg_01LBaXtqa9erqyCq7QZshxS3
+- content: \[{‘text’: ‘Therefore, the result of (604542 + 6458932) \* 2
+  is 14126948.’, ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
 - role: assistant
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 725, ‘output_tokens’: 16}
+- usage: {‘input_tokens’: 686, ‘output_tokens’: 29}
 
 </details>
 
@@ -373,9 +366,7 @@ display.Image(filename=fn, width=200)
 
 ![](index_files/figure-commonmark/cell-21-output-1.jpeg)
 
-We create a
-[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) object
-as before:
+We create a `Chat` object as before:
 
 ``` python
 chat = Chat(model)
@@ -398,7 +389,7 @@ be daisies or a similar type of flower.
 
 <details>
 
-- id: msg_017i7Su5rfcdcz3FmiEQ9CvD
+- id: msg_01X5J1GB26h8QLsFmyZM1buo
 - content: \[{‘text’: ‘The image contains purple or lavender-colored
   flowers, which appear to be daisies or a similar type of flower.’,
   ‘type’: ‘text’}\]
@@ -407,7 +398,7 @@ be daisies or a similar type of flower.
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 185, ‘output_tokens’: 28}
+- usage: {‘input_tokens’: 110, ‘output_tokens’: 28}
 
 </details>
 
@@ -417,7 +408,7 @@ The image is included as input tokens.
 chat.use
 ```
 
-    In: 185; Out: 28; Total: 213
+    In: 110; Out: 28; Total: 138
 
 Alternatively, Claudette supports creating a multi-stage chat with
 separate image and text prompts. For instance, you can pass just the
@@ -439,7 +430,7 @@ playful nature of this young pup.
 
 <details>
 
-- id: msg_01K36rQXar93QVV5PzzaAoPr
+- id: msg_011LA5EKWh6rV8R3STcD5em8
 - content: \[{‘text’: ‘The image shows a cute puppy lying in the grass.
   The puppy appears to be a Cavalier King Charles Spaniel, with a fluffy
   brown and white coat. The puppy is looking directly at the camera with
@@ -452,7 +443,7 @@ playful nature of this young pup.
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 173, ‘output_tokens’: 91}
+- usage: {‘input_tokens’: 98, ‘output_tokens’: 91}
 
 </details>
 
@@ -465,7 +456,7 @@ the viewer.
 
 <details>
 
-- id: msg_013CqCFmEzPvc6mW5kAP8fki
+- id: msg_01ELRVyupU4WfN9Ctbq6WabB
 - content: \[{‘text’: ‘The puppy in the image is facing towards the
   camera, looking directly at the viewer.’, ‘type’: ‘text’}\]
 - model: claude-3-haiku-20240307
@@ -473,7 +464,7 @@ the viewer.
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 275, ‘output_tokens’: 21}
+- usage: {‘input_tokens’: 200, ‘output_tokens’: 21}
 
 </details>
 
@@ -487,7 +478,7 @@ silky fur in those colors.
 
 <details>
 
-- id: msg_01XfDZDRyaNMW58TVJ9znXjR
+- id: msg_01L2Zre86FUWrnLAN8jk8ogF
 - content: \[{‘text’: ‘The puppy in the image has a brown and white coat
   color. It appears to be a Cavalier King Charles Spaniel breed, with
   the characteristic long, silky fur in those colors.’, ‘type’:
@@ -497,7 +488,7 @@ silky fur in those colors.
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 304, ‘output_tokens’: 44}
+- usage: {‘input_tokens’: 229, ‘output_tokens’: 44}
 
 </details>
 
@@ -508,4 +499,4 @@ that number of input tokens increases quickly with this kind of chat.
 chat.use
 ```
 
-    In: 752; Out: 156; Total: 908
+    In: 527; Out: 156; Total: 683
