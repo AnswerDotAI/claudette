@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = []
 
-# %% ../01_toolloop.ipynb 2
+# %% ../01_toolloop.ipynb 3
 from .core import *
 from fastcore.utils import *
 from fastcore.meta import delegates
@@ -11,7 +11,7 @@ from fastcore.meta import delegates
 from anthropic.types import TextBlock, Message
 from anthropic.types.beta.tools import ToolsBetaMessage, tool_use_block
 
-# %% ../01_toolloop.ipynb 16
+# %% ../01_toolloop.ipynb 18
 @patch
 @delegates(Chat.__call__)
 def toolloop(self:Chat,
@@ -26,6 +26,6 @@ def toolloop(self:Chat,
         if r.stop_reason!='tool_use': break
         if trace_func: trace_func(r)
         r = self(**kwargs)
-        if not (cont_func or noop)(self.h[-2]['content']): break
+        if not (cont_func or noop)(self.h[-2]): break
     if trace_func: trace_func(r)
     return r
