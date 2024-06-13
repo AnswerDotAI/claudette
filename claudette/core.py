@@ -11,10 +11,10 @@ try: from IPython import display
 except: display=None
 
 from anthropic import Anthropic
-from anthropic.types import Usage, TextBlock, Message
-from anthropic.types.beta.tools import ToolsBetaMessage, tool_use_block
-from anthropic.resources.beta.tools import messages
+from anthropic.types import Usage, TextBlock, Message, ToolUseBlock
+from anthropic.resources import messages
 
+import toolslm
 from toolslm.funccall import *
 
 from fastcore import imghdr
@@ -43,7 +43,7 @@ def contents(r):
 
 # %% ../00_core.ipynb 28
 @patch
-def _repr_markdown_(self:(ToolsBetaMessage,Message)):
+def _repr_markdown_(self:(Message)):
     det = '\n- '.join(f'{k}: {v}' for k,v in self.model_dump().items())
     return f"""{contents(self)}
 
@@ -89,7 +89,7 @@ class Client:
 
 # %% ../00_core.ipynb 62
 @patch
-def _r(self:Client, r:ToolsBetaMessage, prefill=''):
+def _r(self:Client, r:Message, prefill=''):
     "Store the result of the message and accrue total usage."
     if prefill:
         blk = find_block(r)
@@ -122,7 +122,7 @@ def __call__(self:Client,
     if not isinstance(msgs,list): msgs = [msgs]
     msgs = mk_msgs(msgs+pref)
     if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    res = self.c.beta.tools.messages.create(
+    res = self.c.messages.create(
         model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     self._r(res, prefill)
     return self.result
@@ -133,7 +133,7 @@ def _mk_ns(*funcs:list[callable]) -> dict[str,callable]:
     return {f.__name__:f for f in funcs}
 
 # %% ../00_core.ipynb 91
-def call_func(fc:tool_use_block.ToolUseBlock, # Tool use block from Claude's message
+def call_func(fc:ToolUseBlock, # Tool use block from Claude's message
               ns:Optional[abc.Mapping]=None, # Namespace to search for tools, defaults to `globals()`
               obj:Optional=None # Object to search for tools
              ):
@@ -154,7 +154,7 @@ def mk_toolres(
     "Create a `tool_result` message from response `r`."
     cts = getattr(r, 'content', [])
     res = [mk_msg(r)]
-    tcs = [call_func(o, ns=ns, obj=obj) for o in cts if isinstance(o,tool_use_block.ToolUseBlock)]
+    tcs = [call_func(o, ns=ns, obj=obj) for o in cts if isinstance(o,ToolUseBlock)]
     if tcs: res.append(mk_msg(tcs))
     return res
 

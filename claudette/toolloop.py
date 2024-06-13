@@ -8,8 +8,7 @@ from .core import *
 from fastcore.utils import *
 from fastcore.meta import delegates
 
-from anthropic.types import TextBlock, Message
-from anthropic.types.beta.tools import ToolsBetaMessage, tool_use_block
+from anthropic.types import TextBlock, Message, ToolUseBlock
 
 # %% ../01_toolloop.ipynb 18
 @patch
