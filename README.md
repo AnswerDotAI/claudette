@@ -103,7 +103,7 @@ model = models[1]
 
 ## Chat
 
-The main interface to Claudia is the
+The main interface to Claudette is the
 [`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) class,
 which provides a stateful interface to Claude:
 
@@ -390,13 +390,13 @@ as before:
 chat = Chat(model)
 ```
 
-Claudia expects images as a list of bytes, so we read in the file:
+Claudette expects images as a list of bytes, so we read in the file:
 
 ``` python
 img = fn.read_bytes()
 ```
 
-Prompts to Claudia can be lists, containing text, images, or both, eg:
+Prompts to Claudette can be lists, containing text, images, or both, eg:
 
 ``` python
 chat([img, "In brief, what color flowers are in this image?"])
