@@ -204,7 +204,7 @@ use external tools.
 
 We use [docments](https://fastcore.fast.ai/docments.html) to make
 defining Python functions as ergonomic as possible. Each parameter (and
-the return value) should have a type, and a docments comment with the
+the return value) should have a type, and a document comment with the
 description of what it is. As an example we’ll write a simple function
 that adds numbers together, and will tell us when it’s being called:
 
