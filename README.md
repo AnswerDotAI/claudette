@@ -116,7 +116,7 @@ Hello Jeremy, it’s nice to meet you. How can I assist you today?
 
 <details>
 
-- id: msg_01YX34xKJS6LMfA3JtgA6caB
+- id: msg_01KLrPzN79dXmDhTH2Nv6tjn
 - content: \[{‘text’: “Hello Jeremy, it’s nice to meet you. How can I
   assist you today?”, ‘type’: ‘text’}\]
 - model: claude-3-5-sonnet-20240620
@@ -137,7 +137,7 @@ Your name is Jeremy, as you just told me.
 
 <details>
 
-- id: msg_01QbnmJLCTTjLR6kXTyYbunb
+- id: msg_01VsZr9D5ptbWrggdX28y1J5
 - content: \[{‘text’: ‘Your name is Jeremy, as you just told me.’,
   ‘type’: ‘text’}\]
 - model: claude-3-5-sonnet-20240620
@@ -157,7 +157,7 @@ collapsible section. Alternatively you can `print` the details:
 print(r)
 ```
 
-    Message(id='msg_01QbnmJLCTTjLR6kXTyYbunb', content=[TextBlock(text='Your name is Jeremy, as you just told me.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 47; Out: 14; Total: 61)
+    Message(id='msg_01VsZr9D5ptbWrggdX28y1J5', content=[TextBlock(text='Your name is Jeremy, as you just told me.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 47; Out: 14; Total: 61)
 
 Claude supports adding an extra `assistant` message at the end, which
 contains the *prefill* – i.e. the text we want Claude to assume the
@@ -173,7 +173,7 @@ to be finding personal fulfillment, happiness, and purpose.
 
 <details>
 
-- id: msg_01Ae1HbMmcBCjKhLUPKXDeC3
+- id: msg_01RMBD95RyQjbsNckGYmRMLu
 - content: \[{‘text’: ‘According to Douglas Adams, “42.” More seriously,
   it's often considered to be finding personal fulfillment, happiness,
   and purpose.’, ‘type’: ‘text’}\]
@@ -256,13 +256,13 @@ r
 
     Finding the sum of 604542 and 6458932
 
-ToolUseBlock(id=‘toolu_01JHjdE4eC6bUjDj77CAoNiV’, input={‘a’: 604542,
+ToolUseBlock(id=‘toolu_018a7fT3Mnoa2XqtAMXqawXU’, input={‘a’: 604542,
 ‘b’: 6458932}, name=‘sums’, type=‘tool_use’)
 
 <details>
 
-- id: msg_01KsHimPgeAbLS2sFtjCxP3b
-- content: \[{‘id’: ‘toolu_01JHjdE4eC6bUjDj77CAoNiV’, ‘input’: {‘a’:
+- id: msg_011r1ZTjJSLFCJKceMoFSPky
+- content: \[{‘id’: ‘toolu_018a7fT3Mnoa2XqtAMXqawXU’, ‘input’: {‘a’:
   604542, ‘b’: 6458932}, ‘name’: ‘sums’, ‘type’: ‘tool_use’}\]
 - model: claude-3-5-sonnet-20240620
 - role: assistant
@@ -282,13 +282,13 @@ chat()
 
     Finding the sum of 7063474 and 1
 
-ToolUseBlock(id=‘toolu_012yq7K1XWBdLi9ay8irt9w2’, input={‘a’: 7063474},
+ToolUseBlock(id=‘toolu_01Pc9N6fQSUNnuqrUKR2DkmL’, input={‘a’: 7063474},
 name=‘sums’, type=‘tool_use’)
 
 <details>
 
-- id: msg_01J9EKYHty2ip1zV1RMCEonL
-- content: \[{‘id’: ‘toolu_012yq7K1XWBdLi9ay8irt9w2’, ‘input’: {‘a’:
+- id: msg_01Ct8URrPt5hf5mjUSndwigS
+- content: \[{‘id’: ‘toolu_01Pc9N6fQSUNnuqrUKR2DkmL’, ‘input’: {‘a’:
   7063474}, ‘name’: ‘sums’, ‘type’: ‘tool_use’}\]
 - model: claude-3-5-sonnet-20240620
 - role: assistant
@@ -340,10 +340,10 @@ chat.toolloop(pr, trace_func=print)
 ```
 
     Finding the sum of 604542 and 6458932
-    Message(id='msg_01KVraS4hHRf9uprXD2cQbet', content=[TextBlock(text='Certainly! To calculate (604542+6458932)*2, we\'ll need to use the available tools to perform the addition and multiplication operations. Let\'s break it down step by step:\n\n1. First, we\'ll add 604542 and 6458932 using the "sums" function.\n2. Then, we\'ll multiply the result by 2 using the "mults" function.\n\nLet\'s start with the addition:', type='text'), ToolUseBlock(id='toolu_01A3VGJsYNoeVX9JiihodHb9', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 538; Out: 169; Total: 707)
+    Message(id='msg_016tRhA75RqXTkCMR9WoZvyE', content=[TextBlock(text='Certainly! To calculate (604542+6458932)*2, we\'ll need to use the available tools to perform the addition and multiplication operations. Let\'s break it down step by step:\n\n1. First, we\'ll add 604542 and 6458932 using the "sums" function.\n2. Then, we\'ll multiply the result by 2 using the "mults" function.\n\nLet\'s start with the addition:', type='text'), ToolUseBlock(id='toolu_017aomxeCUA6DxM9U6UQjMu2', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 538; Out: 168; Total: 706)
     Finding the product of 7063474 and 2
-    Message(id='msg_01Y5xwtoYqhTYbMP5BBMU6K4', content=[TextBlock(text="Great! The sum of 604542 and 6458932 is 7063474.\n\nNow, let's multiply this result by 2:", type='text'), ToolUseBlock(id='toolu_01U42ECWp5q5dngWKtTH2HCg', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 721; Out: 106; Total: 827)
-    Message(id='msg_017r6fKZdaRFNJpdihWZRThe', content=[TextBlock(text='Now we have our final result. \n\nThe calculation (604542+6458932)*2 equals 14126948.\n\nTo break it down:\n1. 604542 + 6458932 = 7063474\n2. 7063474 * 2 = 14126948\n\nSo, the final answer to (604542+6458932)*2 is 14126948.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 841; Out: 95; Total: 936)
+    Message(id='msg_016w97cNedVktfhHUoL2Ey7a', content=[TextBlock(text="Great! The sum of 604542 and 6458932 is 7063474.\n\nNow, let's multiply this result by 2:", type='text'), ToolUseBlock(id='toolu_0115UMmS2GMeej1CafKLKvBB', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 721; Out: 106; Total: 827)
+    Message(id='msg_0139BkRu9b9yKPp8N8NHBMpj', content=[TextBlock(text='Now we have our final result. \n\nThe calculation (604542+6458932)*2 equals 14126948.\n\nTo break it down:\n1. 604542 + 6458932 = 7063474\n2. 7063474 * 2 = 14126948\n\nSo, the final answer to (604542+6458932)*2 is 14126948.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 841; Out: 95; Total: 936)
 
 Now we have our final result.
 
@@ -356,7 +356,7 @@ So, the final answer to (604542+6458932)\*2 is 14126948.
 
 <details>
 
-- id: msg_017r6fKZdaRFNJpdihWZRThe
+- id: msg_0139BkRu9b9yKPp8N8NHBMpj
 - content: \[{‘text’: ’Now we have our final result. calculation
   (604542+6458932)*2 equals 14126948.break it down:. 604542 + 6458932 =
   7063474. 7063474 * 2 = 14126948, the final answer to
@@ -408,7 +408,7 @@ blooming in the background behind the adorable puppy in the foreground.
 
 <details>
 
-- id: msg_012uLnhG7Uid5wSXfWdVUE5s
+- id: msg_01EsC5ZMpo5chJRzcjkceLu9
 - content: \[{‘text’: ‘The flowers in this image are purple. They appear
   to be small, daisy-like flowers, possibly asters or some type of
   purple wildflower, blooming in the background behind the adorable
@@ -444,41 +444,43 @@ chat(img)
 This image shows an adorable puppy lying in the grass. The puppy appears
 to be a Cavalier King Charles Spaniel or a similar breed, with
 distinctive white and reddish-brown fur coloring. Its face is
-predominantly white with large, expressive eyes and a small black nose.
+predominantly white with large, expressive dark eyes and a small black
+nose.
 
-The puppy is resting on a grassy surface, and behind it, you can see
-some purple flowers, likely asters or michaelmas daisies. These flowers
-provide a lovely contrast to the puppy’s fur colors. In the background,
-there’s also what looks like a wooden structure, possibly a fence or the
-side of a building.
+The puppy is resting on a grassy surface, giving the impression of being
+outdoors. In the background, you can see purple flowers, which look like
+asters or michaelmas daisies, adding a lovely splash of color to the
+scene. There’s also what appears to be a wooden structure or fence
+behind the flowers, suggesting a garden setting.
 
-The overall composition creates a charming, pastoral scene that
-highlights the puppy’s cuteness against a natural backdrop. The soft
-focus on the flowers and background draws attention to the sharp detail
-of the puppy’s face, making it the clear focal point of the image.
+The composition of the image creates a charming, pastoral scene that
+highlights the puppy’s cuteness against the natural backdrop. The
+contrast between the soft fur of the puppy and the delicate purple
+flowers makes for a visually appealing and heartwarming picture.
 
 <details>
 
-- id: msg_01T3FW2qD2ULoqoqxUN6ZT3a
+- id: msg_013TMWFVwfmYh2qzUtUqen68
 - content: \[{‘text’: “This image shows an adorable puppy lying in the
   grass. The puppy appears to be a Cavalier King Charles Spaniel or a
   similar breed, with distinctive white and reddish-brown fur coloring.
-  Its face is predominantly white with large, expressive eyes and a
-  small black nose.puppy is resting on a grassy surface, and behind it,
-  you can see some purple flowers, likely asters or michaelmas daisies.
-  These flowers provide a lovely contrast to the puppy’s fur colors. In
-  the background, there’s also what looks like a wooden structure,
-  possibly a fence or the side of a building.overall composition creates
-  a charming, pastoral scene that highlights the puppy’s cuteness
-  against a natural backdrop. The soft focus on the flowers and
-  background draws attention to the sharp detail of the puppy’s face,
-  making it the clear focal point of the image.”, ‘type’: ‘text’}\]
+  Its face is predominantly white with large, expressive dark eyes and a
+  small black nose.puppy is resting on a grassy surface, giving the
+  impression of being outdoors. In the background, you can see purple
+  flowers, which look like asters or michaelmas daisies, adding a lovely
+  splash of color to the scene. There’s also what appears to be a wooden
+  structure or fence behind the flowers, suggesting a garden
+  setting.composition of the image creates a charming, pastoral scene
+  that highlights the puppy’s cuteness against the natural backdrop. The
+  contrast between the soft fur of the puppy and the delicate purple
+  flowers makes for a visually appealing and heartwarming picture.”,
+  ‘type’: ‘text’}\]
 - model: claude-3-5-sonnet-20240620
 - role: assistant
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 98, ‘output_tokens’: 194}
+- usage: {‘input_tokens’: 98, ‘output_tokens’: 197}
 
 </details>
 
@@ -487,29 +489,28 @@ chat('What direction is the puppy facing?')
 ```
 
 The puppy in the image is facing towards the camera, looking directly at
-the viewer. Its head is slightly tilted, giving it an endearing,
-inquisitive expression. The puppy’s body is angled slightly to its left
-(our right), with its front paws visible in the foreground, resting on
-the grass. This positioning allows us to see the full face of the puppy,
-showcasing its adorable features and the distinctive color pattern of
-its fur.
+the viewer. Its head is slightly tilted, giving it an endearing and
+curious expression. The puppy’s body is angled slightly to its left (our
+right), with its front paws visible and resting on the grass. This
+positioning allows us to see the full face of the puppy, showcasing its
+adorable features and the distinctive color pattern of its fur.
 
 <details>
 
-- id: msg_017b9N54LeghaziZEyw9CgQL
+- id: msg_015W9aQZt9JsjExJKcN72cDo
 - content: \[{‘text’: “The puppy in the image is facing towards the
   camera, looking directly at the viewer. Its head is slightly tilted,
-  giving it an endearing, inquisitive expression. The puppy’s body is
+  giving it an endearing and curious expression. The puppy’s body is
   angled slightly to its left (our right), with its front paws visible
-  in the foreground, resting on the grass. This positioning allows us to
-  see the full face of the puppy, showcasing its adorable features and
-  the distinctive color pattern of its fur.”, ‘type’: ‘text’}\]
+  and resting on the grass. This positioning allows us to see the full
+  face of the puppy, showcasing its adorable features and the
+  distinctive color pattern of its fur.”, ‘type’: ‘text’}\]
 - model: claude-3-5-sonnet-20240620
 - role: assistant
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 303, ‘output_tokens’: 101}
+- usage: {‘input_tokens’: 306, ‘output_tokens’: 95}
 
 </details>
 
@@ -520,42 +521,37 @@ chat('What color is it?')
 The puppy in the image has a combination of two main colors:
 
 1.  White: The majority of its face, including the muzzle area and a
-    portion of its forehead, is white.
+    portion of its body that’s visible, is white.
 
-2.  Reddish-brown (often called “chestnut” or “ruby” in dog breed
-    descriptions): This color appears on the puppy’s ears and extends to
-    patches on its head.
+2.  Reddish-brown (often called “chestnut” or “ruby” in this breed):
+    This color appears on the ears and extends to patches on the body,
+    though the full extent isn’t visible in this image.
 
-The contrast between the white and reddish-brown fur creates the
-classic, recognizable pattern often associated with Cavalier King
-Charles Spaniels. The puppy also has a small black nose, which adds a
-touch of contrast to its predominantly light-colored face.
-
-This color combination gives the puppy a very charming and distinctive
-appearance, making it stand out beautifully against the green grass and
-purple flowers in the background.
+This color combination is typical for Cavalier King Charles Spaniels,
+particularly the Blenheim variety. The contrast between the white and
+the reddish-brown fur creates a striking and adorable appearance,
+highlighting the puppy’s facial features and giving it a distinctive
+look.
 
 <details>
 
-- id: msg_01PfRNHLbzStTb4WqWH6JNfy
+- id: msg_0146KQcPjSoXFGLjqjpzwU3Q
 - content: \[{‘text’: ‘The puppy in the image has a combination of two
   main colors:. White: The majority of its face, including the muzzle
-  area and a portion of its forehead, is white.. Reddish-brown (often
-  called “chestnut” or “ruby” in dog breed descriptions): This color
-  appears on the puppy's ears and extends to patches on its
-  head.contrast between the white and reddish-brown fur creates the
-  classic, recognizable pattern often associated with Cavalier King
-  Charles Spaniels. The puppy also has a small black nose, which adds a
-  touch of contrast to its predominantly light-colored face.color
-  combination gives the puppy a very charming and distinctive
-  appearance, making it stand out beautifully against the green grass
-  and purple flowers in the background.’, ‘type’: ‘text’}\]
+  area and a portion of its body that's visible, is white..
+  Reddish-brown (often called “chestnut” or “ruby” in this breed): This
+  color appears on the ears and extends to patches on the body, though
+  the full extent isn't visible in this image.color combination is
+  typical for Cavalier King Charles Spaniels, particularly the Blenheim
+  variety. The contrast between the white and the reddish-brown fur
+  creates a striking and adorable appearance, highlighting the puppy's
+  facial features and giving it a distinctive look.’, ‘type’: ‘text’}\]
 - model: claude-3-5-sonnet-20240620
 - role: assistant
 - stop_reason: end_turn
 - stop_sequence: None
 - type: message
-- usage: {‘input_tokens’: 412, ‘output_tokens’: 179}
+- usage: {‘input_tokens’: 409, ‘output_tokens’: 157}
 
 </details>
 
@@ -566,7 +562,7 @@ that number of input tokens increases quickly with this kind of chat.
 chat.use
 ```
 
-    In: 813; Out: 474; Total: 1287
+    In: 813; Out: 449; Total: 1262
 
 ## Other model providers
 
@@ -617,7 +613,59 @@ have?
 
 <details>
 
-- id: msg_bdrk_011gSnQd9FcaVAYDdHBuScU2
+- id: msg_bdrk_011MuMcLUba22CUttpxWuHJC
+- content: \[{‘text’: “Hello Jeremy! It’s nice to meet you. How can I
+  assist you today? Is there anything specific you’d like to talk about
+  or any questions you have?”, ‘type’: ‘text’}\]
+- model: claude-3-5-sonnet-20240620
+- role: assistant
+- stop_reason: end_turn
+- stop_sequence: None
+- type: message
+- usage: {‘input_tokens’: 10, ‘output_tokens’: 36}
+
+</details>
+
+### Google Vertex
+
+These are the models available through Vertex:
+
+``` python
+models_goog
+```
+
+    ('claude-3-haiku@20240307',
+     'claude-3-sonnet@20240229',
+     'claude-3-opus@20240229',
+     'claude-3-5-sonnet@20240620')
+
+To use them, call `AnthropicVertex` with your access details, and pass
+that to
+[`Client`](https://AnswerDotAI.github.io/claudette/core.html#client):
+
+``` python
+from anthropic import AnthropicVertex
+import google.auth
+```
+
+``` python
+project_id = google.auth.default()[1]
+gv = AnthropicVertex(project_id=project_id, region="us-east5")
+client = Client(models_goog[-1], gv)
+```
+
+``` python
+chat = Chat(cli=client)
+chat("I'm Jeremy")
+```
+
+Hello Jeremy! It’s nice to meet you. How can I assist you today? Is
+there anything specific you’d like to talk about or any questions you
+have?
+
+<details>
+
+- id: msg_vrtx_015zVvSZxfmNQ8FRZjb9zPdJ
 - content: \[{‘text’: “Hello Jeremy! It’s nice to meet you. How can I
   assist you today? Is there anything specific you’d like to talk about
   or any questions you have?”, ‘type’: ‘text’}\]
