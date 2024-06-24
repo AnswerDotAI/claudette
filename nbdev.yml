@@ -3,7 +3,7 @@ project:
 
 website:
   title: "claudette"
-  site-url: "https://AnswerDotAI.github.io/claudette"
+  site-url: "https://claudette.answer.ai/"
   description: "Claudette is Claude's friend"
   repo-branch: main
   repo-url: "https://github.com/AnswerDotAI/claudette"

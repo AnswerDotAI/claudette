@@ -7,7 +7,7 @@
 
 > **NB**: If you are reading this in GitHub’s readme, we recommend you
 > instead read the much more nicely formatted [documentation
-> format](https://answerdotai.github.io/claudette/) of this tutorial.
+> format](https://claudette.answer.ai/) of this tutorial.
 
 *Claudette* is a wrapper for Anthropic’s [Python
 SDK](https://github.com/anthropics/anthropic-sdk-python).
@@ -17,8 +17,8 @@ to do a lot of stuff manually. That’s a lot of extra work and
 boilerplate! Claudette automates pretty much everything that can be
 automated, whilst providing full control. Amongst the features provided:
 
-- A [`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat)
-  class that creates stateful dialogs
+- A [`Chat`](https://claudette.answer.ai/core.html#chat) class that
+  creates stateful dialogs
 - Support for *prefill*, which tells Claude what to use as the first few
   words of its response
 - Convenient image support
@@ -33,11 +33,11 @@ Notebook which includes callout notes and tips, HTML tables and images,
 detailed explanations, and teaches *how* and *why* the code is written
 the way it is. Even if you’ve never used the Anthropic Python SDK or
 Claude API before, you should be able to read the source code. Click
-[Claudette’s Source](https://answerdotai.github.io/claudette/core.html)
-to read it, or clone the git repo and execute the notebook yourself to
-see every step of the creation process in action. The tutorial below
-includes links to API details which will take you to relevant parts of
-the source. The reason this project is a new kind of literal program is
+[Claudette’s Source](https://claudette.answer.ai/core.html) to read it,
+or clone the git repo and execute the notebook yourself to see every
+step of the creation process in action. The tutorial below includes
+links to API details which will take you to relevant parts of the
+source. The reason this project is a new kind of literal program is
 because we take seriously Knuth’s call to action, that we have a “*moral
 commitment*” to never write an “*illiterate program*” – and so we have a
 commitment to making literate programming and easy and pleasant
@@ -104,8 +104,8 @@ model = models[1]
 ## Chat
 
 The main interface to Claudette is the
-[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) class,
-which provides a stateful interface to Claude:
+[`Chat`](https://claudette.answer.ai/core.html#chat) class, which
+provides a stateful interface to Claude:
 
 ``` python
 chat = Chat(model, sp="""You are a helpful and concise assistant.""")
@@ -237,9 +237,8 @@ pr
     'What is 604542+6458932?'
 
 To use tools, pass a list of them to
-[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat), and to
-force it to always answer using a tool, set `tool_choice` to that
-function name:
+[`Chat`](https://claudette.answer.ai/core.html#chat), and to force it to
+always answer using a tool, set `tool_choice` to that function name:
 
 ``` python
 chat = Chat(model, sp=sp, tools=[sums], tool_choice='sums')
@@ -310,7 +309,7 @@ chat.use
     In: 916; Out: 88; Total: 1004
 
 We can do everything needed to use tools in a single step, by using
-[`Chat.toolloop`](https://AnswerDotAI.github.io/claudette/toolloop.html#chat.toolloop).
+[`Chat.toolloop`](https://claudette.answer.ai/toolloop.html#chat.toolloop).
 This can even call multiple tools as needed solve a problem. For
 example, let’s define a tool to handle multiplication:
 
@@ -382,8 +381,7 @@ display.Image(filename=fn, width=200)
 
 ![](index_files/figure-commonmark/cell-21-output-1.jpeg)
 
-We create a
-[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) object
+We create a [`Chat`](https://claudette.answer.ai/core.html#chat) object
 as before:
 
 ``` python
@@ -582,8 +580,7 @@ models_aws
      'anthropic.claude-3-5-sonnet-20240620-v1:0')
 
 To use them, call `AnthropicBedrock` with your access details, and pass
-that to
-[`Client`](https://AnswerDotAI.github.io/claudette/core.html#client):
+that to [`Client`](https://claudette.answer.ai/core.html#client):
 
 ``` python
 from anthropic import AnthropicBedrock
@@ -597,9 +594,8 @@ ab = AnthropicBedrock(
 client = Client(models_aws[-1], ab)
 ```
 
-Now create your
-[`Chat`](https://AnswerDotAI.github.io/claudette/core.html#chat) object
-passing this client to the `cli` parameter – and from then on,
+Now create your [`Chat`](https://claudette.answer.ai/core.html#chat)
+object passing this client to the `cli` parameter – and from then on,
 everything is identical to the previous examples.
 
 ``` python
@@ -640,8 +636,7 @@ models_goog
      'claude-3-5-sonnet@20240620')
 
 To use them, call `AnthropicVertex` with your access details, and pass
-that to
-[`Client`](https://AnswerDotAI.github.io/claudette/core.html#client):
+that to [`Client`](https://claudette.answer.ai/core.html#client):
 
 ``` python
 from anthropic import AnthropicVertex
