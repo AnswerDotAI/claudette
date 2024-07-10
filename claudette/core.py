@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['empty', 'models', 'models_aws', 'models_goog', 'find_block', 'contents', 'usage', 'mk_msgs', 'Client',
-           'mk_tool_choice', 'call_func', 'mk_toolres', 'Chat', 'img_msg', 'text_msg', 'mk_msg']
+           'mk_tool_choice', 'call_func', 'mk_funcres', 'mk_toolres', 'Chat', 'img_msg', 'text_msg', 'mk_msg']
 
 # %% ../00_core.ipynb 6
 import inspect, typing, mimetypes, base64, json
@@ -154,7 +154,11 @@ def call_func(fc:ToolUseBlock, # Tool use block from Claude's message
     func = getattr(obj, fc.name, None)
     if not func: func = ns[fc.name]
     res = func(**fc.input)
-    return dict(type="tool_result", tool_use_id=fc.id, content=str(res))
+    return res
+
+def mk_funcres(tuid, res):
+    "Given tool use id and the tool result, create a tool_result response."
+    return dict(type="tool_result", tool_use_id=tuid, content=str(res))
 
 
 # %% ../00_core.ipynb 103
@@ -166,7 +170,7 @@ def mk_toolres(
     "Create a `tool_result` message from response `r`."
     cts = getattr(r, 'content', [])
     res = [mk_msg(r)]
-    tcs = [call_func(o, ns=ns, obj=obj) for o in cts if isinstance(o,ToolUseBlock)]
+    tcs = [mk_funcres(o.id, call_func(o, ns=ns, obj=obj)) for o in cts if isinstance(o,ToolUseBlock)]
     if tcs: res.append(mk_msg(tcs))
     return res
 
