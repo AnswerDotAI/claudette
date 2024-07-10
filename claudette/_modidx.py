@@ -33,4 +33,8 @@ d = { 'settings': { 'branch': 'main',
                                 'claudette.core.mk_toolres': ('core.html#mk_toolres', 'claudette/core.py'),
                                 'claudette.core.text_msg': ('core.html#text_msg', 'claudette/core.py'),
                                 'claudette.core.usage': ('core.html#usage', 'claudette/core.py')},
+            'claudette.struct': { 'claudette.struct.BaseModel.claude_schema': ( 'struct.html#basemodel.claude_schema',
+                                                                                'claudette/struct.py'),
+                                  'claudette.struct.Chat.struct': ('struct.html#chat.struct', 'claudette/struct.py'),
+                                  'claudette.struct.Client.struct': ('struct.html#client.struct', 'claudette/struct.py')},
             'claudette.toolloop': {'claudette.toolloop.Chat.toolloop': ('toolloop.html#chat.toolloop', 'claudette/toolloop.py')}}}
