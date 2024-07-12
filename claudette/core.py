@@ -5,7 +5,7 @@ __all__ = ['empty', 'models', 'models_aws', 'models_goog', 'find_block', 'conten
            'mk_tool_choice', 'call_func', 'mk_toolres', 'Chat', 'img_msg', 'text_msg', 'mk_msg']
 
 # %% ../00_core.ipynb 6
-import inspect, typing, mimetypes, base64, json
+import inspect, typing, mimetypes, base64, json, html
 from collections import abc
 try: from IPython import display
 except: display=None
@@ -78,7 +78,7 @@ def mk_msgs(msgs:list, **kw):
     if isinstance(msgs,str): msgs=[msgs]
     return [mk_msg(o, ('user','assistant')[i%2], **kw) for i,o in enumerate(msgs)]
 
-# %% ../00_core.ipynb 62
+# %% ../00_core.ipynb 63
 class Client:
     def __init__(self, model, cli=None, log=True):
         "Basic Anthropic messages client."
@@ -86,7 +86,7 @@ class Client:
         self.log = CLogger() if log else None
         self.c = (cli or Anthropic())
 
-# %% ../00_core.ipynb 65
+# %% ../00_core.ipynb 66
 @patch
 def _r(self:Client, r:Message, prefill=''):
     "Store the result of the message and accrue total usage."
@@ -99,7 +99,7 @@ def _r(self:Client, r:Message, prefill=''):
     self.stop_sequence = r.stop_sequence
     return r
 
-# %% ../00_core.ipynb 69
+# %% ../00_core.ipynb 70
 @patch
 def _stream(self:Client, msgs:list, prefill='', **kwargs):
     with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs), **kwargs) as s:
@@ -111,7 +111,7 @@ def _stream(self:Client, msgs:list, prefill='', **kwargs):
             "result": self.result, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
         })
 
-# %% ../00_core.ipynb 71
+# %% ../00_core.ipynb 72
 @patch
 @delegates(messages.Messages.create)
 def __call__(self:Client,
@@ -140,17 +140,17 @@ def __call__(self:Client,
     })
     return self.result
 
-# %% ../00_core.ipynb 95
+# %% ../00_core.ipynb 96
 def mk_tool_choice(choose:Union[str,bool,None])->dict:
     "Create a `tool_choice` dict that's 'auto' if `choose` is `None`, 'any' if it is True, or 'tool' otherwise"
     return {"type": "tool", "name": choose} if isinstance(choose,str) else {'type':'any'} if choose else {'type':'auto'}
 
-# %% ../00_core.ipynb 106
+# %% ../00_core.ipynb 107
 def _mk_ns(*funcs:list[callable]) -> dict[str,callable]:
     "Create a `dict` of name to function in `funcs`, to use as a namespace"
     return {f.__name__:f for f in funcs}
 
-# %% ../00_core.ipynb 108
+# %% ../00_core.ipynb 109
 def call_func(fc:ToolUseBlock, # Tool use block from Claude's message
               ns:Optional[abc.Mapping]=None, # Namespace to search for tools, defaults to `globals()`
               obj:Optional=None # Object to search for tools
@@ -163,7 +163,7 @@ def call_func(fc:ToolUseBlock, # Tool use block from Claude's message
     res = func(**fc.input)
     return dict(type="tool_result", tool_use_id=fc.id, content=str(res))
 
-# %% ../00_core.ipynb 111
+# %% ../00_core.ipynb 112
 def mk_toolres(
     r:abc.Mapping, # Tool use request response from Claude
     ns:Optional[abc.Mapping]=None, # Namespace to search for tools
@@ -176,7 +176,7 @@ def mk_toolres(
     if tcs: res.append(mk_msg(tcs))
     return res
 
-# %% ../00_core.ipynb 123
+# %% ../00_core.ipynb 124
 class Chat:
     def __init__(self,
                  model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
@@ -192,13 +192,13 @@ class Chat:
     @property
     def use(self): return self.c.use
 
-# %% ../00_core.ipynb 126
+# %% ../00_core.ipynb 127
 @patch
 def _stream(self:Chat, res):
     yield from res
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
 
-# %% ../00_core.ipynb 127
+# %% ../00_core.ipynb 128
 @patch
 def __call__(self:Chat,
              pr=None,  # Prompt / message
@@ -217,7 +217,7 @@ def __call__(self:Chat,
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
     return res
 
-# %% ../00_core.ipynb 146
+# %% ../00_core.ipynb 147
 def img_msg(data:bytes)->dict:
     "Convert image `data` into an encoded `dict`"
     img = base64.b64encode(data).decode("utf-8")
@@ -225,19 +225,19 @@ def img_msg(data:bytes)->dict:
     r = dict(type="base64", media_type=mtype, data=img)
     return {"type": "image", "source": r}
 
-# %% ../00_core.ipynb 148
+# %% ../00_core.ipynb 149
 def text_msg(s:str)->dict:
     "Convert `s` to a text message"
     return {"type": "text", "text": s}
 
-# %% ../00_core.ipynb 152
+# %% ../00_core.ipynb 153
 def _mk_content(src):
     "Create appropriate content data structure based on type of content"
     if isinstance(src,str): return text_msg(src)
     if isinstance(src,bytes): return img_msg(src)
     return src
 
-# %% ../00_core.ipynb 155
+# %% ../00_core.ipynb 156
 def mk_msg(content, # A string, list, or dict containing the contents of the message
            role='user', # Must be 'user' or 'assistant'
            **kw):
@@ -248,9 +248,9 @@ def mk_msg(content, # A string, list, or dict containing the contents of the mes
     content = [_mk_content(o) for o in content] if content else '.'
     return dict(role=role, content=content, **kw)
 
-# %% ../00_core.ipynb 164
+# %% ../00_core.ipynb 166
 models_aws = ('anthropic.claude-3-haiku-20240307-v1:0', 'anthropic.claude-3-sonnet-20240229-v1:0',
     'anthropic.claude-3-opus-20240229-v1:0', 'anthropic.claude-3-5-sonnet-20240620-v1:0')
 
-# %% ../00_core.ipynb 170
+# %% ../00_core.ipynb 172
 models_goog = 'claude-3-haiku@20240307', 'claude-3-sonnet@20240229', 'claude-3-opus@20240229', 'claude-3-5-sonnet@20240620'
