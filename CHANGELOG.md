@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.0.5
+
+### New Features
+
+- Better support for stop sequences ([#12](https://github.com/AnswerDotAI/claudette/pull/12)), thanks to [@xl0](https://github.com/xl0)
+
+
 ## 0.0.3
 
 ### New Features
