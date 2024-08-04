@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.0.6
+
+### New Features
+
+- Default chat prompt & function calling refactor ([#15](https://github.com/AnswerDotAI/claudette/pull/15)), thanks to [@tom-pollak](https://github.com/tom-pollak)
+
+
 ## 0.0.5
 
 ### New Features
