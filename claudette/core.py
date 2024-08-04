@@ -160,7 +160,6 @@ def mk_funcres(tuid, res):
     "Given tool use id and the tool result, create a tool_result response."
     return dict(type="tool_result", tool_use_id=tuid, content=str(res))
 
-
 # %% ../00_core.ipynb 103
 def mk_toolres(
     r:abc.Mapping, # Tool use request response from Claude
@@ -228,7 +227,7 @@ def __call__(self:Chat,
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
     return res
 
-# %% ../00_core.ipynb 136
+# %% ../00_core.ipynb 142
 def img_msg(data:bytes)->dict:
     "Convert image `data` into an encoded `dict`"
     img = base64.b64encode(data).decode("utf-8")
@@ -236,19 +235,19 @@ def img_msg(data:bytes)->dict:
     r = dict(type="base64", media_type=mtype, data=img)
     return {"type": "image", "source": r}
 
-# %% ../00_core.ipynb 138
+# %% ../00_core.ipynb 144
 def text_msg(s:str)->dict:
     "Convert `s` to a text message"
     return {"type": "text", "text": s}
 
-# %% ../00_core.ipynb 142
+# %% ../00_core.ipynb 148
 def _mk_content(src):
     "Create appropriate content data structure based on type of content"
     if isinstance(src,str): return text_msg(src)
     if isinstance(src,bytes): return img_msg(src)
     return src
 
-# %% ../00_core.ipynb 145
+# %% ../00_core.ipynb 151
 def mk_msg(content, # A string, list, or dict containing the contents of the message
            role='user', # Must be 'user' or 'assistant'
            **kw):
@@ -259,9 +258,9 @@ def mk_msg(content, # A string, list, or dict containing the contents of the mes
     content = [_mk_content(o) for o in content] if content else '.'
     return dict(role=role, content=content, **kw)
 
-# %% ../00_core.ipynb 152
+# %% ../00_core.ipynb 158
 models_aws = ('anthropic.claude-3-haiku-20240307-v1:0', 'anthropic.claude-3-sonnet-20240229-v1:0',
     'anthropic.claude-3-opus-20240229-v1:0', 'anthropic.claude-3-5-sonnet-20240620-v1:0')
 
-# %% ../00_core.ipynb 158
+# %% ../00_core.ipynb 164
 models_goog = 'claude-3-haiku@20240307', 'claude-3-sonnet@20240229', 'claude-3-opus@20240229', 'claude-3-5-sonnet@20240620'
