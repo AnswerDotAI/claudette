@@ -3,14 +3,14 @@
 # %% auto 0
 __all__ = []
 
-# %% ../01_toolloop.ipynb 3
+# %% ../01_toolloop.ipynb
 from .core import *
 from fastcore.utils import *
 from fastcore.meta import delegates
 
 from anthropic.types import TextBlock, Message, ToolUseBlock
 
-# %% ../01_toolloop.ipynb 18
+# %% ../01_toolloop.ipynb
 @patch
 @delegates(Chat.__call__)
 def toolloop(self:Chat,
