@@ -82,9 +82,10 @@ def mk_msgs(msgs:list, **kw):
 
 # %% ../00_core.ipynb
 class Client:
-    def __init__(self, model, cli=None):
+    def __init__(self, model, cli=None, log=False):
         "Basic Anthropic messages client."
-        self.model,self.use,self.log = model,usage(),[]
+        self.model,self.use = model,usage()
+        self.log = [] if log else None
         self.c = (cli or Anthropic())
 
 # %% ../00_core.ipynb
@@ -107,7 +108,7 @@ def _stream(self:Client, msgs:list, prefill='', **kwargs):
         if prefill: yield(prefill)
         yield from s.text_stream
         self._r(s.get_final_message(), prefill)
-        self.log.append({
+        if self.log is not None: self.log.append({
             "msgs": msgs, "prefill": prefill, **kwargs,
             "result": self.result, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
         })
@@ -135,7 +136,7 @@ def __call__(self:Client,
     res = self.c.messages.create(
         model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     self._r(res, prefill)
-    self.log.append({
+    if self.log is not None: self.log.append({
         "msgs": msgs, "maxtok": maxtok, "sp": sp, "temp": temp, "prefill": prefill, "stream": stream, "stop": stop, **kwargs,
         "result": res, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
     })
