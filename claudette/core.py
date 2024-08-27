@@ -86,7 +86,7 @@ class Client:
         "Basic Anthropic messages client."
         self.model,self.use = model,usage()
         self.log = [] if log else None
-        self.c = (cli or Anthropic())
+        self.c = (cli or Anthropic(default_headers={'anthropic-beta': 'prompt-caching-2024-07-31'}))
 
 # %% ../00_core.ipynb
 @patch
@@ -237,34 +237,41 @@ def __call__(self:Chat,
     return res
 
 # %% ../00_core.ipynb
-def img_msg(data:bytes)->dict:
+def _add_cache(d, cache):
+    "Optionally add cache control"
+    if cache: d["cache_control"] = {"type": "ephemeral"}
+    return d
+
+# %% ../00_core.ipynb
+def img_msg(data:bytes, cache:False)->dict:
     "Convert image `data` into an encoded `dict`"
     img = base64.b64encode(data).decode("utf-8")
     mtype = mimetypes.types_map['.'+imghdr.what(None, h=data)]
     r = dict(type="base64", media_type=mtype, data=img)
-    return {"type": "image", "source": r}
+    return _add_cache({"type": "image", "source": r}, cache)
 
 # %% ../00_core.ipynb
-def text_msg(s:str)->dict:
+def text_msg(s:str, cache:False)->dict:
     "Convert `s` to a text message"
-    return {"type": "text", "text": s}
+    return _add_cache({"type": "text", "text": s}, cache)
 
 # %% ../00_core.ipynb
-def _mk_content(src):
+def _mk_content(src, cache=False):
     "Create appropriate content data structure based on type of content"
-    if isinstance(src,str): return text_msg(src)
-    if isinstance(src,bytes): return img_msg(src)
+    if isinstance(src,str): return text_msg(src, cache=cache)
+    if isinstance(src,bytes): return img_msg(src, cache=cache)
     return src
 
 # %% ../00_core.ipynb
 def mk_msg(content, # A string, list, or dict containing the contents of the message
            role='user', # Must be 'user' or 'assistant'
+           cache=False,
            **kw):
     "Helper to create a `dict` appropriate for a Claude message. `kw` are added as key/value pairs to the message"
     if hasattr(content, 'content'): content,role = content.content,content.role
-    if isinstance(content, abc.Mapping): content=content['content']
+    if isinstance(content, abc.Mapping): content=content.get('content', content)
     if not isinstance(content, list): content=[content]
-    content = [_mk_content(o) for o in content] if content else '.'
+    content = [_mk_content(o, cache if islast else False) for islast,o in loop_last(content)] if content else '.'
     return dict(role=role, content=content, **kw)
 
 # %% ../00_core.ipynb
