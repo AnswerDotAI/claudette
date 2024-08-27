@@ -2,6 +2,20 @@
 
 <!-- do not remove -->
 
+## 0.0.7
+
+### New Features
+
+- Prompt caching ([#20](https://github.com/AnswerDotAI/claudette/issues/20))
+- add markdown to doc output ([#19](https://github.com/AnswerDotAI/claudette/issues/19))
+- Support vscode details tags ([#18](https://github.com/AnswerDotAI/claudette/issues/18))
+- Add a `cont_pr` param to Chat as a "default" prompt [#15](https://github.com/AnswerDotAI/claudette/pull/15)), thanks to [@tom-pollak](https://github.com/tom-pollak)
+
+### Bugs Squashed
+
+- Explicit `tool_choice` causes chat() to call tool twice. ([#11](https://github.com/AnswerDotAI/claudette/issues/11))
+
+
 ## 0.0.6
 
 ### New Features
