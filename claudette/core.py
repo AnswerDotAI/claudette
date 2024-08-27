@@ -44,7 +44,7 @@ def contents(r):
 # %% ../00_core.ipynb
 @patch
 def _repr_markdown_(self:(Message)):
-    det = '\n- '.join(f'{k}: {v}' for k,v in self.model_dump().items())
+    det = '\n- '.join(f'{k}: `{v}`' for k,v in self.model_dump().items())
     return f"""{contents(self)}
 
 <details>
@@ -243,7 +243,7 @@ def _add_cache(d, cache):
     return d
 
 # %% ../00_core.ipynb
-def img_msg(data:bytes, cache:False)->dict:
+def img_msg(data:bytes, cache=False)->dict:
     "Convert image `data` into an encoded `dict`"
     img = base64.b64encode(data).decode("utf-8")
     mtype = mimetypes.types_map['.'+imghdr.what(None, h=data)]
@@ -251,7 +251,7 @@ def img_msg(data:bytes, cache:False)->dict:
     return _add_cache({"type": "image", "source": r}, cache)
 
 # %% ../00_core.ipynb
-def text_msg(s:str, cache:False)->dict:
+def text_msg(s:str, cache=False)->dict:
     "Convert `s` to a text message"
     return _add_cache({"type": "text", "text": s}, cache)
 
