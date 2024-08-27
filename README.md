@@ -114,16 +114,16 @@ Hello Jeremy, it’s nice to meet you. How can I assist you today?
 
 <details>
 
-- id: msg_01Ht1YKw3qr4oeiE8uZkuuGW
-- content: \[{‘text’: “Hello Jeremy, it’s nice to meet you. How can I
-  assist you today?”, ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 19, ‘output_tokens’: 20,
-  ‘cache_creation_input_tokens’: 0, ‘cache_read_input_tokens’: 0}
+- id: `msg_014J96J6f9Bxrmyr7uA5Z4E3`
+- content:
+  `[{'text': "Hello Jeremy, it's nice to meet you. How can I assist you today?", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 19, 'output_tokens': 20, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -136,16 +136,16 @@ Your name is Jeremy, as you just told me.
 
 <details>
 
-- id: msg_01WKwTVxHNz96wEqprwtDR75
-- content: \[{‘text’: ‘Your name is Jeremy, as you just told me.’,
-  ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 47, ‘output_tokens’: 14,
-  ‘cache_creation_input_tokens’: 0, ‘cache_read_input_tokens’: 0}
+- id: `msg_01RpP5rBhFK34UkZwAiMnL85`
+- content:
+  `[{'text': 'Your name is Jeremy, as you just told me.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 47, 'output_tokens': 14, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -157,7 +157,7 @@ collapsible section. Alternatively you can `print` the details:
 print(r)
 ```
 
-    Message(id='msg_01WKwTVxHNz96wEqprwtDR75', content=[TextBlock(text='Your name is Jeremy, as you just told me.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 47; Out: 14; Total: 61)
+    Message(id='msg_01RpP5rBhFK34UkZwAiMnL85', content=[TextBlock(text='Your name is Jeremy, as you just told me.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 47; Out: 14; Total: 61)
 
 Claude supports adding an extra `assistant` message at the end, which
 contains the *prefill* – i.e. the text we want Claude to assume the
@@ -173,17 +173,16 @@ to be finding personal fulfillment, happiness, and purpose.
 
 <details>
 
-- id: msg_01P4vNp6tti1nxLa5UBmtXGQ
-- content: \[{‘text’: ‘According to Douglas Adams, “42.” More seriously,
-  it's often considered to be finding personal fulfillment, happiness,
-  and purpose.’, ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 81, ‘output_tokens’: 27,
-  ‘cache_creation_input_tokens’: 0, ‘cache_read_input_tokens’: 0}
+- id: `msg_01Qgsa4a7cdPJkCrm989emJ5`
+- content:
+  `[{'text': 'According to Douglas Adams,  "42." More seriously, it\'s often considered to be finding personal fulfillment, happiness, and purpose.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 81, 'output_tokens': 27, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -197,6 +196,143 @@ for o in chat("Concisely, what book was that in?", prefill='It was in', stream=T
 ```
 
     It was in "The Hitchhiker's Guide to the Galaxy" by Douglas Adams.
+
+## Prompt caching
+
+If you use `mk_msg(msg, cache=True)`, then the message is cached using
+Claude’s [prompt
+caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)
+feature. For instance, here we use caching when asking about Claudette’s
+readme file:
+
+``` python
+chat = Chat(model, sp="""You are a helpful and concise assistant.""")
+```
+
+``` python
+nbtxt = Path('README.txt').read_text()
+msg = f'''<README>
+{nbtxt}
+</README>
+In brief, what is the purpose of this project based on the readme?'''
+r = chat(mk_msg(msg, cache=True))
+r
+```
+
+Based on the readme, the main purpose of the Claudette project is to
+provide a high-level wrapper around Anthropic’s Python SDK for
+interacting with Claude AI models. Key features and goals include:
+
+1.  Automating and simplifying interactions with Claude, reducing
+    boilerplate code.
+
+2.  Providing a stateful dialog interface through the
+    [`Chat`](https://claudette.answer.ai/core.html#chat) class.
+
+3.  Supporting features like prefill (specifying the start of Claude’s
+    response) and image handling.
+
+4.  Offering convenient support for Claude’s Tool Use API.
+
+5.  Serving as an example of “literate programming”, with the source
+    code designed to be readable and educational, including explanations
+    of how and why the code is written.
+
+6.  Supporting multiple model providers, including direct Anthropic API
+    access as well as Claude models available through Amazon Bedrock and
+    Google Vertex AI.
+
+The project aims to make working with Claude models more convenient and
+accessible for developers while also serving as an educational resource
+on how to effectively use and interact with these AI models.
+
+<details>
+
+- id: `msg_01HkjoKjfY5zrmBrkjHvtDpG`
+- content:
+  `[{'text': 'Based on the readme, the main purpose of the Claudette project is to provide a high-level wrapper around Anthropic\'s Python SDK for interacting with Claude AI models. Key features and goals include:\n\n1. Automating and simplifying interactions with Claude, reducing boilerplate code.\n\n2. Providing a stateful dialog interface through the [`Chat`](https://claudette.answer.ai/core.html#chat) class.\n\n3. Supporting features like prefill (specifying the start of Claude\'s response) and image handling.\n\n4. Offering convenient support for Claude\'s Tool Use API.\n\n5. Serving as an example of "literate programming", with the source code designed to be readable and educational, including explanations of how and why the code is written.\n\n6. Supporting multiple model providers, including direct Anthropic API access as well as Claude models available through Amazon Bedrock and Google Vertex AI.\n\nThe project aims to make working with Claude models more convenient and accessible for developers while also serving as an educational resource on how to effectively use and interact with these AI models.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 4, 'output_tokens': 220, 'cache_creation_input_tokens': 7171, 'cache_read_input_tokens': 0}`
+
+</details>
+
+The response records the a cache has been created using these input
+tokens:
+
+``` python
+print(r.usage)
+```
+
+    Usage(input_tokens=4, output_tokens=220, cache_creation_input_tokens=7171, cache_read_input_tokens=0)
+
+We can now ask a followup question in this chat:
+
+``` python
+r = chat('How does it make tool use more ergonomic?')
+r
+```
+
+Claudette makes tool use more ergonomic in several ways:
+
+1.  Simplified function definition: It uses docments to make defining
+    Python functions for tools as simple as possible. Each parameter and
+    the return value should have a type and a description.
+
+2.  Automatic handling: The
+    [`Chat`](https://claudette.answer.ai/core.html#chat) class can be
+    initialized with a list of tools, and Claudette handles the
+    back-and-forth between Claude and the tools automatically.
+
+3.  Single-step execution: The
+    [`Chat.toolloop`](https://claudette.answer.ai/toolloop.html#chat.toolloop)
+    method allows for executing a series of tool calls in a single step,
+    even if multiple tools are needed to solve a problem.
+
+4.  Forced tool use: You can set `tool_choice` to force Claude to always
+    answer using a specific tool.
+
+5.  Tracing: The `toolloop` method supports a `trace_func` parameter,
+    allowing you to see each response from Claude during the process.
+
+6.  Automatic parameter passing: When Claude decides to use a tool,
+    Claudette automatically calls the tool with the provided parameters.
+
+7.  System prompt integration: It allows setting a system prompt to
+    guide Claude’s behavior when using tools, such as instructing it not
+    to mention the tools it’s using.
+
+These features significantly reduce the amount of code and manual
+handling required to use Claude’s tool use capabilities, making the
+process more streamlined and developer-friendly.
+
+<details>
+
+- id: `msg_01EfFbEBeYETAvfjGncn8Vcb`
+- content:
+  `[{'text': "Claudette makes tool use more ergonomic in several ways:\n\n1. Simplified function definition: It uses docments to make defining Python functions for tools as simple as possible. Each parameter and the return value should have a type and a description.\n\n2. Automatic handling: The [`Chat`](https://claudette.answer.ai/core.html#chat) class can be initialized with a list of tools, and Claudette handles the back-and-forth between Claude and the tools automatically.\n\n3. Single-step execution: The [`Chat.toolloop`](https://claudette.answer.ai/toolloop.html#chat.toolloop) method allows for executing a series of tool calls in a single step, even if multiple tools are needed to solve a problem.\n\n4. Forced tool use: You can set`tool_choice`to force Claude to always answer using a specific tool.\n\n5. Tracing: The`toolloop`method supports a`trace_func`parameter, allowing you to see each response from Claude during the process.\n\n6. Automatic parameter passing: When Claude decides to use a tool, Claudette automatically calls the tool with the provided parameters.\n\n7. System prompt integration: It allows setting a system prompt to guide Claude's behavior when using tools, such as instructing it not to mention the tools it's using.\n\nThese features significantly reduce the amount of code and manual handling required to use Claude's tool use capabilities, making the process more streamlined and developer-friendly.", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 240, 'output_tokens': 289, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 7171}`
+
+</details>
+
+We can see that this only used ~200 regular input tokens – the 7000+
+context tokens have been read from cache.
+
+``` python
+print(r.usage)
+```
+
+    Usage(input_tokens=240, output_tokens=289, cache_creation_input_tokens=0, cache_read_input_tokens=7171)
 
 ## Tool use
 
@@ -256,20 +392,21 @@ r
 
     Finding the sum of 604542 and 6458932
 
-ToolUseBlock(id=‘toolu_018a7fT3Mnoa2XqtAMXqawXU’, input={‘a’: 604542,
+ToolUseBlock(id=‘toolu_01C6G2iuLtBBftESiujKzXfx’, input={‘a’: 604542,
 ‘b’: 6458932}, name=‘sums’, type=‘tool_use’)
 
 <details>
 
-- id: msg_011r1ZTjJSLFCJKceMoFSPky
-- content: \[{‘id’: ‘toolu_018a7fT3Mnoa2XqtAMXqawXU’, ‘input’: {‘a’:
-  604542, ‘b’: 6458932}, ‘name’: ‘sums’, ‘type’: ‘tool_use’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: tool_use
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 414, ‘output_tokens’: 53}
+- id: `msg_01HPZwX3mQ7sMbjWUHEwgUsT`
+- content:
+  `[{'id': 'toolu_01C6G2iuLtBBftESiujKzXfx', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `tool_use`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 414, 'output_tokens': 53, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -280,22 +417,20 @@ happens automatically:
 chat()
 ```
 
-    Finding the sum of 7063474 and 1
-
-ToolUseBlock(id=‘toolu_01Pc9N6fQSUNnuqrUKR2DkmL’, input={‘a’: 7063474},
-name=‘sums’, type=‘tool_use’)
+The sum of 604542 and 6458932 is 7063474.
 
 <details>
 
-- id: msg_01Ct8URrPt5hf5mjUSndwigS
-- content: \[{‘id’: ‘toolu_01Pc9N6fQSUNnuqrUKR2DkmL’, ‘input’: {‘a’:
-  7063474}, ‘name’: ‘sums’, ‘type’: ‘tool_use’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: tool_use
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 502, ‘output_tokens’: 35}
+- id: `msg_01RNHxf1jXfS76h2UpF8RnZ2`
+- content:
+  `[{'text': 'The sum of 604542 and 6458932 is 7063474.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 515, 'output_tokens': 23, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -307,7 +442,7 @@ You can see how many tokens have been used at any time by checking the
 chat.use
 ```
 
-    In: 916; Out: 88; Total: 1004
+    In: 929; Out: 76; Total: 1005
 
 We can do everything needed to use tools in a single step, by using
 [`Chat.toolloop`](https://claudette.answer.ai/toolloop.html#chat.toolloop).
@@ -340,10 +475,10 @@ chat.toolloop(pr, trace_func=print)
 ```
 
     Finding the sum of 604542 and 6458932
-    Message(id='msg_016tRhA75RqXTkCMR9WoZvyE', content=[TextBlock(text='Certainly! To calculate (604542+6458932)*2, we\'ll need to use the available tools to perform the addition and multiplication operations. Let\'s break it down step by step:\n\n1. First, we\'ll add 604542 and 6458932 using the "sums" function.\n2. Then, we\'ll multiply the result by 2 using the "mults" function.\n\nLet\'s start with the addition:', type='text'), ToolUseBlock(id='toolu_017aomxeCUA6DxM9U6UQjMu2', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 538; Out: 168; Total: 706)
+    Message(id='msg_01DgZ9Fcs6h8HB7qEaFkg3Ah', content=[TextBlock(text='Certainly! To calculate (604542+6458932)*2, we\'ll need to use the available tools to perform the addition and multiplication operations. Let\'s break it down step by step:\n\n1. First, we\'ll add 604542 and 6458932 using the "sums" function.\n2. Then, we\'ll multiply the result by 2 using the "mults" function.\n\nLet\'s start with the addition:', type='text'), ToolUseBlock(id='toolu_01XTMLyKo9Q6TX4SpCVmmUsP', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 538; Out: 168; Total: 706)
     Finding the product of 7063474 and 2
-    Message(id='msg_016w97cNedVktfhHUoL2Ey7a', content=[TextBlock(text="Great! The sum of 604542 and 6458932 is 7063474.\n\nNow, let's multiply this result by 2:", type='text'), ToolUseBlock(id='toolu_0115UMmS2GMeej1CafKLKvBB', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 721; Out: 106; Total: 827)
-    Message(id='msg_0139BkRu9b9yKPp8N8NHBMpj', content=[TextBlock(text='Now we have our final result. \n\nThe calculation (604542+6458932)*2 equals 14126948.\n\nTo break it down:\n1. 604542 + 6458932 = 7063474\n2. 7063474 * 2 = 14126948\n\nSo, the final answer to (604542+6458932)*2 is 14126948.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 841; Out: 95; Total: 936)
+    Message(id='msg_011P8jdxwLoKNf8nTDua7VM8', content=[TextBlock(text="Great! The sum of 604542 and 6458932 is 7063474.\n\nNow, let's multiply this result by 2:", type='text'), ToolUseBlock(id='toolu_01FETWkj4a9HyX25c8ETULYh', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 721; Out: 106; Total: 827)
+    Message(id='msg_01UXwy69vUWSy9bK24skQ3yE', content=[TextBlock(text='Now we have our final result. \n\nThe calculation (604542+6458932)*2 equals 14126948.\n\nTo break it down:\n1. 604542 + 6458932 = 7063474\n2. 7063474 * 2 = 14126948\n\nSo, the final answer to (604542+6458932)*2 is 14126948.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 841; Out: 95; Total: 936)
 
 Now we have our final result.
 
@@ -356,17 +491,16 @@ So, the final answer to (604542+6458932)\*2 is 14126948.
 
 <details>
 
-- id: msg_0139BkRu9b9yKPp8N8NHBMpj
-- content: \[{‘text’: ’Now we have our final result. calculation
-  (604542+6458932)*2 equals 14126948.break it down:. 604542 + 6458932 =
-  7063474. 7063474 * 2 = 14126948, the final answer to
-  (604542+6458932)\*2 is 14126948.’, ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 841, ‘output_tokens’: 95}
+- id: `msg_01UXwy69vUWSy9bK24skQ3yE`
+- content:
+  `[{'text': 'Now we have our final result. \n\nThe calculation (604542+6458932)*2 equals 14126948.\n\nTo break it down:\n1. 604542 + 6458932 = 7063474\n2. 7063474 * 2 = 14126948\n\nSo, the final answer to (604542+6458932)*2 is 14126948.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 841, 'output_tokens': 95, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -380,7 +514,7 @@ fn = Path('samples/puppy.jpg')
 display.Image(filename=fn, width=200)
 ```
 
-<img src="index_files/figure-commonmark/cell-21-output-1.jpeg"
+<img src="index_files/figure-commonmark/cell-26-output-1.jpeg"
 width="200" />
 
 We create a [`Chat`](https://claudette.answer.ai/core.html#chat) object
@@ -403,22 +537,21 @@ chat([img, "In brief, what color flowers are in this image?"])
 ```
 
 The flowers in this image are purple. They appear to be small,
-daisy-like flowers, possibly asters or some type of purple wildflower,
+daisy-like flowers, possibly asters or some type of purple daisy,
 blooming in the background behind the adorable puppy in the foreground.
 
 <details>
 
-- id: msg_01EsC5ZMpo5chJRzcjkceLu9
-- content: \[{‘text’: ‘The flowers in this image are purple. They appear
-  to be small, daisy-like flowers, possibly asters or some type of
-  purple wildflower, blooming in the background behind the adorable
-  puppy in the foreground.’, ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 110, ‘output_tokens’: 51}
+- id: `msg_01XtkdWMWHVppHqtiv7gdmtA`
+- content:
+  `[{'text': 'The flowers in this image are purple. They appear to be small, daisy-like flowers, possibly asters or some type of purple daisy, blooming in the background behind the adorable puppy in the foreground.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 110, 'output_tokens': 50, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -428,7 +561,7 @@ The image is included as input tokens.
 chat.use
 ```
 
-    In: 110; Out: 51; Total: 161
+    In: 110; Out: 50; Total: 160
 
 Alternatively, Claudette supports creating a multi-stage chat with
 separate image and text prompts. For instance, you can pass just the
@@ -444,43 +577,33 @@ chat(img)
 This image shows an adorable puppy lying in the grass. The puppy appears
 to be a Cavalier King Charles Spaniel or a similar breed, with
 distinctive white and reddish-brown fur coloring. Its face is
-predominantly white with large, expressive dark eyes and a small black
-nose.
+predominantly white with large, expressive eyes and a small black nose.
 
-The puppy is resting on a grassy surface, giving the impression of being
-outdoors. In the background, you can see purple flowers, which look like
-asters or michaelmas daisies, adding a lovely splash of color to the
-scene. There’s also what appears to be a wooden structure or fence
-behind the flowers, suggesting a garden setting.
+The puppy is resting on a grassy surface, and behind it, you can see
+some purple flowers, likely asters or michaelmas daisies. These flowers
+provide a lovely contrast to the puppy’s fur colors. In the background,
+there seems to be a wooden structure, possibly a fence or the side of a
+building, giving the scene a rustic, outdoor feel.
 
-The composition of the image creates a charming, pastoral scene that
-highlights the puppy’s cuteness against the natural backdrop. The
-contrast between the soft fur of the puppy and the delicate purple
-flowers makes for a visually appealing and heartwarming picture.
+The composition of the image is quite charming, with the puppy as the
+main focus in the foreground and the flowers adding a soft, colorful
+backdrop. The lighting appears natural, highlighting the puppy’s soft
+fur and the delicate petals of the flowers. Overall, it’s a heartwarming
+scene that captures the innocence and cuteness of a young dog in a
+picturesque outdoor setting.
 
 <details>
 
-- id: msg_013TMWFVwfmYh2qzUtUqen68
-- content: \[{‘text’: “This image shows an adorable puppy lying in the
-  grass. The puppy appears to be a Cavalier King Charles Spaniel or a
-  similar breed, with distinctive white and reddish-brown fur coloring.
-  Its face is predominantly white with large, expressive dark eyes and a
-  small black nose.puppy is resting on a grassy surface, giving the
-  impression of being outdoors. In the background, you can see purple
-  flowers, which look like asters or michaelmas daisies, adding a lovely
-  splash of color to the scene. There’s also what appears to be a wooden
-  structure or fence behind the flowers, suggesting a garden
-  setting.composition of the image creates a charming, pastoral scene
-  that highlights the puppy’s cuteness against the natural backdrop. The
-  contrast between the soft fur of the puppy and the delicate purple
-  flowers makes for a visually appealing and heartwarming picture.”,
-  ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 98, ‘output_tokens’: 197}
+- id: `msg_01Simo36wFes3M21SXZFGBT2`
+- content:
+  `[{'text': "This image shows an adorable puppy lying in the grass. The puppy appears to be a Cavalier King Charles Spaniel or a similar breed, with distinctive white and reddish-brown fur coloring. Its face is predominantly white with large, expressive eyes and a small black nose.\n\nThe puppy is resting on a grassy surface, and behind it, you can see some purple flowers, likely asters or michaelmas daisies. These flowers provide a lovely contrast to the puppy's fur colors. In the background, there seems to be a wooden structure, possibly a fence or the side of a building, giving the scene a rustic, outdoor feel.\n\nThe composition of the image is quite charming, with the puppy as the main focus in the foreground and the flowers adding a soft, colorful backdrop. The lighting appears natural, highlighting the puppy's soft fur and the delicate petals of the flowers. Overall, it's a heartwarming scene that captures the innocence and cuteness of a young dog in a picturesque outdoor setting.", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 98, 'output_tokens': 232, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -488,29 +611,26 @@ flowers makes for a visually appealing and heartwarming picture.
 chat('What direction is the puppy facing?')
 ```
 
-The puppy in the image is facing towards the camera, looking directly at
-the viewer. Its head is slightly tilted, giving it an endearing and
-curious expression. The puppy’s body is angled slightly to its left (our
-right), with its front paws visible and resting on the grass. This
-positioning allows us to see the full face of the puppy, showcasing its
-adorable features and the distinctive color pattern of its fur.
+The puppy in the image is facing towards the left side of the frame. Its
+head is turned slightly, allowing us to see most of its face, including
+both eyes, its nose, and part of its mouth. The puppy’s body is angled
+diagonally, with its front paws visible and resting on the grass. This
+positioning gives the viewer a good look at the puppy’s adorable facial
+features and the distinctive coloring of its fur, while also creating an
+engaging composition within the photograph.
 
 <details>
 
-- id: msg_015W9aQZt9JsjExJKcN72cDo
-- content: \[{‘text’: “The puppy in the image is facing towards the
-  camera, looking directly at the viewer. Its head is slightly tilted,
-  giving it an endearing and curious expression. The puppy’s body is
-  angled slightly to its left (our right), with its front paws visible
-  and resting on the grass. This positioning allows us to see the full
-  face of the puppy, showcasing its adorable features and the
-  distinctive color pattern of its fur.”, ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 306, ‘output_tokens’: 95}
+- id: `msg_019YhPzDxXXjrcpjaS6G8fmF`
+- content:
+  `[{'text': "The puppy in the image is facing towards the left side of the frame. Its head is turned slightly, allowing us to see most of its face, including both eyes, its nose, and part of its mouth. The puppy's body is angled diagonally, with its front paws visible and resting on the grass. This positioning gives the viewer a good look at the puppy's adorable facial features and the distinctive coloring of its fur, while also creating an engaging composition within the photograph.", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 341, 'output_tokens': 108, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -520,49 +640,43 @@ chat('What color is it?')
 
 The puppy in the image has a combination of two main colors:
 
-1.  White: The majority of its face, including the muzzle area and a
-    portion of its body that’s visible, is white.
+1.  White: The majority of its face, including the area around its eyes,
+    muzzle, and part of its chest, is white.
 
-2.  Reddish-brown (often called “chestnut” or “ruby” in this breed):
-    This color appears on the ears and extends to patches on the body,
-    though the full extent isn’t visible in this image.
+2.  Reddish-brown: This color, often referred to as “chestnut” or “ruby”
+    in Cavalier King Charles Spaniels, covers the puppy’s ears and
+    extends to patches on its body.
 
-This color combination is typical for Cavalier King Charles Spaniels,
-particularly the Blenheim variety. The contrast between the white and
-the reddish-brown fur creates a striking and adorable appearance,
-highlighting the puppy’s facial features and giving it a distinctive
-look.
+The contrast between these two colors is quite striking and typical of
+the Cavalier King Charles Spaniel breed. The white fur appears bright
+and clean, while the reddish-brown areas have a rich, warm tone. This
+color combination, along with the puppy’s expressive eyes and small
+black nose, contributes to its incredibly cute and appealing appearance.
 
 <details>
 
-- id: msg_0146KQcPjSoXFGLjqjpzwU3Q
-- content: \[{‘text’: ‘The puppy in the image has a combination of two
-  main colors:. White: The majority of its face, including the muzzle
-  area and a portion of its body that's visible, is white..
-  Reddish-brown (often called “chestnut” or “ruby” in this breed): This
-  color appears on the ears and extends to patches on the body, though
-  the full extent isn't visible in this image.color combination is
-  typical for Cavalier King Charles Spaniels, particularly the Blenheim
-  variety. The contrast between the white and the reddish-brown fur
-  creates a striking and adorable appearance, highlighting the puppy's
-  facial features and giving it a distinctive look.’, ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 409, ‘output_tokens’: 157}
+- id: `msg_01WVxHA2sAff5q1En3q9km8F`
+- content:
+  `[{'text': 'The puppy in the image has a combination of two main colors:\n\n1. White: The majority of its face, including the area around its eyes, muzzle, and part of its chest, is white.\n\n2. Reddish-brown: This color, often referred to as "chestnut" or "ruby" in Cavalier King Charles Spaniels, covers the puppy\'s ears and extends to patches on its body.\n\nThe contrast between these two colors is quite striking and typical of the Cavalier King Charles Spaniel breed. The white fur appears bright and clean, while the reddish-brown areas have a rich, warm tone. This color combination, along with the puppy\'s expressive eyes and small black nose, contributes to its incredibly cute and appealing appearance.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 457, 'output_tokens': 175, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
 
 Note that the image is passed in again for every input in the dialog, so
 that number of input tokens increases quickly with this kind of chat.
+(For large images, using prompt caching might be a good idea.)
 
 ``` python
 chat.use
 ```
 
-    In: 813; Out: 449; Total: 1262
+    In: 896; Out: 515; Total: 1411
 
 ## Other model providers
 
@@ -611,16 +725,15 @@ have?
 
 <details>
 
-- id: msg_bdrk_011MuMcLUba22CUttpxWuHJC
-- content: \[{‘text’: “Hello Jeremy! It’s nice to meet you. How can I
-  assist you today? Is there anything specific you’d like to talk about
-  or any questions you have?”, ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 10, ‘output_tokens’: 36}
+- id: `msg_bdrk_01VFVE1Pe5LNubaWYKC1sz8f`
+- content:
+  `[{'text': "Hello Jeremy! It's nice to meet you. How can I assist you today? Is there anything specific you'd like to talk about or any questions you have?", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage: `{'input_tokens': 10, 'output_tokens': 36}`
 
 </details>
 
@@ -662,15 +775,14 @@ have?
 
 <details>
 
-- id: msg_vrtx_015zVvSZxfmNQ8FRZjb9zPdJ
-- content: \[{‘text’: “Hello Jeremy! It’s nice to meet you. How can I
-  assist you today? Is there anything specific you’d like to talk about
-  or any questions you have?”, ‘type’: ‘text’}\]
-- model: claude-3-5-sonnet-20240620
-- role: assistant
-- stop_reason: end_turn
-- stop_sequence: None
-- type: message
-- usage: {‘input_tokens’: 10, ‘output_tokens’: 36}
+- id: `msg_vrtx_01P251BUJXBBvihsvb3VVgZ3`
+- content:
+  `[{'text': "Hello Jeremy! It's nice to meet you. How can I assist you today? Is there anything specific you'd like to talk about or any questions you have?", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage: `{'input_tokens': 10, 'output_tokens': 36}`
 
 </details>
