@@ -9,17 +9,10 @@ from collections import abc
 try: from IPython import display
 except: display=None
 
-from anthropic import Anthropic, AnthropicBedrock, AnthropicVertex, AsyncAnthropic
-from anthropic.types import Usage, TextBlock, Message, ToolUseBlock
-from anthropic.resources import messages
-
-import toolslm
-from toolslm.funccall import *
-
-from fastcore import imghdr
+from anthropic import AsyncAnthropic
+from toolslm.funccall import get_schema
 from fastcore.meta import delegates
 from fastcore.utils import *
-
 from .core import *
 
 # %% ../02_async.ipynb
@@ -33,17 +26,13 @@ class AsyncClient(Client):
 @patch
 async def _stream(self:AsyncClient, msgs:list, prefill='', **kwargs):
     async with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs), **kwargs) as s:
-        if prefill: yield(prefill)
+        if prefill: yield prefill
         async for o in s.text_stream: yield o
-        self._r(await s.get_final_message(), prefill)
-        if self.log is not None: self.log.append({
-            "msgs": msgs, "prefill": prefill, **kwargs,
-            "result": self.result, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
-        })
+        self._log(await s.get_final_message(), prefill, msgs, kwargs)
 
 # %% ../02_async.ipynb
 @patch
-@delegates(messages.Messages.create)
+@delegates(Client)
 async def __call__(self:AsyncClient,
              msgs:list, # List of messages in the dialog
              sp='', # The system prompt
@@ -53,34 +42,22 @@ async def __call__(self:AsyncClient,
              stream:bool=False, # Stream response?
              stop=None, # Stop sequence
              **kwargs):
-    "Make a call to Claude."
-    pref = [prefill.strip()] if prefill else []
-    if not isinstance(msgs,list): msgs = [msgs]
-    if stop is not None:
-        if not isinstance(stop, (list)): stop = [stop]
-        kwargs["stop_sequences"] = stop
-    msgs = mk_msgs(msgs+pref)
+    "Make an async call to Claude."
+    msgs = self._precall(msgs, prefill, stop, kwargs)
     if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     res = await self.c.messages.create(
         model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    self._r(res, prefill)
-    if self.log is not None: self.log.append({
-        "msgs": msgs, "maxtok": maxtok, "sp": sp, "temp": temp, "prefill": prefill, "stream": stream, "stop": stop, **kwargs,
-        "result": res, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
-    })
-    return self.result
+    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
 
 # %% ../02_async.ipynb
+@delegates()
 class AsyncChat(Chat):
     def __init__(self,
                  model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
                  cli:Optional[Client]=None, # Client to use (leave empty if passing `model`)
-                 sp='', # Optional system prompt
-                 tools:Optional[list]=None, # List of tools to make available to Claude
-                 cont_pr:Optional[str]=None, # User prompt to continue an assistant response
-                 tool_choice:Optional[dict]=None): # Optionally force use of some tool
+                 **kwargs):
         "Anthropic async chat client."
-        super().__init__(model, cli, sp, tools, cont_pr=cont_pr, tool_choice=tool_choice)
+        super().__init__(model, cli, **kwargs)
         if not cli: self.c = AsyncClient(model)
 
 # %% ../02_async.ipynb
@@ -91,14 +68,7 @@ async def _stream(self:AsyncChat, res):
 
 # %% ../02_async.ipynb
 @patch
-async def _append_pr(self:AsyncChat,
-    pr=None,  # Prompt / message
-):
+async def _append_pr(self:AsyncChat, pr=None):
     prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user' if no history
-    if pr and prev_role == 'user':
-        await self() # There's already a user request pending, so complete it
-    elif pr is None and prev_role == 'assistant':
-        if self.cont_pr is None:
-            raise ValueError("User prompt must be given after an assistant completion, or `self.cont_pr` must be specified.")
-        pr = self.cont_pr # No user prompt, keep the `assistant,[user:cont_pr],assistant` chain
-    if pr: self.h.append(mk_msg(pr))
+    if pr and prev_role == 'user': await self()
+    self._post_pr(pr, prev_role)

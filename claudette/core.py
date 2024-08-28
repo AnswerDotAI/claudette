@@ -103,15 +103,33 @@ def _r(self:Client, r:Message, prefill=''):
 
 # %% ../00_core.ipynb
 @patch
+def _log(self:Client, final, prefill, msgs, maxtok=None, sp=None, temp=None, stream=None, stop=None, **kwargs):
+    self._r(final, prefill)
+    if self.log is not None: self.log.append({
+        "msgs": msgs, "prefill": prefill, **kwargs,
+        "msgs": msgs, "prefill": prefill, "maxtok": maxtok, "sp": sp, "temp": temp, "stream": stream, "stop": stop, **kwargs,
+        "result": self.result, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
+    })
+    return self.result
+
+# %% ../00_core.ipynb
+@patch
 def _stream(self:Client, msgs:list, prefill='', **kwargs):
     with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs), **kwargs) as s:
         if prefill: yield(prefill)
         yield from s.text_stream
-        self._r(s.get_final_message(), prefill)
-        if self.log is not None: self.log.append({
-            "msgs": msgs, "prefill": prefill, **kwargs,
-            "result": self.result, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
-        })
+        self._log(s.get_final_message(), prefill, msgs, **kwargs)
+
+# %% ../00_core.ipynb
+@patch
+def _precall(self:Client, msgs, prefill, stop, kwargs):
+    pref = [prefill.strip()] if prefill else []
+    if not isinstance(msgs,list): msgs = [msgs]
+    if stop is not None:
+        if not isinstance(stop, (list)): stop = [stop]
+        kwargs["stop_sequences"] = stop
+    msgs = mk_msgs(msgs+pref)
+    return msgs
 
 # %% ../00_core.ipynb
 @patch
@@ -126,21 +144,11 @@ def __call__(self:Client,
              stop=None, # Stop sequence
              **kwargs):
     "Make a call to Claude."
-    pref = [prefill.strip()] if prefill else []
-    if not isinstance(msgs,list): msgs = [msgs]
-    if stop is not None:
-        if not isinstance(stop, (list)): stop = [stop]
-        kwargs["stop_sequences"] = stop
-    msgs = mk_msgs(msgs+pref)
+    msgs = self._precall(msgs, prefill, stop, kwargs)
     if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     res = self.c.messages.create(
         model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    self._r(res, prefill)
-    if self.log is not None: self.log.append({
-        "msgs": msgs, "maxtok": maxtok, "sp": sp, "temp": temp, "prefill": prefill, "stream": stream, "stop": stop, **kwargs,
-        "result": res, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
-    })
-    return self.result
+    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
 
 # %% ../00_core.ipynb
 def mk_tool_choice(choose:Union[str,bool,None])->dict:
@@ -208,18 +216,23 @@ def _stream(self:Chat, res):
 
 # %% ../00_core.ipynb
 @patch
+def _post_pr(self:Chat, pr, prev_role):
+    if pr is None and prev_role == 'assistant':
+        if self.cont_pr is None:
+            raise ValueError("Prompt must be given after assistant completion, or use `self.cont_pr`.")
+        pr = self.cont_pr # No user prompt, keep the chain
+    if pr: self.h.append(mk_msg(pr))
+
+# %% ../00_core.ipynb
+@patch
 def _append_pr(self:Chat,
                pr=None,  # Prompt / message
               ):
-    prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user' if no history
-    if pr and prev_role == 'user':
-        self() # There's already a user request pending, so complete it
-    elif pr is None and prev_role == 'assistant':
-        if self.cont_pr is None:
-            raise ValueError("User prompt must be given after an assistant completion, or `self.cont_pr` must be specified.")
-        pr = self.cont_pr # No user prompt, keep the `assistant,[user:cont_pr],assistant` chain
-    if pr: self.h.append(mk_msg(pr))
+    prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user'
+    if pr and prev_role == 'user': self() # already user request pending
+    self._post_pr(pr, prev_role)
 
+# %% ../00_core.ipynb
 @patch
 def __call__(self:Chat,
              pr=None,  # Prompt / message
