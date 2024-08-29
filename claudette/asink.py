@@ -72,3 +72,20 @@ async def _append_pr(self:AsyncChat, pr=None):
     prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user' if no history
     if pr and prev_role == 'user': await self()
     self._post_pr(pr, prev_role)
+
+# %% ../02_async.ipynb
+@patch
+async def __call__(self:AsyncChat,
+        pr=None,  # Prompt / message
+        temp=0, # Temperature
+        maxtok=4096, # Maximum tokens
+        stream=False, # Stream response?
+        prefill='', # Optional prefill to pass to Claude as start of its response
+        **kw):
+    await self._append_pr(pr)
+    if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
+    if self.tool_choice and pr: kw['tool_choice'] = mk_tool_choice(self.tool_choice)
+    res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
+    if stream: return self._stream(res)
+    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
+    return res
