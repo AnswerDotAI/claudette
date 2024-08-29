@@ -2,9 +2,11 @@
 
 <!-- do not remove -->
 
-## 0.0.8
+## 0.0.9
 
-- Async support
+### New Features
+
+- Async support ([#21](https://github.com/AnswerDotAI/claudette/issues/21))
 
 
 ## 0.0.7
