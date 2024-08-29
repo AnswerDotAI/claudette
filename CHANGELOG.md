@@ -2,6 +2,11 @@
 
 <!-- do not remove -->
 
+## 0.0.8
+
+- Async support
+
+
 ## 0.0.7
 
 ### New Features
