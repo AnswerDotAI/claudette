@@ -239,14 +239,19 @@ def __call__(self:Chat,
              temp=0, # Temperature
              maxtok=4096, # Maximum tokens
              stream=False, # Stream response?
-             prefill='', # Optional prefill to pass to Claude as start of its response
+             prefill: Optional[str]='', # prefill to pass to Claude as start of its response
+             response_model: Optional[callable]=None, # output format to use
              **kw):
     self._append_pr(pr)
     if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
     if self.tool_choice and pr: kw['tool_choice'] = mk_tool_choice(self.tool_choice)
+    if response_model:
+        kw['tools'] = [get_schema(response_model)]
+        kw['tool_choice'] = mk_tool_choice(response_model)
     res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
+    if response_model: res.response_model = response_model(**res.content[0].input)
     return res
 
 # %% ../00_core.ipynb
