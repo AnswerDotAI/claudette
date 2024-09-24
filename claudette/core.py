@@ -215,7 +215,7 @@ class Chat:
         assert model or cli
         assert cont_pr != "", "cont_pr may not be an empty string"
         self.c = (cli or Client(model))
-        self.h,self.sp,self.tools,self.cont_pr,self.tool_choice = [],sp,tools,cont_pr,tool_choice
+        self.h,self.sp,self.tools,self.cont_pr,self.tool_choice,self.tool_results = [],sp,tools,cont_pr,tool_choice,[]
 
     @property
     def use(self): return self.c.use
@@ -260,7 +260,7 @@ def __call__(self:Chat,
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
     last_msg = self.h[-1]
-    res.tool_results = [tres for tres in last_msg['content'] if isinstance(tres, dict) and tres['type'] == 'tool_result']
+    self.tool_results += [tres for tres in last_msg['content'] if isinstance(tres, dict) and tres['type'] == 'tool_result']
     return res
 
 # %% ../00_core.ipynb

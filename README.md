@@ -114,7 +114,7 @@ Hello Jeremy, it’s nice to meet you. How can I assist you today?
 
 <details>
 
-- id: `msg_01UMpEJEVgTVAmK1yqMh9KvM`
+- id: `msg_01CwS6uoWkYKbg3kKFQnpp9b`
 - content:
   `[{'text': "Hello Jeremy, it's nice to meet you. How can I assist you today?", 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -124,7 +124,6 @@ Hello Jeremy, it’s nice to meet you. How can I assist you today?
 - type: `message`
 - usage:
   `{'input_tokens': 19, 'output_tokens': 20, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
 
 </details>
 
@@ -137,7 +136,7 @@ Your name is Jeremy, as you just told me.
 
 <details>
 
-- id: `msg_01XJuSMNEMLFzX3LX3YwBRrr`
+- id: `msg_01XXHK7KVb3Cyfw9EmPgMBT5`
 - content:
   `[{'text': 'Your name is Jeremy, as you just told me.', 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -147,7 +146,6 @@ Your name is Jeremy, as you just told me.
 - type: `message`
 - usage:
   `{'input_tokens': 47, 'output_tokens': 14, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
 
 </details>
 
@@ -159,7 +157,7 @@ collapsible section. Alternatively you can `print` the details:
 print(r)
 ```
 
-    Message(id='msg_01XJuSMNEMLFzX3LX3YwBRrr', content=[TextBlock(text='Your name is Jeremy, as you just told me.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 47; Out: 14; Total: 61, tool_results=[])
+    Message(id='msg_01XXHK7KVb3Cyfw9EmPgMBT5', content=[TextBlock(text='Your name is Jeremy, as you just told me.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 47; Out: 14; Total: 61)
 
 Claude supports adding an extra `assistant` message at the end, which
 contains the *prefill* – i.e. the text we want Claude to assume the
@@ -175,7 +173,7 @@ to be finding personal fulfillment, happiness, and purpose.
 
 <details>
 
-- id: `msg_012TCwvsYFR4kdAQtSp7PLDM`
+- id: `msg_01S7qzVNPuLaBWD7SfuJv36L`
 - content:
   `[{'text': 'According to Douglas Adams,  "42." More seriously, it\'s often considered to be finding personal fulfillment, happiness, and purpose.', 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -185,7 +183,6 @@ to be finding personal fulfillment, happiness, and purpose.
 - type: `message`
 - usage:
   `{'input_tokens': 81, 'output_tokens': 27, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
 
 </details>
 
@@ -218,7 +215,7 @@ have?
 
 <details>
 
-- id: `msg_019JMWNfCEEs9CNufVuu7ZZR`
+- id: `msg_012NyXtj2m72ips9ry1kCFnj`
 - content:
   `[{'text': "Hello Jeremy! It's nice to meet you. How can I assist you today? Is there anything specific you'd like to talk about or any questions you have?", 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -239,15 +236,17 @@ async for o in await chat("Concisely, what is the meaning of life?",
     print(o, end='')
 ```
 
-    According to Douglas Adams,  the meaning of life is 42. More seriously, there's no universally agreed upon answer. Common perspectives include:
+    According to Douglas Adams,  the meaning of life is 42. More seriously, philosophers have debated this for millennia. Common answers include:
 
-    1. Finding personal happiness and fulfillment
-    2. Serving others or a higher purpose
-    3. Creating meaning through our choices and actions
-    4. Experiencing and appreciating existence
-    5. Evolving and growing as individuals and as a species
+    1. Finding personal happiness
+    2. Serving others
+    3. Pursuing knowledge
+    4. Creating meaning through our choices
+    5. Fulfilling our potential
+    6. Connecting with others
+    7. Experiencing love and beauty
 
-    Ultimately, many believe each person must define their own meaning of life.
+    Ultimately, many believe we must each find our own meaning.
 
 ## Prompt caching
 
@@ -272,42 +271,44 @@ r
 ```
 
 Based on the readme, the main purpose of the Claudette project is to
-provide a high-level wrapper for Anthropic’s Python SDK for interacting
-with Claude AI models. Key aspects include:
+provide a high-level wrapper around Anthropic’s Python SDK for
+interacting with Claude AI models. Key features and goals include:
 
 1.  Automating and simplifying interactions with Claude, reducing
     boilerplate code.
 
-2.  Providing a stateful Chat class for managing conversations.
+2.  Providing a stateful dialog interface through the
+    [`Chat`](https://claudette.answer.ai/core.html#chat) class.
 
-3.  Supporting features like prefill, image handling, and tool use.
+3.  Supporting features like prefill (specifying the start of Claude’s
+    response) and image handling.
 
-4.  Offering a more convenient interface while maintaining full control.
+4.  Offering convenient support for Claude’s Tool Use API.
 
-5.  Being the first “literate nbdev” project, meaning the source code is
-    a rendered Jupyter Notebook with detailed explanations, making it
-    educational and easy to understand.
+5.  Serving as an example of “literate programming”, with the source
+    code designed to be readable and educational, including explanations
+    of how and why the code is written.
 
-6.  Supporting multiple model providers including Anthropic directly,
-    Amazon Bedrock, and Google Vertex.
+6.  Supporting multiple model providers, including direct Anthropic API
+    access as well as Claude models available through Amazon Bedrock and
+    Google Vertex AI.
 
-The project aims to make working with Claude models more accessible and
-efficient for developers while also serving as an educational resource
-on how to build such interfaces.
+The project aims to make working with Claude models more convenient and
+accessible for developers while also serving as an educational resource
+on how to effectively use and interact with these AI models.
 
 <details>
 
-- id: `msg_01QZQ8SJZYM8FtFMTBe1gPUS`
+- id: `msg_01Ki1G74bNztnX64U5uUFKyf`
 - content:
-  `[{'text': 'Based on the readme, the main purpose of the Claudette project is to provide a high-level wrapper for Anthropic\'s Python SDK for interacting with Claude AI models. Key aspects include:\n\n1. Automating and simplifying interactions with Claude, reducing boilerplate code.\n\n2. Providing a stateful Chat class for managing conversations.\n\n3. Supporting features like prefill, image handling, and tool use.\n\n4. Offering a more convenient interface while maintaining full control.\n\n5. Being the first "literate nbdev" project, meaning the source code is a rendered Jupyter Notebook with detailed explanations, making it educational and easy to understand.\n\n6. Supporting multiple model providers including Anthropic directly, Amazon Bedrock, and Google Vertex.\n\nThe project aims to make working with Claude models more accessible and efficient for developers while also serving as an educational resource on how to build such interfaces.', 'type': 'text'}]`
+  `[{'text': 'Based on the readme, the main purpose of the Claudette project is to provide a high-level wrapper around Anthropic\'s Python SDK for interacting with Claude AI models. Key features and goals include:\n\n1. Automating and simplifying interactions with Claude, reducing boilerplate code.\n\n2. Providing a stateful dialog interface through the [`Chat`](https://claudette.answer.ai/core.html#chat) class.\n\n3. Supporting features like prefill (specifying the start of Claude\'s response) and image handling.\n\n4. Offering convenient support for Claude\'s Tool Use API.\n\n5. Serving as an example of "literate programming", with the source code designed to be readable and educational, including explanations of how and why the code is written.\n\n6. Supporting multiple model providers, including direct Anthropic API access as well as Claude models available through Amazon Bedrock and Google Vertex AI.\n\nThe project aims to make working with Claude models more convenient and accessible for developers while also serving as an educational resource on how to effectively use and interact with these AI models.', 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 4, 'output_tokens': 196, 'cache_creation_input_tokens': 7171, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
+  `{'input_tokens': 4, 'output_tokens': 220, 'cache_creation_input_tokens': 7171, 'cache_read_input_tokens': 0}`
 
 </details>
 
@@ -318,7 +319,7 @@ tokens:
 print(r.usage)
 ```
 
-    Usage(input_tokens=4, output_tokens=196, cache_creation_input_tokens=7171, cache_read_input_tokens=0)
+    Usage(input_tokens=4, output_tokens=220, cache_creation_input_tokens=7171, cache_read_input_tokens=0)
 
 We can now ask a followup question in this chat:
 
@@ -333,47 +334,45 @@ Claudette makes tool use more ergonomic in several ways:
     Python functions for tools as simple as possible. Each parameter and
     the return value should have a type and a description.
 
-2.  Automatic handling: When Claude decides to use a tool, Claudette
-    automatically handles the process of calling the tool and feeding
-    the result back to Claude.
+2.  Automatic handling: The
+    [`Chat`](https://claudette.answer.ai/core.html#chat) class can be
+    initialized with a list of tools, and Claudette handles the
+    back-and-forth between Claude and the tools automatically.
 
 3.  Single-step execution: The
     [`Chat.toolloop`](https://claudette.answer.ai/toolloop.html#chat.toolloop)
-    method allows for executing multiple tool calls in a single step,
-    handling the back-and-forth between Claude and the tools
-    automatically.
+    method allows for executing a series of tool calls in a single step,
+    even if multiple tools are needed to solve a problem.
 
-4.  Easy tool registration: Tools are simply passed as a list to the
-    Chat constructor, making it easy to add or change available tools.
-
-5.  Forced tool use: You can set `tool_choice` to force Claude to always
+4.  Forced tool use: You can set `tool_choice` to force Claude to always
     answer using a specific tool.
 
-6.  Tracing: The `toolloop` method supports a `trace_func` parameter,
-    allowing you to see each response from Claude in the process, which
-    is useful for debugging and understanding the tool use flow.
+5.  Tracing: The `toolloop` method supports a `trace_func` parameter,
+    allowing you to see each response from Claude during the process.
+
+6.  Automatic parameter passing: When Claude decides to use a tool,
+    Claudette automatically calls the tool with the provided parameters.
 
 7.  System prompt integration: It allows setting a system prompt to
-    guide Claude’s behavior when using tools, like instructing it not to
-    mention the tools it’s using.
+    guide Claude’s behavior when using tools, such as instructing it not
+    to mention the tools it’s using.
 
 These features significantly reduce the amount of code and manual
-handling required to implement tool use with Claude, making the process
-more streamlined and developer-friendly.
+handling required to use Claude’s tool use capabilities, making the
+process more streamlined and developer-friendly.
 
 <details>
 
-- id: `msg_01MYyXnvV6gV5eBAhWHwDMf9`
+- id: `msg_0115MrHuUtMqTZGX3UpUY8qa`
 - content:
-  `[{'text': "Claudette makes tool use more ergonomic in several ways:\n\n1. Simplified function definition: It uses docments to make defining Python functions for tools as simple as possible. Each parameter and the return value should have a type and a description.\n\n2. Automatic handling: When Claude decides to use a tool, Claudette automatically handles the process of calling the tool and feeding the result back to Claude.\n\n3. Single-step execution: The [`Chat.toolloop`](https://claudette.answer.ai/toolloop.html#chat.toolloop) method allows for executing multiple tool calls in a single step, handling the back-and-forth between Claude and the tools automatically.\n\n4. Easy tool registration: Tools are simply passed as a list to the Chat constructor, making it easy to add or change available tools.\n\n5. Forced tool use: You can set`tool_choice`to force Claude to always answer using a specific tool.\n\n6. Tracing: The`toolloop`method supports a`trace_func`parameter, allowing you to see each response from Claude in the process, which is useful for debugging and understanding the tool use flow.\n\n7. System prompt integration: It allows setting a system prompt to guide Claude's behavior when using tools, like instructing it not to mention the tools it's using.\n\nThese features significantly reduce the amount of code and manual handling required to implement tool use with Claude, making the process more streamlined and developer-friendly.", 'type': 'text'}]`
+  `[{'text': "Claudette makes tool use more ergonomic in several ways:\n\n1. Simplified function definition: It uses docments to make defining Python functions for tools as simple as possible. Each parameter and the return value should have a type and a description.\n\n2. Automatic handling: The [`Chat`](https://claudette.answer.ai/core.html#chat) class can be initialized with a list of tools, and Claudette handles the back-and-forth between Claude and the tools automatically.\n\n3. Single-step execution: The [`Chat.toolloop`](https://claudette.answer.ai/toolloop.html#chat.toolloop) method allows for executing a series of tool calls in a single step, even if multiple tools are needed to solve a problem.\n\n4. Forced tool use: You can set`tool_choice`to force Claude to always answer using a specific tool.\n\n5. Tracing: The`toolloop`method supports a`trace_func`parameter, allowing you to see each response from Claude during the process.\n\n6. Automatic parameter passing: When Claude decides to use a tool, Claudette automatically calls the tool with the provided parameters.\n\n7. System prompt integration: It allows setting a system prompt to guide Claude's behavior when using tools, such as instructing it not to mention the tools it's using.\n\nThese features significantly reduce the amount of code and manual handling required to use Claude's tool use capabilities, making the process more streamlined and developer-friendly.", 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 216, 'output_tokens': 295, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 7171}`
-- tool_results: `[]`
+  `{'input_tokens': 240, 'output_tokens': 289, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 7171}`
 
 </details>
 
@@ -384,7 +383,7 @@ context tokens have been read from cache.
 print(r.usage)
 ```
 
-    Usage(input_tokens=216, output_tokens=295, cache_creation_input_tokens=0, cache_read_input_tokens=7171)
+    Usage(input_tokens=240, output_tokens=289, cache_creation_input_tokens=0, cache_read_input_tokens=7171)
 
 ## Tool use
 
@@ -444,14 +443,14 @@ r
 
     Finding the sum of 604542 and 6458932
 
-ToolUseBlock(id=‘toolu_011uoKUrsAgjhprPs7bFYYJW’, input={‘a’: 604542,
+ToolUseBlock(id=‘toolu_0179jv6tT5hrMAbTjmC94a8o’, input={‘a’: 604542,
 ‘b’: 6458932}, name=‘sums’, type=‘tool_use’)
 
 <details>
 
-- id: `msg_01UjzVDubCyTaSS7Sr7vxs2B`
+- id: `msg_01E3xnkymERTNVPQXDpw3xNn`
 - content:
-  `[{'id': 'toolu_011uoKUrsAgjhprPs7bFYYJW', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]`
+  `[{'id': 'toolu_0179jv6tT5hrMAbTjmC94a8o', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]`
 - model: `claude-3-5-sonnet-20240620`
 - role: `assistant`
 - stop_reason: `tool_use`
@@ -459,8 +458,6 @@ ToolUseBlock(id=‘toolu_011uoKUrsAgjhprPs7bFYYJW’, input={‘a’: 604542,
 - type: `message`
 - usage:
   `{'input_tokens': 414, 'output_tokens': 53, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results:
-  `[{'type': 'tool_result', 'tool_use_id': 'toolu_011uoKUrsAgjhprPs7bFYYJW', 'content': 7063474}]`
 
 </details>
 
@@ -475,7 +472,7 @@ The sum of 604542 and 6458932 is 7063474.
 
 <details>
 
-- id: `msg_01R6kssPpVFF9D8AY94NKbUT`
+- id: `msg_01XhZebhLMHrBhEvnH6Acydx`
 - content:
   `[{'text': 'The sum of 604542 and 6458932 is 7063474.', 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -485,19 +482,18 @@ The sum of 604542 and 6458932 is 7063474.
 - type: `message`
 - usage:
   `{'input_tokens': 515, 'output_tokens': 23, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
 
 </details>
 
-We can also directly access the result of the tool call from the
-response object.
+We can also directly access the result of the all the tool calls
+throughout the chat like so:
 
 ``` python
-r.tool_results
+chat.tool_results
 ```
 
     [{'type': 'tool_result',
-      'tool_use_id': 'toolu_011uoKUrsAgjhprPs7bFYYJW',
+      'tool_use_id': 'toolu_0179jv6tT5hrMAbTjmC94a8o',
       'content': 7063474}]
 
 You can see how many tokens have been used at any time by checking the
@@ -541,10 +537,10 @@ chat.toolloop(pr, trace_func=print)
 ```
 
     Finding the sum of 604542 and 6458932
-    Message(id='msg_01Lg9vmU9inCRtWM4ZksKWDh', content=[TextBlock(text='Certainly! To calculate (604542+6458932)*2, we\'ll need to use the available tools to perform the addition and multiplication operations. Let\'s break it down step by step:\n\n1. First, we\'ll add 604542 and 6458932 using the "sums" function.\n2. Then, we\'ll multiply the result by 2 using the "mults" function.\n\nLet\'s start with the addition:', type='text'), ToolUseBlock(id='toolu_01NzsLJ2jFiU2LkNbGbT7zsX', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 538; Out: 168; Total: 706, tool_results=[{'type': 'tool_result', 'tool_use_id': 'toolu_01NzsLJ2jFiU2LkNbGbT7zsX', 'content': 7063474}])
+    Message(id='msg_01Cjcxi2zHapopVmLxBbDCcX', content=[TextBlock(text='Certainly! I\'ll use the available tools to calculate (604542+6458932)*2 for you. Let\'s break this down into steps:\n\n1. First, we\'ll add 604542 and 6458932 using the "sums" function.\n2. Then, we\'ll multiply the result by 2 using the "mults" function.\n\nLet\'s start with the addition:', type='text'), ToolUseBlock(id='toolu_01M3WiVLJ7eDLm8LiaRZVT7F', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 538; Out: 160; Total: 698)
     Finding the product of 7063474 and 2
-    Message(id='msg_01KxCVavN7ckdvg2GHqZJimC', content=[TextBlock(text="Great! The sum of 604542 and 6458932 is 7063474.\n\nNow, let's multiply this result by 2:", type='text'), ToolUseBlock(id='toolu_015pjYz8MZnsNpMgeytAqrdt', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 721; Out: 106; Total: 827, tool_results=[{'type': 'tool_result', 'tool_use_id': 'toolu_015pjYz8MZnsNpMgeytAqrdt', 'content': 14126948}])
-    Message(id='msg_013ovXsD1PZ14hiYQRvCfHYD', content=[TextBlock(text='Now we have our final result. \n\nThe calculation (604542+6458932)*2 equals 14126948.\n\nTo break it down:\n1. 604542 + 6458932 = 7063474\n2. 7063474 * 2 = 14126948\n\nSo, the final answer to (604542+6458932)*2 is 14126948.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 841; Out: 95; Total: 936, tool_results=[])
+    Message(id='msg_0197YftdKidBbiqM4DEKSQdu', content=[TextBlock(text="Great! The sum of 604542 and 6458932 is 7063474.\n\nNow, let's multiply this result by 2:", type='text'), ToolUseBlock(id='toolu_01L1qBQTcGPfvKsc6iyjBw3a', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='tool_use', stop_sequence=None, type='message', usage=In: 713; Out: 106; Total: 819)
+    Message(id='msg_019LpxX8nuG9sYYmywxHtkxY', content=[TextBlock(text='Now we have our final result. \n\nThe calculation (604542+6458932)*2 equals 14126948.\n\nTo break it down:\n1. 604542 + 6458932 = 7063474\n2. 7063474 * 2 = 14126948\n\nSo, the final answer to (604542+6458932)*2 is 14126948.', type='text')], model='claude-3-5-sonnet-20240620', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 833; Out: 95; Total: 928)
 
 Now we have our final result.
 
@@ -557,7 +553,7 @@ So, the final answer to (604542+6458932)\*2 is 14126948.
 
 <details>
 
-- id: `msg_013ovXsD1PZ14hiYQRvCfHYD`
+- id: `msg_019LpxX8nuG9sYYmywxHtkxY`
 - content:
   `[{'text': 'Now we have our final result. \n\nThe calculation (604542+6458932)*2 equals 14126948.\n\nTo break it down:\n1. 604542 + 6458932 = 7063474\n2. 7063474 * 2 = 14126948\n\nSo, the final answer to (604542+6458932)*2 is 14126948.', 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -566,10 +562,20 @@ So, the final answer to (604542+6458932)\*2 is 14126948.
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 841, 'output_tokens': 95, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
+  `{'input_tokens': 833, 'output_tokens': 95, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
 
 </details>
+
+``` python
+chat.tool_results
+```
+
+    [{'type': 'tool_result',
+      'tool_use_id': 'toolu_01M3WiVLJ7eDLm8LiaRZVT7F',
+      'content': 7063474},
+     {'type': 'tool_result',
+      'tool_use_id': 'toolu_01L1qBQTcGPfvKsc6iyjBw3a',
+      'content': 14126948}]
 
 We can also utilize Claudette’s tool calling to perform structure
 generation. Here is an example of using tool use to synthetically
@@ -612,7 +618,7 @@ r = chat(pr)
 r
 ```
 
-ToolUseBlock(id=‘toolu_01Gv4zkjacei5vDqB5e4YDvU’, input={‘turns’:
+ToolUseBlock(id=‘toolu_01JcVSonNrE2oQvsYDCSPgrC’, input={‘turns’:
 \[{‘speaker’: ‘Jeremy’, ‘text’: ‘Hi Clara, how are you doing today?’},
 {‘speaker’: ‘Clara’, ‘text’: “Hello Jeremy! I’m doing well, thanks for
 asking. How about you?”}, {‘speaker’: ‘Jeremy’, ‘text’: “I’m good,
@@ -627,9 +633,9 @@ See you on Wednesday!’}\]}, name=‘Conversation’, type=‘tool_use’)
 
 <details>
 
-- id: `msg_01AqAntpLd3zRAcN8sYDoEpd`
+- id: `msg_01JtuBrtrVGTv4Tk3juor1KJ`
 - content:
-  `[{'id': 'toolu_01Gv4zkjacei5vDqB5e4YDvU', 'input': {'turns': [{'speaker': 'Jeremy', 'text': 'Hi Clara, how are you doing today?'}, {'speaker': 'Clara', 'text': "Hello Jeremy! I'm doing well, thanks for asking. How about you?"}, {'speaker': 'Jeremy', 'text': "I'm good, thanks. I was wondering if you'd like to grab coffee sometime this week?"}, {'speaker': 'Clara', 'text': "That sounds lovely! I'm free on Wednesday afternoon if that works for you."}, {'speaker': 'Jeremy', 'text': 'Wednesday afternoon works perfectly for me. Shall we say 3 PM at the café on Main Street?'}, {'speaker': 'Clara', 'text': "3 PM at the café on Main Street sounds great. I'll see you then, Jeremy!"}, {'speaker': 'Jeremy', 'text': 'Excellent! Looking forward to it, Clara. See you on Wednesday!'}]}, 'name': 'Conversation', 'type': 'tool_use'}]`
+  `[{'id': 'toolu_01JcVSonNrE2oQvsYDCSPgrC', 'input': {'turns': [{'speaker': 'Jeremy', 'text': 'Hi Clara, how are you doing today?'}, {'speaker': 'Clara', 'text': "Hello Jeremy! I'm doing well, thanks for asking. How about you?"}, {'speaker': 'Jeremy', 'text': "I'm good, thanks. I was wondering if you'd like to grab coffee sometime this week?"}, {'speaker': 'Clara', 'text': "That sounds lovely! I'm free on Wednesday afternoon if that works for you."}, {'speaker': 'Jeremy', 'text': 'Wednesday afternoon works perfectly for me. Shall we say 3 PM at the café on Main Street?'}, {'speaker': 'Clara', 'text': "3 PM at the café on Main Street sounds great. I'll see you then, Jeremy!"}, {'speaker': 'Jeremy', 'text': 'Excellent! Looking forward to it, Clara. See you on Wednesday!'}]}, 'name': 'Conversation', 'type': 'tool_use'}]`
 - model: `claude-3-5-sonnet-20240620`
 - role: `assistant`
 - stop_reason: `tool_use`
@@ -637,16 +643,20 @@ See you on Wednesday!’}\]}, name=‘Conversation’, type=‘tool_use’)
 - type: `message`
 - usage:
   `{'input_tokens': 373, 'output_tokens': 295, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results:
-  `[{'type': 'tool_result', 'tool_use_id': 'toolu_01Gv4zkjacei5vDqB5e4YDvU', 'content': __main__.Conversation(turns=[{'speaker': 'Jeremy', 'text': 'Hi Clara, how are you doing today?'}, {'speaker': 'Clara', 'text': "Hello Jeremy! I'm doing well, thanks for asking. How about you?"}, {'speaker': 'Jeremy', 'text': "I'm good, thanks. I was wondering if you'd like to grab coffee sometime this week?"}, {'speaker': 'Clara', 'text': "That sounds lovely! I'm free on Wednesday afternoon if that works for you."}, {'speaker': 'Jeremy', 'text': 'Wednesday afternoon works perfectly for me. Shall we say 3 PM at the café on Main Street?'}, {'speaker': 'Clara', 'text': "3 PM at the café on Main Street sounds great. I'll see you then, Jeremy!"}, {'speaker': 'Jeremy', 'text': 'Excellent! Looking forward to it, Clara. See you on Wednesday!'}])}]`
 
 </details>
 
 ``` python
-r.tool_results[0]['content']
+for t in chat.tool_results[0]['content'].turns: print(t)
 ```
 
-    __main__.Conversation(turns=[{'speaker': 'Jeremy', 'text': 'Hi Clara, how are you doing today?'}, {'speaker': 'Clara', 'text': "Hello Jeremy! I'm doing well, thanks for asking. How about you?"}, {'speaker': 'Jeremy', 'text': "I'm good, thanks. I was wondering if you'd like to grab coffee sometime this week?"}, {'speaker': 'Clara', 'text': "That sounds lovely! I'm free on Wednesday afternoon if that works for you."}, {'speaker': 'Jeremy', 'text': 'Wednesday afternoon works perfectly for me. Shall we say 3 PM at the café on Main Street?'}, {'speaker': 'Clara', 'text': "3 PM at the café on Main Street sounds great. I'll see you then, Jeremy!"}, {'speaker': 'Jeremy', 'text': 'Excellent! Looking forward to it, Clara. See you on Wednesday!'}])
+    {'speaker': 'Jeremy', 'text': 'Hi Clara, how are you doing today?'}
+    {'speaker': 'Clara', 'text': "Hello Jeremy! I'm doing well, thanks for asking. How about you?"}
+    {'speaker': 'Jeremy', 'text': "I'm good, thanks. I was wondering if you'd like to grab coffee sometime this week?"}
+    {'speaker': 'Clara', 'text': "That sounds lovely! I'm free on Wednesday afternoon if that works for you."}
+    {'speaker': 'Jeremy', 'text': 'Wednesday afternoon works perfectly for me. Shall we say 3 PM at the café on Main Street?'}
+    {'speaker': 'Clara', 'text': "3 PM at the café on Main Street sounds great. I'll see you then, Jeremy!"}
+    {'speaker': 'Jeremy', 'text': 'Excellent! Looking forward to it, Clara. See you on Wednesday!'}
 
 ## Images
 
@@ -658,7 +668,7 @@ fn = Path('samples/puppy.jpg')
 display.Image(filename=fn, width=200)
 ```
 
-<img src="index_files/figure-commonmark/cell-33-output-1.jpeg"
+<img src="index_files/figure-commonmark/cell-34-output-1.jpeg"
 width="200" />
 
 We create a [`Chat`](https://claudette.answer.ai/core.html#chat) object
@@ -686,7 +696,7 @@ blooming in the background behind the adorable puppy in the foreground.
 
 <details>
 
-- id: `msg_01JKCaLLYPgryrykw9Ny3XLJ`
+- id: `msg_01HD7aQcVEBQrHh6E7vMx2Lz`
 - content:
   `[{'text': 'The flowers in this image are purple. They appear to be small, daisy-like flowers, possibly asters or some type of purple daisy, blooming in the background behind the adorable puppy in the foreground.', 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -696,7 +706,6 @@ blooming in the background behind the adorable puppy in the foreground.
 - type: `message`
 - usage:
   `{'input_tokens': 110, 'output_tokens': 50, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
 
 </details>
 
@@ -742,7 +751,7 @@ young dog in a picturesque outdoor setting.
 
 <details>
 
-- id: `msg_016mNxpGsU1SRHjdD1wWT6VX`
+- id: `msg_01GkAfUxh1JKrmm7oPJDztKb`
 - content:
   `[{'text': "This image shows an adorable puppy lying in the grass. The puppy appears to be a Cavalier King Charles Spaniel or a similar breed, with distinctive white and reddish-brown fur coloring. Its face is predominantly white with large, expressive dark eyes and a small black nose.\n\nThe puppy is resting on a grassy surface, and behind it, you can see some purple flowers, which look like asters or michaelmas daisies. These flowers add a lovely splash of color to the background. There's also what seems to be a wooden structure or fence visible behind the puppy, giving the scene a rustic, garden-like feel.\n\nThe composition of the image is quite charming, with the puppy as the main focus in the foreground and the natural elements providing a beautiful, colorful backdrop. The lighting appears soft, highlighting the puppy's fur and giving the whole image a warm, inviting atmosphere.\n\nThis kind of image would be perfect for a greeting card, calendar, or as a heartwarming pet portrait. It captures the innocence and cuteness of a young dog in a picturesque outdoor setting.", 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -752,7 +761,6 @@ young dog in a picturesque outdoor setting.
 - type: `message`
 - usage:
   `{'input_tokens': 98, 'output_tokens': 248, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
 
 </details>
 
@@ -770,7 +778,7 @@ portrait of the young dog.
 
 <details>
 
-- id: `msg_018JNoAnKYLLMcJ9RrTAn3oz`
+- id: `msg_01E1ozHTY4yQ8NmMT8x1kyVm`
 - content:
   `[{'text': "The puppy in the image is facing towards the left side of the frame. Its head is turned slightly, allowing us to see most of its face, including both eyes, which are looking directly at the camera. The puppy's body is angled diagonally, with its front paws and chest visible as it rests on the grass. This positioning gives a good view of the puppy's facial features and part of its body, creating an engaging and endearing portrait of the young dog.", 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -780,7 +788,6 @@ portrait of the young dog.
 - type: `message`
 - usage:
   `{'input_tokens': 357, 'output_tokens': 105, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
 
 </details>
 
@@ -804,7 +811,7 @@ and adorable appearance for the puppy.
 
 <details>
 
-- id: `msg_01EVoQqTD5X3HY5btoZynEtZ`
+- id: `msg_0198LHZQFureob3qCrBQRCkq`
 - content:
   `[{'text': 'The puppy in the image has a combination of two main colors:\n\n1. White: The majority of its face, including the area around its eyes, muzzle, and what\'s visible of its chest and front legs, is white.\n\n2. Reddish-brown (often called "chestnut" or "ruby" in dog breed descriptions): This color appears on the puppy\'s ears and extends to patches visible on its back.\n\nThis color combination of white and reddish-brown is typical of certain spaniel breeds, particularly the Cavalier King Charles Spaniel. The contrast between the white and the reddish-brown fur creates a striking and adorable appearance for the puppy.', 'type': 'text'}]`
 - model: `claude-3-5-sonnet-20240620`
@@ -814,7 +821,6 @@ and adorable appearance for the puppy.
 - type: `message`
 - usage:
   `{'input_tokens': 470, 'output_tokens': 153, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-- tool_results: `[]`
 
 </details>
 
