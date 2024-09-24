@@ -5,7 +5,7 @@ __all__ = ['empty', 'models', 'models_aws', 'models_goog', 'find_block', 'conten
            'mk_tool_choice', 'call_func', 'mk_funcres', 'mk_toolres', 'Chat', 'img_msg', 'text_msg', 'mk_msg']
 
 # %% ../00_core.ipynb
-import inspect, typing, mimetypes, base64, json
+import copy, inspect, typing, mimetypes, base64, json
 from collections import abc
 try: from IPython import display
 except: display=None
@@ -121,6 +121,17 @@ def _stream(self:Client, msgs:list, prefill='', **kwargs):
         self._log(s.get_final_message(), prefill, msgs, **kwargs)
 
 # %% ../00_core.ipynb
+def _fix_tool_results(msgs):
+    "Convert any tool_result contents that aren't strings to strings"
+    msgs = copy.deepcopy(msgs)
+    for m in msgs:
+        if isinstance(m['content'], list):
+            for c in m['content']:
+                if isinstance(c, dict) and c['type']=='tool_result':
+                    c['content'] = str(c['content'])
+    return msgs
+
+# %% ../00_core.ipynb
 @patch
 def _precall(self:Client, msgs, prefill, stop, kwargs):
     pref = [prefill.strip()] if prefill else []
@@ -129,6 +140,7 @@ def _precall(self:Client, msgs, prefill, stop, kwargs):
         if not isinstance(stop, (list)): stop = [stop]
         kwargs["stop_sequences"] = stop
     msgs = mk_msgs(msgs+pref)
+    msgs = _fix_tool_results(msgs)
     return msgs
 
 # %% ../00_core.ipynb
@@ -175,7 +187,7 @@ def call_func(fc:ToolUseBlock, # Tool use block from Claude's message
 
 def mk_funcres(tuid, res):
     "Given tool use id and the tool result, create a tool_result response."
-    return dict(type="tool_result", tool_use_id=tuid, content=str(res))
+    return dict(type="tool_result", tool_use_id=tuid, content=res)
 
 # %% ../00_core.ipynb
 def mk_toolres(
@@ -239,7 +251,7 @@ def __call__(self:Chat,
              temp=0, # Temperature
              maxtok=4096, # Maximum tokens
              stream=False, # Stream response?
-             prefill='', # Optional prefill to pass to Claude as start of its response
+             prefill: Optional[str]='', # prefill to pass to Claude as start of its response
              **kw):
     self._append_pr(pr)
     if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
@@ -247,6 +259,8 @@ def __call__(self:Chat,
     res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
+    last_msg = self.h[-1]
+    res.tool_results = [tres for tres in last_msg['content'] if isinstance(tres, dict) and tres['type'] == 'tool_result']
     return res
 
 # %% ../00_core.ipynb
