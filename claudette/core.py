@@ -39,7 +39,7 @@ def contents(r):
     "Helper to get the contents from Claude response `r`."
     blk = find_block(r)
     if not blk and r.content: blk = r.content[0]
-    return blk.text.strip() if hasattr(blk,'text') else blk
+    return blk.text.strip() if hasattr(blk,'text') else str(blk)
 
 # %% ../00_core.ipynb
 @patch
@@ -178,7 +178,7 @@ def call_func(fc:ToolUseBlock, # Tool use block from Claude's message
 
 def mk_funcres(tuid, res):
     "Given tool use id and the tool result, create a tool_result response."
-    return dict(type="tool_result", tool_use_id=tuid, content=str(res))
+    return dict(type="tool_result", tool_use_id=tuid, content=res)
 
 # %% ../00_core.ipynb
 def mk_toolres(
@@ -272,11 +272,17 @@ def text_msg(s:str, cache=False)->dict:
     return _add_cache({"type": "text", "text": s}, cache)
 
 # %% ../00_core.ipynb
+def _str_if_needed(o):
+    if isinstance(o, (list,tuple,abc.Mapping)) or hasattr(o, '__pydantic_serializer__'): return o
+    return str(o)
+
+# %% ../00_core.ipynb
 def _mk_content(src, cache=False):
     "Create appropriate content data structure based on type of content"
     if isinstance(src,str): return text_msg(src, cache=cache)
     if isinstance(src,bytes): return img_msg(src, cache=cache)
-    return src
+    if isinstance(src, abc.Mapping): return {k:_str_if_needed(v) for k,v in src.items()}
+    return _str_if_needed(src)
 
 # %% ../00_core.ipynb
 def mk_msg(content, # A string, list, or dict containing the contents of the message
