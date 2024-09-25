@@ -45,7 +45,8 @@ def contents(r):
 @patch
 def _repr_markdown_(self:(Message)):
     det = '\n- '.join(f'{k}: `{v}`' for k,v in self.model_dump().items())
-    return f"""{contents(self)}
+    cts = re.sub(r'\$', '&#36;', contents(self))  # escape `$` for jupyter latex
+    return f"""{cts}
 
 <details>
 
@@ -54,25 +55,27 @@ def _repr_markdown_(self:(Message)):
 </details>"""
 
 # %% ../00_core.ipynb
-def usage(inp=0, # Number of input tokens
-          out=0  # Number of output tokens
+def usage(inp=0, # input tokens
+          out=0,  # Output tokens
+          cache_create=0, # Cache creation tokens
+          cache_read=0 # Cache read tokens
          ):
     "Slightly more concise version of `Usage`."
-    return Usage(input_tokens=inp, output_tokens=out)
+    return Usage(input_tokens=inp, output_tokens=out, cache_creation_input_tokens=cache_create, cache_read_input_tokens=cache_read)
 
 # %% ../00_core.ipynb
 @patch(as_prop=True)
-def total(self:Usage): return self.input_tokens+self.output_tokens
+def total(self:Usage): return self.input_tokens+self.output_tokens+getattr(self, "cache_creation_input_tokens",0)+getattr(self, "cache_read_input_tokens",0)
 
 # %% ../00_core.ipynb
 @patch
-def __repr__(self:Usage): return f'In: {self.input_tokens}; Out: {self.output_tokens}; Total: {self.total}'
+def __repr__(self:Usage): return f'In: {self.input_tokens}; Out: {self.output_tokens}; Cache create: {getattr(self, "cache_creation_input_tokens",0)}; Cache read: {getattr(self, "cache_read_input_tokens",0)}; Total: {self.total}'
 
 # %% ../00_core.ipynb
 @patch
 def __add__(self:Usage, b):
     "Add together each of `input_tokens` and `output_tokens`"
-    return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens)
+    return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens, getattr(self,'cache_creation_input_tokens',0)+getattr(b,'cache_creation_input_tokens',0), getattr(self,'cache_read_input_tokens',0)+getattr(b,'cache_read_input_tokens',0))
 
 # %% ../00_core.ipynb
 def mk_msgs(msgs:list, **kw):
