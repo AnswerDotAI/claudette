@@ -14,6 +14,7 @@ from toolslm.funccall import get_schema
 from fastcore.meta import delegates
 from fastcore.utils import *
 from .core import *
+from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs
 
 # %% ../02_async.ipynb
 class AsyncClient(Client):
