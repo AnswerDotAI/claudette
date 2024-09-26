@@ -135,25 +135,6 @@ def _precall(self:Client, msgs, prefill, stop, kwargs):
     return msgs
 
 # %% ../00_core.ipynb
-@patch
-@delegates(messages.Messages.create)
-def __call__(self:Client,
-             msgs:list, # List of messages in the dialog
-             sp='', # The system prompt
-             temp=0, # Temperature
-             maxtok=4096, # Maximum tokens
-             prefill='', # Optional prefill to pass to Claude as start of its response
-             stream:bool=False, # Stream response?
-             stop=None, # Stop sequence
-             **kwargs):
-    "Make a call to Claude."
-    msgs = self._precall(msgs, prefill, stop, kwargs)
-    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    res = self.c.messages.create(
-        model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
-
-# %% ../00_core.ipynb
 def mk_tool_choice(choose:Union[str,bool,None])->dict:
     "Create a `tool_choice` dict that's 'auto' if `choose` is `None`, 'any' if it is True, or 'tool' otherwise"
     return {"type": "tool", "name": choose} if isinstance(choose,str) else {'type':'any'} if choose else {'type':'auto'}
@@ -192,6 +173,43 @@ def mk_toolres(
     tcs = [mk_funcres(o.id, call_func(o, ns=ns, obj=obj)) for o in cts if isinstance(o,ToolUseBlock)]
     if tcs: res.append(mk_msg(tcs))
     return res
+
+# %% ../00_core.ipynb
+@patch
+@delegates(messages.Messages.create)
+def __call__(self:Client,
+             msgs:list, # List of messages in the dialog
+             sp='', # The system prompt
+             temp=0, # Temperature
+             maxtok=4096, # Maximum tokens
+             prefill='', # Optional prefill to pass to Claude as start of its response
+             stream:bool=False, # Stream response?
+             stop=None, # Stop sequence
+             tools:Optional[list]=None, # List of tools to make available to Claude
+             tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             **kwargs):
+    "Make a call to Claude."
+    if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
+    if tool_choice and pr: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
+    msgs = self._precall(msgs, prefill, stop, kwargs)
+    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, stop=stop, **kwargs)
+    res = self.c.messages.create(model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
+    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
+
+# %% ../00_core.ipynb
+@patch
+@delegates(Client.__call__)
+def structured(self:Client,
+               msgs:list, # List of messages in the dialog
+               ns:Optional[abc.Mapping]=None, # Namespace to search for tools
+               obj:Optional=None, # Class to search for tools
+               **kwargs):
+    "Return the value of all tool calls (generally used for structured outputs)"
+    res = self(msgs, **kwargs)
+    if ns is None: ns=globals()
+    cts = getattr(r, 'content', [])
+    tcs = [call_func(o, ns=ns, obj=obj) for o in cts if isinstance(o,ToolUseBlock)]
+    return tcs
 
 # %% ../00_core.ipynb
 class Chat:
@@ -245,9 +263,8 @@ def __call__(self:Chat,
              prefill='', # Optional prefill to pass to Claude as start of its response
              **kw):
     self._append_pr(pr)
-    if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
-    if self.tool_choice and pr: kw['tool_choice'] = mk_tool_choice(self.tool_choice)
-    res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
+    res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok,
+                 tools=self.tools, tool_choice=self.tool_choice, **kw)
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
     return res
