@@ -290,7 +290,7 @@ def text_msg(s:str, cache=False)->dict:
 
 # %% ../00_core.ipynb
 def _str_if_needed(o):
-    if isinstance(o, (list,tuple,abc.Mapping)) or hasattr(o, '__pydantic_serializer__'): return o
+    if isinstance(o, (list,tuple,abc.Mapping,L)) or hasattr(o, '__pydantic_serializer__'): return o
     return str(o)
 
 # %% ../00_core.ipynb
@@ -311,7 +311,7 @@ def mk_msg(content, # A string, list, or dict containing the contents of the mes
     if isinstance(content, abc.Mapping): content=content.get('content', content)
     if not isinstance(content, list): content=[content]
     content = [_mk_content(o, cache if islast else False) for islast,o in loop_last(content)] if content else '.'
-    return dict(role=role, content=content, **kw)
+    return AttrDict(dict(role=role, content=content, **kw))
 
 # %% ../00_core.ipynb
 models_aws = ('anthropic.claude-3-haiku-20240307-v1:0', 'anthropic.claude-3-sonnet-20240229-v1:0',
