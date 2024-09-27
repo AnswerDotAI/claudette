@@ -192,7 +192,7 @@ def __call__(self:Client,
     if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
     if tool_choice and pr: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
     msgs = self._precall(msgs, prefill, stop, kwargs)
-    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, stop=stop, **kwargs)
+    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     res = self.c.messages.create(model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
 
@@ -311,7 +311,7 @@ def mk_msg(content, # A string, list, or dict containing the contents of the mes
     if isinstance(content, abc.Mapping): content=content.get('content', content)
     if not isinstance(content, list): content=[content]
     content = [_mk_content(o, cache if islast else False) for islast,o in loop_last(content)] if content else '.'
-    return dict2obj(dict(role=role, content=content, **kw))
+    return dict(role=role, content=content, **kw)
 
 # %% ../00_core.ipynb
 models_aws = ('anthropic.claude-3-haiku-20240307-v1:0', 'anthropic.claude-3-sonnet-20240229-v1:0',
