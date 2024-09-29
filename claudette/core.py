@@ -349,12 +349,4 @@ def mk_msg(content, # A string, list, or dict containing the contents of the mes
     if isinstance(content, abc.Mapping): content=content.get('content', content)
     if not isinstance(content, list): content=[content]
     content = [_mk_content(o, cache if islast else False) for islast,o in loop_last(content)] if content else '.'
-    return dict2obj(dict(role=role, content=content, **kw))
-    return AttrDict(dict(role=role, content=content, **kw))
-
-# %% ../00_core.ipynb
-models_aws = ('anthropic.claude-3-haiku-20240307-v1:0', 'anthropic.claude-3-sonnet-20240229-v1:0',
-    'anthropic.claude-3-opus-20240229-v1:0', 'anthropic.claude-3-5-sonnet-20240620-v1:0')
-
-# %% ../00_core.ipynb
-models_goog = 'claude-3-haiku@20240307', 'claude-3-sonnet@20240229', 'claude-3-opus@20240229', 'claude-3-5-sonnet@20240620'
+    return dict2obj(dict(role=role, content=content, **kw), list_func=list)
