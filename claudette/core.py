@@ -211,7 +211,7 @@ def __call__(self:Client,
              **kwargs):
     "Make a call to Claude."
     if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
-    if tool_choice and pr: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
+    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
     msgs = self._precall(msgs, prefill, stop, kwargs)
     if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     res = self.c.messages.create(model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
@@ -228,7 +228,7 @@ def structured(self:Client,
     "Return the value of all tool calls (generally used for structured outputs)"
     res = self(msgs, **kwargs)
     if ns is None: ns=globals()
-    cts = getattr(r, 'content', [])
+    cts = getattr(res, 'content', [])
     tcs = [call_func(o, ns=ns, obj=obj) for o in cts if isinstance(o,ToolUseBlock)]
     return tcs
 
