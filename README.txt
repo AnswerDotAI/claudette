@@ -674,3 +674,7 @@ have?
 - usage: {‘input_tokens’: 10, ‘output_tokens’: 36}
 
 </details>
+
+## Extensions
+
+- [Pydantic Structured Ouput](https://github.com/tom-pollak/claudette-pydantic)
