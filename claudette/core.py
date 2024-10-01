@@ -222,12 +222,14 @@ def __call__(self:Client,
 @delegates(Client.__call__)
 def structured(self:Client,
                msgs:list, # List of messages in the dialog
-               ns:Optional[abc.Mapping]=None, # Namespace to search for tools
+               tools:Optional[list]=None, # List of tools to make available to Claude
                obj:Optional=None, # Class to search for tools
+               ns:Optional[abc.Mapping]=None, # Namespace to search for tools
                **kwargs):
     "Return the value of all tool calls (generally used for structured outputs)"
-    res = self(msgs, **kwargs)
-    if ns is None: ns=globals()
+    tools = listify(tools)
+    res = self(msgs, tools=tools, tool_choice=tools, **kwargs)
+    if ns is None: ns=tools
     cts = getattr(res, 'content', [])
     tcs = [call_func(o, ns=ns, obj=obj) for o in cts if isinstance(o,ToolUseBlock)]
     return tcs
