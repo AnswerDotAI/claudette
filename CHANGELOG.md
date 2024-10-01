@@ -2,6 +2,15 @@
 
 <!-- do not remove -->
 
+## 0.0.10
+
+### New Features
+
+- Add `Client.structured` ([#32](https://github.com/AnswerDotAI/claudette/issues/32))
+- Use `dict2obj` ([#30](https://github.com/AnswerDotAI/claudette/issues/30))
+- Store tool call result without stringifying ([#29](https://github.com/AnswerDotAI/claudette/issues/29))
+
+
 ## 0.0.9
 
 ### New Features
