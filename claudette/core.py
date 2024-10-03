@@ -208,10 +208,11 @@ def __call__(self:Client,
              stop=None, # Stop sequence
              tools:Optional[list]=None, # List of tools to make available to Claude
              tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             pr=None, # prompt
              **kwargs):
     "Make a call to Claude."
     if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
-    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
+    if tool_choice and pr: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
     msgs = self._precall(msgs, prefill, stop, kwargs)
     if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     res = self.c.messages.create(model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
@@ -304,7 +305,7 @@ def __call__(self:Chat,
              **kw):
     self._append_pr(pr)
     res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok,
-                 tools=self.tools, tool_choice=self.tool_choice, **kw)
+                 tools=self.tools, tool_choice=self.tool_choice, pr=pr,**kw)
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
     return res
