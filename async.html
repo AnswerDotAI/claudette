@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>The async version – claudette</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="The async version – claudette">
+<meta property="og:description" content="Claudette is Claude’s friend">
+<meta property="og:site_name" content="claudette">
+<meta name="twitter:title" content="The async version – claudette">
+<meta name="twitter:description" content="Claudette is Claude’s friend">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">claudette</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./async.html">The async version</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">claudette</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Claudette’s source</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./toolloop.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tool loop</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./async.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">The async version</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#async-sdk" id="toc-async-sdk" class="nav-link" data-scroll-target="#async-sdk">Async SDK</a>
+  <ul class="collapse">
+  <li><a href="#asyncclient" id="toc-asyncclient" class="nav-link" data-scroll-target="#asyncclient">AsyncClient</a></li>
+  <li><a href="#asyncclient.__call__" id="toc-asyncclient.__call__" class="nav-link" data-scroll-target="#asyncclient.__call__">AsyncClient.__call__</a></li>
+  </ul></li>
+  <li><a href="#asyncchat" id="toc-asyncchat" class="nav-link" data-scroll-target="#asyncchat">AsyncChat</a>
+  <ul class="collapse">
+  <li><a href="#asyncchat-1" id="toc-asyncchat-1" class="nav-link" data-scroll-target="#asyncchat-1">AsyncChat</a></li>
+  <li><a href="#asyncchat.__call__" id="toc-asyncchat.__call__" class="nav-link" data-scroll-target="#asyncchat.__call__">AsyncChat.__call__</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/AnswerDotAI/claudette/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="async.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">The async version</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+</section>
+<section id="async-sdk" class="level2">
+<h2 class="anchored" data-anchor-id="async-sdk">Async SDK</h2>
+<div id="70b53a51" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> models[<span class="dv">1</span>]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>cli <span class="op">=</span> AsyncAnthropic()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="6ec40731" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {<span class="st">'role'</span>: <span class="st">'user'</span>, <span class="st">'content'</span>: <span class="st">"I'm Jeremy"</span>}</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="cf">await</span> cli.messages.create(messages<span class="op">=</span>[m], model<span class="op">=</span>model, max_tokens<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Hello Jeremy! It’s nice to meet you. How can I assist you today? Is there anything specific you’d like to talk about or any questions you have?</p>
+<details>
+<ul>
+<li>id: <code>msg_019gsEQs5dqb3kgwNJbTH27M</code></li>
+<li>content: <code>[{'text': "Hello Jeremy! It's nice to meet you. How can I assist you today? Is there anything specific you'd like to talk about or any questions you have?", 'type': 'text'}]</code></li>
+<li>model: <code>claude-3-5-sonnet-20240620</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'input_tokens': 10, 'output_tokens': 36}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/asink.py#L19" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="asyncclient" class="level3">
+<h3 class="anchored" data-anchor-id="asyncclient">AsyncClient</h3>
+<blockquote class="blockquote">
+<pre><code> AsyncClient (model, cli=None, log=False)</code></pre>
+</blockquote>
+<p><em>Async Anthropic messages client.</em></p>
+<div id="3b873aaf" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AsyncClient(Client):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, model, cli<span class="op">=</span><span class="va">None</span>, log<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">"Async Anthropic messages client."</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(model,cli,log)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> cli: <span class="va">self</span>.c <span class="op">=</span> AsyncAnthropic(default_headers<span class="op">=</span>{<span class="st">'anthropic-beta'</span>: <span class="st">'prompt-caching-2024-07-31'</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="d01e9ccf" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> AsyncClient(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0181f7b3" class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>c._r(r)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>c.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 10; Out: 36; Total: 46</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/asink.py#L36" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="asyncclient.__call__" class="level3">
+<h3 class="anchored" data-anchor-id="asyncclient.__call__">AsyncClient.__call__</h3>
+<blockquote class="blockquote">
+<pre><code> AsyncClient.__call__ (msgs:list, sp='', temp=0, maxtok=4096, prefill='',
+                       stream:bool=False, stop=None, cli=None, log=False)</code></pre>
+</blockquote>
+<p><em>Make an async call to Claude.</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>msgs</td>
+<td>list</td>
+<td></td>
+<td>List of messages in the dialog</td>
+</tr>
+<tr class="even">
+<td>sp</td>
+<td>str</td>
+<td></td>
+<td>The system prompt</td>
+</tr>
+<tr class="odd">
+<td>temp</td>
+<td>int</td>
+<td>0</td>
+<td>Temperature</td>
+</tr>
+<tr class="even">
+<td>maxtok</td>
+<td>int</td>
+<td>4096</td>
+<td>Maximum tokens</td>
+</tr>
+<tr class="odd">
+<td>prefill</td>
+<td>str</td>
+<td></td>
+<td>Optional prefill to pass to Claude as start of its response</td>
+</tr>
+<tr class="even">
+<td>stream</td>
+<td>bool</td>
+<td>False</td>
+<td>Stream response?</td>
+</tr>
+<tr class="odd">
+<td>stop</td>
+<td>NoneType</td>
+<td>None</td>
+<td>Stop sequence</td>
+</tr>
+<tr class="even">
+<td>cli</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>log</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div id="6520a355" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> _stream(<span class="va">self</span>:AsyncClient, msgs:<span class="bu">list</span>, prefill<span class="op">=</span><span class="st">''</span>, <span class="op">**</span>kwargs):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="cf">with</span> <span class="va">self</span>.c.messages.stream(model<span class="op">=</span><span class="va">self</span>.model, messages<span class="op">=</span>mk_msgs(msgs), <span class="op">**</span>kwargs) <span class="im">as</span> s:</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> prefill: <span class="cf">yield</span> prefill</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">async</span> <span class="cf">for</span> o <span class="kw">in</span> s.text_stream: <span class="cf">yield</span> o</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._log(<span class="cf">await</span> s.get_final_message(), prefill, msgs, kwargs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="835638bb" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">@delegates</span>(Client)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>:AsyncClient,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>             msgs:<span class="bu">list</span>, <span class="co"># List of messages in the dialog</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>             sp<span class="op">=</span><span class="st">''</span>, <span class="co"># The system prompt</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>             temp<span class="op">=</span><span class="dv">0</span>, <span class="co"># Temperature</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>             maxtok<span class="op">=</span><span class="dv">4096</span>, <span class="co"># Maximum tokens</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>             prefill<span class="op">=</span><span class="st">''</span>, <span class="co"># Optional prefill to pass to Claude as start of its response</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>             stream:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>, <span class="co"># Stream response?</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>             stop<span class="op">=</span><span class="va">None</span>, <span class="co"># Stop sequence</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>             <span class="op">**</span>kwargs):</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Make an async call to Claude."</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    msgs <span class="op">=</span> <span class="va">self</span>._precall(msgs, prefill, stop, kwargs)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> stream: <span class="cf">return</span> <span class="va">self</span>._stream(msgs, prefill<span class="op">=</span>prefill, max_tokens<span class="op">=</span>maxtok, system<span class="op">=</span>sp, temperature<span class="op">=</span>temp, <span class="op">**</span>kwargs)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> <span class="cf">await</span> <span class="va">self</span>.c.messages.create(</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        model<span class="op">=</span><span class="va">self</span>.model, messages<span class="op">=</span>msgs, max_tokens<span class="op">=</span>maxtok, system<span class="op">=</span>sp, temperature<span class="op">=</span>temp, <span class="op">**</span>kwargs)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>._log(res, prefill, msgs, maxtok, sp, temp, stream<span class="op">=</span>stream, stop<span class="op">=</span>stop, <span class="op">**</span>kwargs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="881b5e78" class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> AsyncClient(model, log<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>c.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 0; Out: 0; Total: 0</code></pre>
+</div>
+</div>
+<div id="c1220856" class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>c.model <span class="op">=</span> models[<span class="dv">1</span>]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> c(<span class="st">'Hi'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Hello! How can I assist you today? Feel free to ask any questions or let me know if you need help with anything.</p>
+<details>
+<ul>
+<li>id: <code>msg_01L9vqP9r1LcmvSk8vWGLbPo</code></li>
+<li>content: <code>[{'text': 'Hello! How can I assist you today? Feel free to ask any questions or let me know if you need help with anything.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-3-5-sonnet-20240620</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'input_tokens': 8, 'output_tokens': 29, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="ae9f7e06" class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>c.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 8; Out: 29; Total: 37</code></pre>
+</div>
+</div>
+<div id="7f479429" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="st">"Concisely, what is the meaning of life?"</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>pref <span class="op">=</span> <span class="st">'According to Douglas Adams,'</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> c(q, prefill<span class="op">=</span>pref)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>According to Douglas Adams, the meaning of life is 42. More seriously, there’s no universally agreed upon meaning of life. Many philosophers and religions have proposed different answers, but it remains an open question that individuals must grapple with for themselves.</p>
+<details>
+<ul>
+<li>id: <code>msg_01KAJbCneA2oCRPVm9EkyDXF</code></li>
+<li>content: <code>[{'text': "According to Douglas Adams,  the meaning of life is 42. More seriously, there's no universally agreed upon meaning of life. Many philosophers and religions have proposed different answers, but it remains an open question that individuals must grapple with for themselves.", 'type': 'text'}]</code></li>
+<li>model: <code>claude-3-5-sonnet-20240620</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'input_tokens': 24, 'output_tokens': 51, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="c0230a8c" class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">for</span> o <span class="kw">in</span> (<span class="cf">await</span> c(<span class="st">'Hi'</span>, stream<span class="op">=</span><span class="va">True</span>)): <span class="bu">print</span>(o, end<span class="op">=</span><span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hello! How can I assist you today? Feel free to ask any questions or let me know if you need help with anything.</code></pre>
+</div>
+</div>
+<div id="beb25f2a" class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>c.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 40; Out: 109; Total: 149</code></pre>
+</div>
+</div>
+<div id="db1c75ef" class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">for</span> o <span class="kw">in</span> (<span class="cf">await</span> c(q, prefill<span class="op">=</span>pref, stream<span class="op">=</span><span class="va">True</span>)): <span class="bu">print</span>(o, end<span class="op">=</span><span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>According to Douglas Adams,  the meaning of life is 42. More seriously, there's no universally agreed upon meaning of life. Many philosophers and religions have proposed different answers, but it remains an open question that individuals must grapple with for themselves.</code></pre>
+</div>
+</div>
+<div id="e36eddc9" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>c.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 64; Out: 160; Total: 224</code></pre>
+</div>
+</div>
+<div id="046e8cc3" class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sums(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    a:<span class="bu">int</span>,  <span class="co"># First thing to sum</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    b:<span class="bu">int</span><span class="op">=</span><span class="dv">1</span> <span class="co"># Second thing to sum</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">int</span>: <span class="co"># The sum of the inputs</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Adds a + b."</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Finding the sum of </span><span class="sc">{</span>a<span class="sc">}</span><span class="ss"> and </span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">+</span> b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="d51f2bdf" class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>a,b <span class="op">=</span> <span class="dv">604542</span>,<span class="dv">6458932</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> <span class="ss">f"What is </span><span class="sc">{</span>a<span class="sc">}</span><span class="ss">+</span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">?"</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>sp <span class="op">=</span> <span class="st">"You are a summing expert."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="bff81d52" class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>tools<span class="op">=</span>[get_schema(sums)]</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>choice <span class="op">=</span> mk_tool_choice(<span class="st">'sums'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8bae7694" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tools <span class="op">=</span> [get_schema(sums)]</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>msgs <span class="op">=</span> mk_msgs(pr)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="cf">await</span> c(msgs, sp<span class="op">=</span>sp, tools<span class="op">=</span>tools, tool_choice<span class="op">=</span>choice)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>tr <span class="op">=</span> mk_toolres(r, ns<span class="op">=</span><span class="bu">globals</span>())</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>msgs <span class="op">+=</span> tr</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>contents(<span class="cf">await</span> c(msgs, sp<span class="op">=</span>sp, tools<span class="op">=</span>tools))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Finding the sum of 604542 and 6458932</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>'As a summing expert, I\'m happy to help you with this addition. The sum of 604542 and 6458932 is 7063474.\n\nTo break it down:\n604542 (first number)\n+ 6458932 (second number)\n= 7063474 (total sum)\n\nThis result was calculated using the "sums" function, which adds two numbers together. Is there anything else you\'d like me to sum for you?'</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="asyncchat" class="level2">
+<h2 class="anchored" data-anchor-id="asyncchat">AsyncChat</h2>
+<hr>
+<p><a href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/asink.py#L54" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="asyncchat-1" class="level3">
+<h3 class="anchored" data-anchor-id="asyncchat-1">AsyncChat</h3>
+<blockquote class="blockquote">
+<pre><code> AsyncChat (model:Optional[str]=None,
+            cli:Optional[claudette.core.Client]=None, sp='',
+            tools:Optional[list]=None, temp=0, cont_pr:Optional[str]=None)</code></pre>
+</blockquote>
+<p><em>Anthropic async chat client.</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>model</td>
+<td>Optional</td>
+<td>None</td>
+<td>Model to use (leave empty if passing <code>cli</code>)</td>
+</tr>
+<tr class="even">
+<td>cli</td>
+<td>Optional</td>
+<td>None</td>
+<td>Client to use (leave empty if passing <code>model</code>)</td>
+</tr>
+<tr class="odd">
+<td>sp</td>
+<td>str</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>tools</td>
+<td>Optional</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>temp</td>
+<td>int</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>cont_pr</td>
+<td>Optional</td>
+<td>None</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div id="a77d1edb" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="at">@delegates</span>()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AsyncChat(Chat):</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                 model:Optional[<span class="bu">str</span>]<span class="op">=</span><span class="va">None</span>, <span class="co"># Model to use (leave empty if passing `cli`)</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                 cli:Optional[Client]<span class="op">=</span><span class="va">None</span>, <span class="co"># Client to use (leave empty if passing `model`)</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                 <span class="op">**</span>kwargs):</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">"Anthropic async chat client."</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(model, cli, <span class="op">**</span>kwargs)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> cli: <span class="va">self</span>.c <span class="op">=</span> AsyncClient(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="04b837c5" class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>sp <span class="op">=</span> <span class="st">"Never mention what tools you use."</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> AsyncChat(model, sp<span class="op">=</span>sp)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>chat.c.use, chat.h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>(In: 0; Out: 0; Total: 0, [])</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/asink.py#L78" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="asyncchat.__call__" class="level3">
+<h3 class="anchored" data-anchor-id="asyncchat.__call__">AsyncChat.__call__</h3>
+<blockquote class="blockquote">
+<pre><code> AsyncChat.__call__ (pr=None, temp=0, maxtok=4096, stream=False,
+                     prefill='', **kw)</code></pre>
+</blockquote>
+<p><em>Call self as a function.</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pr</td>
+<td>NoneType</td>
+<td>None</td>
+<td>Prompt / message</td>
+</tr>
+<tr class="even">
+<td>temp</td>
+<td>int</td>
+<td>0</td>
+<td>Temperature</td>
+</tr>
+<tr class="odd">
+<td>maxtok</td>
+<td>int</td>
+<td>4096</td>
+<td>Maximum tokens</td>
+</tr>
+<tr class="even">
+<td>stream</td>
+<td>bool</td>
+<td>False</td>
+<td>Stream response?</td>
+</tr>
+<tr class="odd">
+<td>prefill</td>
+<td>str</td>
+<td></td>
+<td>Optional prefill to pass to Claude as start of its response</td>
+</tr>
+<tr class="even">
+<td>kw</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div id="42a05df9" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> _stream(<span class="va">self</span>:AsyncChat, res):</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="cf">for</span> o <span class="kw">in</span> res: <span class="cf">yield</span> o</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.h <span class="op">+=</span> mk_toolres(<span class="va">self</span>.c.result, ns<span class="op">=</span><span class="va">self</span>.tools, obj<span class="op">=</span><span class="va">self</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="8e5ab3be" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> _append_pr(<span class="va">self</span>:AsyncChat, pr<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    prev_role <span class="op">=</span> nested_idx(<span class="va">self</span>.h, <span class="op">-</span><span class="dv">1</span>, <span class="st">'role'</span>) <span class="cf">if</span> <span class="va">self</span>.h <span class="cf">else</span> <span class="st">'assistant'</span> <span class="co"># First message should be 'user' if no history</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pr <span class="kw">and</span> prev_role <span class="op">==</span> <span class="st">'user'</span>: <span class="cf">await</span> <span class="va">self</span>()</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>._post_pr(pr, prev_role)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="bec85e37" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>:AsyncChat,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>        pr<span class="op">=</span><span class="va">None</span>,  <span class="co"># Prompt / message</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>        temp<span class="op">=</span><span class="dv">0</span>, <span class="co"># Temperature</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>        maxtok<span class="op">=</span><span class="dv">4096</span>, <span class="co"># Maximum tokens</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>        stream<span class="op">=</span><span class="va">False</span>, <span class="co"># Stream response?</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>        prefill<span class="op">=</span><span class="st">''</span>, <span class="co"># Optional prefill to pass to Claude as start of its response</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">**</span>kw):</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="va">self</span>._append_pr(pr)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.tools: kw[<span class="st">'tools'</span>] <span class="op">=</span> [get_schema(o) <span class="cf">for</span> o <span class="kw">in</span> <span class="va">self</span>.tools]</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.tool_choice <span class="kw">and</span> pr: kw[<span class="st">'tool_choice'</span>] <span class="op">=</span> mk_tool_choice(<span class="va">self</span>.tool_choice)</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> <span class="cf">await</span> <span class="va">self</span>.c(<span class="va">self</span>.h, stream<span class="op">=</span>stream, prefill<span class="op">=</span>prefill, sp<span class="op">=</span><span class="va">self</span>.sp, temp<span class="op">=</span>temp, maxtok<span class="op">=</span>maxtok, <span class="op">**</span>kw)</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> stream: <span class="cf">return</span> <span class="va">self</span>._stream(res)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.h <span class="op">+=</span> mk_toolres(<span class="va">self</span>.c.result, ns<span class="op">=</span><span class="va">self</span>.tools, obj<span class="op">=</span><span class="va">self</span>)</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="40073f42" class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> chat(<span class="st">"I'm Jeremy"</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> chat(<span class="st">"What's my name?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Your name is Jeremy, as you mentioned in your previous message.</p>
+<details>
+<ul>
+<li>id: <code>msg_01NMugMXWpDP9iuTXeLkHarn</code></li>
+<li>content: <code>[{'text': 'Your name is Jeremy, as you mentioned in your previous message.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-3-5-sonnet-20240620</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'input_tokens': 64, 'output_tokens': 16, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="20a32de0" class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="st">"Concisely, what is the meaning of life?"</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>pref <span class="op">=</span> <span class="st">'According to Douglas Adams,'</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> chat(q, prefill<span class="op">=</span>pref)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>According to Douglas Adams, the meaning of life is 42. More seriously, there’s no universally agreed upon answer. Common philosophical perspectives include:</p>
+<ol type="1">
+<li>Finding personal fulfillment</li>
+<li>Serving others</li>
+<li>Pursuing happiness</li>
+<li>Creating meaning through our choices</li>
+<li>Experiencing and appreciating existence</li>
+</ol>
+<p>Ultimately, many believe each individual must determine their own life’s meaning.</p>
+<details>
+<ul>
+<li>id: <code>msg_01VPWUQn5Do1Kst8RYUDQvCu</code></li>
+<li>content: <code>[{'text': "According to Douglas Adams,  the meaning of life is 42. More seriously, there's no universally agreed upon answer. Common philosophical perspectives include:\n\n1. Finding personal fulfillment\n2. Serving others\n3. Pursuing happiness\n4. Creating meaning through our choices\n5. Experiencing and appreciating existence\n\nUltimately, many believe each individual must determine their own life's meaning.", 'type': 'text'}]</code></li>
+<li>model: <code>claude-3-5-sonnet-20240620</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'input_tokens': 100, 'output_tokens': 82, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="529104ec" class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> AsyncChat(model, sp<span class="op">=</span>sp)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">for</span> o <span class="kw">in</span> (<span class="cf">await</span> chat(<span class="st">"I'm Jeremy"</span>, stream<span class="op">=</span><span class="va">True</span>)): <span class="bu">print</span>(o, end<span class="op">=</span><span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hello Jeremy! It's nice to meet you. How are you doing today? Is there anything in particular you'd like to chat about or any questions I can help you with?</code></pre>
+</div>
+</div>
+<div id="ee6535cf" class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> <span class="ss">f"What is </span><span class="sc">{</span>a<span class="sc">}</span><span class="ss">+</span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">?"</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> AsyncChat(model, sp<span class="op">=</span>sp, tools<span class="op">=</span>[sums])</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="cf">await</span> chat(pr)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Finding the sum of 604542 and 6458932</code></pre>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>To answer this question, I can use the “sums” function to add these two numbers together. Let me do that for you.</p>
+<details>
+<ul>
+<li>id: <code>msg_015z1rffSWFxvj7rSpzc43ZE</code></li>
+<li>content: <code>[{'text': 'To answer this question, I can use the "sums" function to add these two numbers together. Let me do that for you.', 'type': 'text'}, {'id': 'toolu_01SNKhtfnDQBC4RGY4mUCq1v', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]</code></li>
+<li>model: <code>claude-3-5-sonnet-20240620</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>tool_use</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'input_tokens': 428, 'output_tokens': 101, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="0979c832" class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> chat()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>The sum of 604542 and 6458932 is 7063474.</p>
+<details>
+<ul>
+<li>id: <code>msg_018KAsE2YGiXWjUJkLPrXpb2</code></li>
+<li>content: <code>[{'text': 'The sum of 604542 and 6458932 is 7063474.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-3-5-sonnet-20240620</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'input_tokens': 543, 'output_tokens': 23, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="5d35d564" class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>fn <span class="op">=</span> Path(<span class="st">'samples/puppy.jpg'</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> fn.read_bytes()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0c0eed5d" class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="st">"In brief, what color flowers are in this image?"</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>msg <span class="op">=</span> mk_msg([img_msg(img), text_msg(q)])</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> c([msg])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>The flowers in this image are purple. They appear to be small, daisy-like flowers, possibly asters or some type of purple daisy, blooming in the background behind the adorable puppy in the foreground.</p>
+<details>
+<ul>
+<li>id: <code>msg_017qgZggLjUY915mWbWCkb9X</code></li>
+<li>content: <code>[{'text': 'The flowers in this image are purple. They appear to be small, daisy-like flowers, possibly asters or some type of purple daisy, blooming in the background behind the adorable puppy in the foreground.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-3-5-sonnet-20240620</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'input_tokens': 110, 'output_tokens': 50, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}</code></li>
+</ul>
+</details>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/claudette\.answer\.ai\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/AnswerDotAI/claudette/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
