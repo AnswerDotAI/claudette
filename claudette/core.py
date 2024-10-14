@@ -105,6 +105,11 @@ def mk_msgs(msgs:list, **kw):
     return [mk_msg(o, ('user','assistant')[i%2], **kw) for i,o in enumerate(msgs)]
 
 # %% ../00_core.ipynb
+def _str_if_needed(o):
+    if isinstance(o, (list,tuple,abc.Mapping,L)) or hasattr(o, '__pydantic_serializer__'): return o
+    return str(o)
+
+# %% ../00_core.ipynb
 class Client:
     def __init__(self, model, cli=None, log=False):
         "Basic Anthropic messages client."
@@ -175,12 +180,11 @@ def call_func(fc:ToolUseBlock, # Tool use block from Claude's message
     if not isinstance(ns, abc.Mapping): ns = _mk_ns(*ns)
     func = getattr(obj, fc.name, None)
     if not func: func = ns[fc.name]
-    res = func(**fc.input)
-    return res
+    return func(**fc.input)
 
 def mk_funcres(tuid, res):
     "Given tool use id and the tool result, create a tool_result response."
-    return dict(type="tool_result", tool_use_id=tuid, content=res)
+    return dict(type="tool_result", tool_use_id=tuid, content=str(res))
 
 # %% ../00_core.ipynb
 def mk_toolres(
@@ -241,12 +245,13 @@ class Chat:
                  cli:Optional[Client]=None, # Client to use (leave empty if passing `model`)
                  sp='', # Optional system prompt
                  tools:Optional[list]=None, # List of tools to make available to Claude
+                 temp=0, # Temperature
                  cont_pr:Optional[str]=None): # User prompt to continue an assistant response: assistant,[user:"..."],assistant
         "Anthropic chat client."
         assert model or cli
         assert cont_pr != "", "cont_pr may not be an empty string"
         self.c = (cli or Client(model))
-        self.h,self.sp,self.tools,self.cont_pr = [],sp,tools,cont_pr
+        self.h,self.sp,self.tools,self.cont_pr,self.temp = [],sp,tools,cont_pr,temp
 
     @property
     def use(self): return self.c.use
@@ -296,12 +301,13 @@ def _append_pr(self:Chat,
 @patch
 def __call__(self:Chat,
              pr=None,  # Prompt / message
-             temp=0, # Temperature
+             temp=None, # Temperature
              maxtok=4096, # Maximum tokens
              stream=False, # Stream response?
              prefill='', # Optional prefill to pass to Claude as start of its response
              tool_choice:Optional[dict]=None, # Optionally force use of some tool
              **kw):
+    if temp is None: temp=self.temp
     self._append_pr(pr)
     res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok,
                  tools=self.tools, tool_choice=tool_choice,**kw)
@@ -327,11 +333,6 @@ def img_msg(data:bytes, cache=False)->dict:
 def text_msg(s:str, cache=False)->dict:
     "Convert `s` to a text message"
     return _add_cache({"type": "text", "text": s}, cache)
-
-# %% ../00_core.ipynb
-def _str_if_needed(o):
-    if isinstance(o, (list,tuple,abc.Mapping,L)) or hasattr(o, '__pydantic_serializer__'): return o
-    return str(o)
 
 # %% ../00_core.ipynb
 def _mk_content(src, cache=False):
