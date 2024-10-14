@@ -208,11 +208,10 @@ def __call__(self:Client,
              stop=None, # Stop sequence
              tools:Optional[list]=None, # List of tools to make available to Claude
              tool_choice:Optional[dict]=None, # Optionally force use of some tool
-             pr=None, # prompt
              **kwargs):
     "Make a call to Claude."
     if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
-    if tool_choice and pr: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
+    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
     msgs = self._precall(msgs, prefill, stop, kwargs)
     if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     res = self.c.messages.create(model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
@@ -242,13 +241,12 @@ class Chat:
                  cli:Optional[Client]=None, # Client to use (leave empty if passing `model`)
                  sp='', # Optional system prompt
                  tools:Optional[list]=None, # List of tools to make available to Claude
-                 cont_pr:Optional[str]=None, # User prompt to continue an assistant response: assistant,[user:"..."],assistant
-                 tool_choice:Optional[dict]=None): # Optionally force use of some tool
+                 cont_pr:Optional[str]=None): # User prompt to continue an assistant response: assistant,[user:"..."],assistant
         "Anthropic chat client."
         assert model or cli
         assert cont_pr != "", "cont_pr may not be an empty string"
         self.c = (cli or Client(model))
-        self.h,self.sp,self.tools,self.cont_pr,self.tool_choice = [],sp,tools,cont_pr,tool_choice
+        self.h,self.sp,self.tools,self.cont_pr = [],sp,tools,cont_pr
 
     @property
     def use(self): return self.c.use
@@ -302,10 +300,11 @@ def __call__(self:Chat,
              maxtok=4096, # Maximum tokens
              stream=False, # Stream response?
              prefill='', # Optional prefill to pass to Claude as start of its response
+             tool_choice:Optional[dict]=None, # Optionally force use of some tool
              **kw):
     self._append_pr(pr)
     res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok,
-                 tools=self.tools, tool_choice=self.tool_choice, pr=pr,**kw)
+                 tools=self.tools, tool_choice=tool_choice,**kw)
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
     return res
