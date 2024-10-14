@@ -2,6 +2,22 @@
 
 <!-- do not remove -->
 
+## 0.1.0
+
+### Breaking Changes
+
+- `tool_choice` is no longer a `Chat` instance variable; instead it is a parameter to `Chat.__call__`
+
+### New Features
+
+- Add `temp` param to `Chat` ([#38](https://github.com/AnswerDotAI/claudette/issues/38))
+
+### Bugs Squashed
+
+- `pr` included but not used ([#37](https://github.com/AnswerDotAI/claudette/issues/37))
+- fix tool use bug ([#35](https://github.com/AnswerDotAI/claudette/pull/35)), thanks to [@comhar](https://github.com/comhar)
+
+
 ## 0.0.10
 
 ### New Features
