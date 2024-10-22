@@ -29,16 +29,16 @@ empty = inspect.Parameter.empty
 model_types = {
     # Anthropic
     'claude-3-opus-20240229': 'opus',
-    'claude-3-5-sonnet-20240620': 'sonnet',
+    'claude-3-5-sonnet-20241022': 'sonnet',
     'claude-3-haiku-20240307': 'haiku',
     # AWS
     'anthropic.claude-3-opus-20240229-v1:0': 'opus',
-    'anthropic.claude-3-5-sonnet-20240620-v1:0': 'sonnet',
+    'anthropic.claude-3-5-sonnet-20241022-v2:0': 'sonnet',
     'anthropic.claude-3-sonnet-20240229-v1:0': 'sonnet',
     'anthropic.claude-3-haiku-20240307-v1:0': 'haiku',
     # Google
     'claude-3-opus@20240229': 'opus',
-    'claude-3-5-sonnet@20240620': 'sonnet',
+    'claude-3-5-sonnet-v2@20241022': 'sonnet',
     'claude-3-sonnet@20240229': 'sonnet',
     'claude-3-haiku@20240307': 'haiku',
 }
