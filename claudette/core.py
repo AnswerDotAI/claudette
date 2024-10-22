@@ -2,8 +2,8 @@
 
 # %% auto 0
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'pricing', 'find_block', 'contents',
-           'usage', 'mk_msgs', 'Client', 'mk_tool_choice', 'call_func', 'mk_funcres', 'mk_toolres', 'Chat', 'img_msg',
-           'text_msg', 'mk_msg']
+           'usage', 'mk_msgs', 'Client', 'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'Chat', 'img_msg', 'text_msg',
+           'mk_msg']
 
 # %% ../00_core.ipynb
 import inspect, typing, mimetypes, base64, json
@@ -166,22 +166,6 @@ def mk_tool_choice(choose:Union[str,bool,None])->dict:
     return {"type": "tool", "name": choose} if isinstance(choose,str) else {'type':'any'} if choose else {'type':'auto'}
 
 # %% ../00_core.ipynb
-def _mk_ns(*funcs:list[callable]) -> dict[str,callable]:
-    "Create a `dict` of name to function in `funcs`, to use as a namespace"
-    return {f.__name__:f for f in funcs}
-
-# %% ../00_core.ipynb
-def call_func(fc:ToolUseBlock, # Tool use block from Claude's message
-              ns:Optional[abc.Mapping]=None, # Namespace to search for tools, defaults to `globals()`
-              obj:Optional=None # Object to search for tools
-             ):
-    "Call the function in the tool response `tr`, using namespace `ns`."
-    if ns is None: ns=globals()
-    if not isinstance(ns, abc.Mapping): ns = _mk_ns(*ns)
-    func = getattr(obj, fc.name, None)
-    if not func: func = ns[fc.name]
-    return func(**fc.input)
-
 def mk_funcres(tuid, res):
     "Given tool use id and the tool result, create a tool_result response."
     return dict(type="tool_result", tool_use_id=tuid, content=str(res))
@@ -195,7 +179,9 @@ def mk_toolres(
     "Create a `tool_result` message from response `r`."
     cts = getattr(r, 'content', [])
     res = [mk_msg(r)]
-    tcs = [mk_funcres(o.id, call_func(o, ns=ns, obj=obj)) for o in cts if isinstance(o,ToolUseBlock)]
+    if ns is None: ns=globals()
+    if obj is not None: ns = mk_ns(obj)
+    tcs = [mk_funcres(o.id, call_func(o.name, o.input, ns)) for o in cts if isinstance(o,ToolUseBlock)]
     if tcs: res.append(mk_msg(tcs))
     return res
 
@@ -234,8 +220,9 @@ def structured(self:Client,
     tools = listify(tools)
     res = self(msgs, tools=tools, tool_choice=tools, **kwargs)
     if ns is None: ns=tools
+    if obj is not None: ns = obj2ns(obj)
     cts = getattr(res, 'content', [])
-    tcs = [call_func(o, ns=ns, obj=obj) for o in cts if isinstance(o,ToolUseBlock)]
+    tcs = [call_func(o.name, o.input, ns=ns) for o in cts if isinstance(o,ToolUseBlock)]
     return tcs
 
 # %% ../00_core.ipynb
@@ -312,7 +299,7 @@ def __call__(self:Chat,
     res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok,
                  tools=self.tools, tool_choice=tool_choice,**kw)
     if stream: return self._stream(res)
-    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
+    self.h += mk_toolres(self.c.result, ns=self.tools)
     return res
 
 # %% ../00_core.ipynb
