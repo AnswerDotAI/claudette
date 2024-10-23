@@ -219,8 +219,8 @@ def structured(self:Client,
     "Return the value of all tool calls (generally used for structured outputs)"
     tools = listify(tools)
     res = self(msgs, tools=tools, tool_choice=tools, **kwargs)
-    if ns is None: ns=tools
-    if obj is not None: ns = obj2ns(obj)
+    if ns is None: ns=mk_ns(*tools)
+    if obj is not None: ns = mk_ns(obj)
     cts = getattr(res, 'content', [])
     tcs = [call_func(o.name, o.input, ns=ns) for o in cts if isinstance(o,ToolUseBlock)]
     return tcs
