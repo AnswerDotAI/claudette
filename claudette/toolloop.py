@@ -20,11 +20,12 @@ def toolloop(self:Chat,
              cont_func:Optional[callable]=noop, # Function that stops loop if returns False
              **kwargs):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
+    n_msgs = len(self.h)
     r = self(pr, **kwargs)
     for i in range(max_steps):
         if r.stop_reason!='tool_use': break
-        if trace_func: trace_func(r)
+        if trace_func: trace_func(self.h[n_msgs:]); n_msgs = len(self.h)
         r = self(**kwargs)
         if not (cont_func or noop)(self.h[-2]): break
-    if trace_func: trace_func(r)
+    if trace_func: trace_func(self.h[n_msgs:])
     return r
