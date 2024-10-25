@@ -84,7 +84,6 @@ async def __call__(self:AsyncChat,
         **kw):
     await self._append_pr(pr)
     if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
-    if self.tool_choice and pr: kw['tool_choice'] = mk_tool_choice(self.tool_choice)
     res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
