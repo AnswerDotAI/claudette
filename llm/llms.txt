@@ -17,7 +17,7 @@ Things to remember when using Claudette:
 
 ## API
 
-- [API List](https://raw.githubusercontent.com/AnswerDotAI/claudette/b30f08e3549554f53b06fbd9bf03a0c961de3023/llm/apilist.txt): A succint list of all functions and methods in claudette.
+- [API List](https://raw.githubusercontent.com/AnswerDotAI/claudette/llm/apilist.txt): A succint list of all functions and methods in claudette.
 
 ## Optional
 - [Tool loop handling](https://claudette.answer.ai/toolloop.html.md): How to use the tool loop functionality for complex multi-step interactions
