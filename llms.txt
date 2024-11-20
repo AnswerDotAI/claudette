@@ -18,6 +18,6 @@ Things to remember when using Claudette:
 - [Async support](https://claudette.answer.ai/async.html.md): Using Claudette with async/await
 - [README](https://raw.githubusercontent.com/AnswerDotAI/claudette/refs/heads/main/README.md): Quick start guide and overview
 
-## Optional Extensions
+## Optional
 
 - [Pydantic Structured Output](https://raw.githubusercontent.com/tom-pollak/claudette-pydantic/refs/heads/main/README.md): Extension for structured data output using Pydantic models

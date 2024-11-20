@@ -4604,7 +4604,7 @@ chat("I'm Jeremy")
 ## Extensions
 
 - [Pydantic Structured
-  Ouput](https://github.com/tom-pollak/claudette-pydantic)</doc></docs><optional extensions><doc title="Pydantic Structured Output" desc="Extension for structured data output using Pydantic models"># claudette-pydantic
+  Ouput](https://github.com/tom-pollak/claudette-pydantic)</doc></docs><optional><doc title="Pydantic Structured Output" desc="Extension for structured data output using Pydantic models"># claudette-pydantic
 
 
 
@@ -4791,4 +4791,4 @@ Chat.struct(
     treat_as_output=True, # In chat history, tool is reflected
     **, # Chat.__call__ kwargs...
 ) -> BaseModel
-```</doc></optional extensions></project>
+```</doc></optional></project>
