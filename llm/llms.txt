@@ -13,11 +13,15 @@ Things to remember when using Claudette:
 
 ## Docs
 
-- [Core functionality](https://claudette.answer.ai/core.html.md): Detailed walkthrough of main features including Client, Chat, and tool usage
-- [Tool loop handling](https://claudette.answer.ai/toolloop.html.md): How to use the tool loop functionality for complex multi-step interactions
-- [Async support](https://claudette.answer.ai/async.html.md): Using Claudette with async/await
 - [README](https://raw.githubusercontent.com/AnswerDotAI/claudette/refs/heads/main/README.md): Quick start guide and overview
+- [Tool loop handling](https://claudette.answer.ai/toolloop.html.md): How to use the tool loop functionality for complex multi-step interactions
+
+## API
+
+- [API List](https://docs.fastht.ml/apilist.txt): A succint list of all functions and methods in claudette.
 
 ## Optional
 
+- [Async support](https://claudette.answer.ai/async.html.md): Using Claudette with async/await
+- [Core functionality](https://claudette.answer.ai/core.html.md): Detailed walkthrough of main features including Client, Chat, and tool usage
 - [Pydantic Structured Output](https://raw.githubusercontent.com/tom-pollak/claudette-pydantic/refs/heads/main/README.md): Extension for structured data output using Pydantic models
