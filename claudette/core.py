@@ -2,11 +2,11 @@
 
 # %% auto 0
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models', 'pricing',
-           'find_block', 'contents', 'usage', 'mk_msgs', 'Client', 'mk_tool_choice', 'mk_funcres', 'mk_toolres',
-           'get_types', 'Chat', 'img_msg', 'text_msg', 'mk_msg']
+           'find_block', 'contents', 'usage', 'Client', 'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types',
+           'Chat', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
-import inspect, typing, mimetypes, base64, json
+import inspect, typing, json
 from collections import abc
 try: from IPython import display
 except: display=None
@@ -18,9 +18,12 @@ from anthropic.resources import messages
 import toolslm
 from toolslm.funccall import *
 
-from fastcore import imghdr
 from fastcore.meta import delegates
 from fastcore.utils import *
+from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs
+
+# %% ../00_core.ipynb
+_all_ = ['mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 empty = inspect.Parameter.empty
@@ -101,17 +104,6 @@ def __repr__(self:Usage): return f'In: {self.input_tokens}; Out: {self.output_to
 def __add__(self:Usage, b):
     "Add together each of `input_tokens` and `output_tokens`"
     return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens, getattr(self,'cache_creation_input_tokens',0)+getattr(b,'cache_creation_input_tokens',0), getattr(self,'cache_read_input_tokens',0)+getattr(b,'cache_read_input_tokens',0))
-
-# %% ../00_core.ipynb
-def mk_msgs(msgs:list, **kw):
-    "Helper to set 'assistant' role on alternate messages."
-    if isinstance(msgs,str): msgs=[msgs]
-    return [mk_msg(o, ('user','assistant')[i%2], **kw) for i,o in enumerate(msgs)]
-
-# %% ../00_core.ipynb
-def _str_if_needed(o):
-    if isinstance(o, (list,tuple,abc.Mapping,L)) or hasattr(o, '__pydantic_serializer__'): return o
-    return str(o)
 
 # %% ../00_core.ipynb
 class Client:
@@ -317,42 +309,3 @@ def __call__(self:Chat,
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=self.tools)
     return res
-
-# %% ../00_core.ipynb
-def _add_cache(d, cache):
-    "Optionally add cache control"
-    if cache: d["cache_control"] = {"type": "ephemeral"}
-    return d
-
-# %% ../00_core.ipynb
-def img_msg(data:bytes, cache=False)->dict:
-    "Convert image `data` into an encoded `dict`"
-    img = base64.b64encode(data).decode("utf-8")
-    mtype = mimetypes.types_map['.'+imghdr.what(None, h=data)]
-    r = dict(type="base64", media_type=mtype, data=img)
-    return _add_cache({"type": "image", "source": r}, cache)
-
-# %% ../00_core.ipynb
-def text_msg(s:str, cache=False)->dict:
-    "Convert `s` to a text message"
-    return _add_cache({"type": "text", "text": s}, cache)
-
-# %% ../00_core.ipynb
-def _mk_content(src, cache=False):
-    "Create appropriate content data structure based on type of content"
-    if isinstance(src,str): return text_msg(src, cache=cache)
-    if isinstance(src,bytes): return img_msg(src, cache=cache)
-    if isinstance(src, abc.Mapping): return {k:_str_if_needed(v) for k,v in src.items()}
-    return _str_if_needed(src)
-
-# %% ../00_core.ipynb
-def mk_msg(content, # A string, list, or dict containing the contents of the message
-           role='user', # Must be 'user' or 'assistant'
-           cache=False,
-           **kw):
-    "Helper to create a `dict` appropriate for a Claude message. `kw` are added as key/value pairs to the message"
-    if hasattr(content, 'content'): content,role = content.content,content.role
-    if isinstance(content, abc.Mapping): content=content.get('content', content)
-    if not isinstance(content, list): content=[content]
-    content = [_mk_content(o, cache if islast else False) for islast,o in loop_last(content)] if content else '.'
-    return dict2obj(dict(role=role, content=content, **kw), list_func=list)
