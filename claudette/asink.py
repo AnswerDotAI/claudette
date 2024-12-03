@@ -10,7 +10,8 @@ try: from IPython import display
 except: display=None
 
 from anthropic import AsyncAnthropic
-from toolslm.funccall import get_schema
+from anthropic.types import ToolUseBlock
+from toolslm.funccall import get_schema, mk_ns, call_func
 from fastcore.meta import delegates
 from fastcore.utils import *
 from .core import *
@@ -41,8 +42,12 @@ async def __call__(self:AsyncClient,
              prefill='', # Optional prefill to pass to Claude as start of its response
              stream:bool=False, # Stream response?
              stop=None, # Stop sequence
+             tools:Optional[list]=None, # List of tools to make available to Claude
+             tool_choice:Optional[dict]=None, # Optionally force use of some tool
              **kwargs):
     "Make an async call to Claude."
+    if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
+    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
     msgs = self._precall(msgs, prefill, stop, kwargs)
     if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     res = await self.c.messages.create(
@@ -83,8 +88,7 @@ async def __call__(self:AsyncChat,
         prefill='', # Optional prefill to pass to Claude as start of its response
         **kw):
     await self._append_pr(pr)
-    if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
     res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
     if stream: return self._stream(res)
-    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
+    self.h += mk_toolres(self.c.result, ns=mk_ns(*listify(self.tools)), obj=self)
     return res
