@@ -55,6 +55,24 @@ async def __call__(self:AsyncClient,
     return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
 
 # %% ../02_async.ipynb
+@patch
+@delegates(Client.__call__)
+async def structured(self:AsyncClient,
+               msgs:list, # List of messages in the dialog
+               tools:Optional[list]=None, # List of tools to make available to Claude
+               obj:Optional=None, # Class to search for tools  
+               ns:Optional[abc.Mapping]=None, # Namespace to search for tools
+               **kwargs):
+    "Return the value of all tool calls (generally used for structured outputs)"
+    tools = listify(tools)
+    if ns is None: ns=mk_ns(*tools)
+    if obj is not None: ns = mk_ns(obj)
+    res = await self(msgs, tools=tools, tool_choice=tools,**kwargs)
+    cts = getattr(res, 'content', [])
+    tcs = [call_func(o.name, o.input, ns=ns) for o in cts if isinstance(o,ToolUseBlock)]
+    return tcs
+
+# %% ../02_async.ipynb
 @delegates()
 class AsyncChat(Chat):
     def __init__(self,
