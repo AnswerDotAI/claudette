@@ -2,6 +2,16 @@
 
 <!-- do not remove -->
 
+## 0.1.1
+
+### New Features
+
+- add structured to async ([#48](https://github.com/AnswerDotAI/claudette/pull/48)), thanks to [@hamelsmu](https://github.com/hamelsmu)
+- add `msglm` ([#46](https://github.com/AnswerDotAI/claudette/pull/46)), thanks to [@comhar](https://github.com/comhar)
+- Add support for new Claude 3.5 Haiku model ([#44](https://github.com/AnswerDotAI/claudette/pull/44)), thanks to [@ncoop57](https://github.com/ncoop57)
+- trace history instead of chat response in toolloop ([#39](https://github.com/AnswerDotAI/claudette/pull/39)), thanks to [@comhar](https://github.com/comhar)
+
+
 ## 0.1.0
 
 ### Breaking Changes
