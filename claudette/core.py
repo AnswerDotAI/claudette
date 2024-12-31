@@ -2,8 +2,8 @@
 
 # %% auto 0
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models', 'pricing',
-           'find_block', 'contents', 'usage', 'Client', 'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types',
-           'Chat', 'mk_msg', 'mk_msgs']
+           'find_block', 'usage', 'Client', 'get_pricing', 'get_costs', 'mk_tool_choice', 'mk_funcres', 'mk_toolres',
+           'get_types', 'Chat', 'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -61,13 +61,6 @@ def find_block(r:abc.Mapping, # The message to look in
               ):
     "Find the first block of type `blk_type` in `r.content`."
     return first(o for o in r.content if isinstance(o,blk_type))
-
-# %% ../00_core.ipynb
-def contents(r):
-    "Helper to get the contents from Claude response `r`."
-    blk = find_block(r)
-    if not blk and r.content: blk = r.content[0]
-    return blk.text.strip() if hasattr(blk,'text') else str(blk)
 
 # %% ../00_core.ipynb
 @patch
@@ -156,6 +149,55 @@ def _precall(self:Client, msgs, prefill, stop, kwargs):
         kwargs["stop_sequences"] = stop
     msgs = mk_msgs(msgs+pref)
     return msgs
+
+# %% ../00_core.ipynb
+pricing = {  # model type: $ / million tokens (input, output, cache write, cache read)
+    'opus': (15, 75, 18.75, 1.5),
+    'sonnet': (3, 15, 3.75, 0.3),
+    'haiku-3': (0.25, 1.25, 0.3, 0.03),
+    'haiku-3-5': (1, 3, 1.25, 0.1),
+}
+
+# %% ../00_core.ipynb
+def get_pricing(m, u):
+    return pricing[m][:3] if u.prompt_token_count < 128_000 else pricing[m][3:]
+
+# %% ../00_core.ipynb
+@patch
+def cost(self:Usage, costs:tuple) -> float:
+    cache_w, cache_r = getattr(self, "cache_creation_input_tokens",0), getattr(self, "cache_read_input_tokens",0)
+    return sum([self.input_tokens * costs[0] +  self.output_tokens * costs[1] +  cache_w * costs[2] + cache_r * costs[3]]) / 1e6
+
+# %% ../00_core.ipynb
+@patch(as_prop=True)
+def cost(self: Client) -> float: return self.use.cost(pricing[model_types[self.model]])
+
+# %% ../00_core.ipynb
+def get_costs(c):
+    costs = pricing[model_types[c.model]]
+    
+    inp_cost = c.use.input_tokens * costs[0] / 1e6
+    out_cost = c.use.output_tokens * costs[1] / 1e6
+
+    cache_w = c.use.cache_creation_input_tokens   
+    cache_r = c.use.cache_read_input_tokens
+    cache_cost = cache_w * costs[2] + cache_r * costs[3] / 1e6
+    return inp_cost, out_cost, cache_cost, cache_w + cache_r
+
+# %% ../00_core.ipynb
+@patch
+def _repr_markdown_(self:Client):
+    if not hasattr(self,'result'): return 'No results yet'
+    msg = contents(self.result)
+    inp_cost, out_cost, cache_cost, cached_toks = get_costs(self)
+    return f"""{msg}
+
+| Metric | Count | Cost (USD) |
+|--------|------:|-----:|
+| Input tokens | {self.use.input_tokens:,} | {inp_cost:.6f} |
+| Output tokens | {self.use.output_tokens:,} | {out_cost:.6f} |
+| Cache tokens | {cached_toks:,} | {cache_cost:.6f} |
+| **Total** | **{self.use.total:,}** | **${self.cost:.6f}** |"""
 
 # %% ../00_core.ipynb
 def mk_tool_choice(choose:Union[str,bool,None])->dict:
@@ -251,22 +293,8 @@ class Chat:
     def use(self): return self.c.use
 
 # %% ../00_core.ipynb
-pricing = {  # model type: $ / million tokens (input, output, cache write, cache read)
-    'opus': (15, 75, 18.75, 1.5),
-    'sonnet': (3, 15, 3.75, 0.3),
-    'haiku-3': (0.25, 1.25, 0.3, 0.03),
-    'haiku-3-5': (1, 3, 1.25, 0.1),
-}
-
-# %% ../00_core.ipynb
-@patch
-def cost(self:Usage, costs:tuple) -> float:
-    cache_w, cache_r = getattr(self, "cache_creation_input_tokens",0), getattr(self, "cache_read_input_tokens",0)
-    return sum([self.input_tokens * costs[0] +  self.output_tokens * costs[1] +  cache_w * costs[2] + cache_r * costs[3]]) / 1e6
-
-# %% ../00_core.ipynb
 @patch(as_prop=True)
-def cost(self: Chat) -> float: return self.c.use.cost(pricing[model_types[self.c.model]])
+def cost(self: Chat) -> float: return self.c.cost
 
 # %% ../00_core.ipynb
 @patch
@@ -309,3 +337,37 @@ def __call__(self:Chat,
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=self.tools)
     return res
+
+# %% ../00_core.ipynb
+@patch
+def _repr_markdown_(self:Chat):
+    if not hasattr(self.c, 'result'): return 'No results yet'
+    last_msg = contents(self.c.result)
+    
+    def fmt_msg(m):
+        t = contents(m)
+        if isinstance(t, dict): return t['content']
+        return t
+        
+    history = '\n\n'.join(f"**{m['role']}**: {fmt_msg(m)}" 
+                         for m in self.h)
+    det = self.c._repr_markdown_().split('\n\n')[-1]
+    return f"""{last_msg}
+
+<details>
+<summary>History</summary>
+
+{history}
+</details>
+
+{det}"""
+
+# %% ../00_core.ipynb
+def contents(r):
+    "Helper to get the contents from Claude response `r`."
+    blk = find_block(r)
+    if not blk and r.content: blk = r.content[0]
+    if hasattr(blk,'text'): return blk.text.strip()
+    elif hasattr(blk,'content'): return blk.content.strip()
+    elif hasattr(blk,'source'): return f'*Media Type - {blk.type}*'
+    return str(blk)
