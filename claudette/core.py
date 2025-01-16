@@ -10,7 +10,6 @@ import inspect, typing, json
 from collections import abc
 try: from IPython import display
 except: display=None
-import traceback
 from typing import get_type_hints
 from functools import wraps
 
