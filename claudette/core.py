@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models', 'pricing',
            'find_block', 'usage', 'Client', 'get_pricing', 'get_costs', 'mk_tool_choice', 'mk_funcres', 'mk_toolres',
-           'get_types', 'is_builtin', 'convert', 'tool', 'Chat', 'contents', 'mk_msg', 'mk_msgs']
+           'get_types', 'tool', 'Chat', 'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -277,17 +277,16 @@ def structured(self:Client,
     return tcs
 
 # %% ../00_core.ipynb
-def is_builtin(tp: type):
+def _is_builtin(tp: type):
     "Returns True for built in primitive types or containers"
     return (tp in (str, int, float, bool, complex) or tp is None
         or getattr(tp, '__origin__', None) is not None)  # Pass through all container types
 
 
-def convert(val: Dict, # dictionary argument being passed in
+def _convert(val: Dict, # dictionary argument being passed in
             tp: type): # type of the tool function input
     "Convert converts a single argument"
-    if val is None or is_builtin(tp) or not isinstance(val, dict):
-        return val
+    if val is None or _is_builtin(tp) or not isinstance(val, dict): return val
     return tp(**val)
 
 # %% ../00_core.ipynb
@@ -295,9 +294,8 @@ def tool(func):
     hints = get_type_hints(func)
     @wraps(func)
     def wrapper(*args, **kwargs):
-        new_args = [convert(arg, hints[p])
-                   for p,arg in zip(inspect.signature(func).parameters, args)]
-        new_kwargs = {k: convert(v, hints[k]) if k in hints else v
+        new_args = [_convert(arg, hints[p]) for p,arg in zip(inspect.signature(func).parameters, args)]
+        new_kwargs = {k: _convert(v, hints[k]) if k in hints else v
                      for k,v in kwargs.items()}
         return func(*new_args, **new_kwargs)
     return wrapper
@@ -315,8 +313,7 @@ class Chat:
         assert model or cli
         assert cont_pr != "", "cont_pr may not be an empty string"
         self.c = (cli or Client(model))
-        if tools:
-            tools = [tool(t) for t in tools]
+        if tools: tools = [tool(t) for t in tools]
         self.h,self.sp,self.tools,self.cont_pr,self.temp = [],sp,tools,cont_pr,temp
 
     @property
