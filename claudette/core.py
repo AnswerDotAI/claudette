@@ -295,8 +295,7 @@ def tool(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         new_args = [_convert(arg, hints[p]) for p,arg in zip(inspect.signature(func).parameters, args)]
-        new_kwargs = {k: _convert(v, hints[k]) if k in hints else v
-                     for k,v in kwargs.items()}
+        new_kwargs = {k: _convert(v, hints[k]) if k in hints else v for k,v in kwargs.items()}
         return func(*new_args, **new_kwargs)
     return wrapper
 
