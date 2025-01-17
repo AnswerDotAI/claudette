@@ -282,7 +282,6 @@ def _is_builtin(tp: type):
     return (tp in (str, int, float, bool, complex) or tp is None
         or getattr(tp, '__origin__', None) is not None)  # Pass through all container types
 
-
 def _convert(val: Dict, # dictionary argument being passed in
             tp: type): # type of the tool function input
     "Convert converts a single argument"
