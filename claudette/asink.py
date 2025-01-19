@@ -15,6 +15,7 @@ from toolslm.funccall import get_schema, mk_ns, call_func
 from fastcore.meta import delegates
 from fastcore.utils import *
 from .core import *
+from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs
 
 # %% ../02_async.ipynb
 class AsyncClient(Client):
@@ -49,6 +50,7 @@ async def __call__(self:AsyncClient,
     if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
     if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
     msgs = self._precall(msgs, prefill, stop, kwargs)
+    if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
     if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
     res = await self.c.messages.create(
         model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
@@ -99,14 +101,17 @@ async def _append_pr(self:AsyncChat, pr=None):
 # %% ../02_async.ipynb
 @patch
 async def __call__(self:AsyncChat,
-        pr=None,  # Prompt / message
-        temp=0, # Temperature
-        maxtok=4096, # Maximum tokens
-        stream=False, # Stream response?
-        prefill='', # Optional prefill to pass to Claude as start of its response
-        **kw):
+                   pr=None,  # Prompt / message
+                   temp=None, # Temperature
+                   maxtok=4096, # Maximum tokens
+                   stream=False, # Stream response?
+                   prefill='', # Optional prefill to pass to Claude as start of its response
+                   tool_choice:Optional[Union[str,bool,dict]]=None, # Optionally force use of some tool
+                   **kw):
+    if temp is None: temp=self.temp
     await self._append_pr(pr)
-    res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
+    res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok,
+                 tools=self.tools, tool_choice=tool_choice,**kw)
     if stream: return self._stream(res)
-    self.h += mk_toolres(self.c.result, ns=mk_ns(*listify(self.tools)), obj=self)
+    self.h += mk_toolres(self.c.result, ns=mk_ns(*listify(self.tools)))
     return res
