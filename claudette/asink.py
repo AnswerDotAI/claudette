@@ -93,15 +93,6 @@ async def _stream(self:AsyncChat, res):
 
 # %% ../02_async.ipynb
 @patch
-def _append_pr(self:Chat,
-               pr=None,  # Prompt / message
-              ):
-    prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user'
-    if pr and prev_role == 'user': self() # already user request pending
-    self._post_pr(pr, prev_role)
-
-# %% ../02_async.ipynb
-@patch
 async def _append_pr(self:AsyncChat, pr=None):
     prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user' if no history
     if pr and prev_role == 'user': await self()
