@@ -102,12 +102,13 @@ def __add__(self:Usage, b):
 
 # %% ../00_core.ipynb
 class Client:
-    def __init__(self, model, cli=None, log=False):
+    def __init__(self, model, cli=None, log=False, cache=False):
         "Basic Anthropic messages client."
         self.model,self.use = model,usage()
         self.text_only = model in text_only_models
         self.log = [] if log else None
         self.c = (cli or Anthropic(default_headers={'anthropic-beta': 'prompt-caching-2024-07-31'}))
+        self.cache = cache
 
 # %% ../00_core.ipynb
 @patch
@@ -136,7 +137,7 @@ def _log(self:Client, final, prefill, msgs, maxtok=None, sp=None, temp=None, str
 # %% ../00_core.ipynb
 @patch
 def _stream(self:Client, msgs:list, prefill='', **kwargs):
-    with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs), **kwargs) as s:
+    with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs, cache=self.cache, cache_last_ckpt_only=self.cache), **kwargs) as s:
         if prefill: yield(prefill)
         yield from s.text_stream
         self._log(s.get_final_message(), prefill, msgs, **kwargs)
@@ -149,7 +150,7 @@ def _precall(self:Client, msgs, prefill, stop, kwargs):
     if stop is not None:
         if not isinstance(stop, (list)): stop = [stop]
         kwargs["stop_sequences"] = stop
-    msgs = mk_msgs(msgs+pref)
+    msgs = mk_msgs(msgs+pref, cache=self.cache, cache_last_ckpt_only=self.cache)
     return msgs
 
 # %% ../00_core.ipynb
@@ -306,13 +307,14 @@ class Chat:
                  sp='', # Optional system prompt
                  tools:Optional[list]=None, # List of tools to make available to Claude
                  temp=0, # Temperature
-                 cont_pr:Optional[str]=None): # User prompt to continue an assistant response: assistant,[user:"..."],assistant
+                 cont_pr:Optional[str]=None, # User prompt to continue an assistant response: assistant,[user:"..."],assistant
+                 cache: bool = False):
         "Anthropic chat client."
         assert model or cli
         assert cont_pr != "", "cont_pr may not be an empty string"
-        self.c = (cli or Client(model))
+        self.c = (cli or Client(model, cache=cache))
         if tools: tools = [tool(t) for t in tools]
-        self.h,self.sp,self.tools,self.cont_pr,self.temp = [],sp,tools,cont_pr,temp
+        self.h,self.sp,self.tools,self.cont_pr,self.temp, self.cache = [],sp,tools,cont_pr,temp, cache
 
     @property
     def use(self): return self.c.use
@@ -334,7 +336,7 @@ def _post_pr(self:Chat, pr, prev_role):
         if self.cont_pr is None:
             raise ValueError("Prompt must be given after assistant completion, or use `self.cont_pr`.")
         pr = self.cont_pr # No user prompt, keep the chain
-    if pr: self.h.append(mk_msg(pr))
+    if pr: self.h.append(mk_msg(pr, cache=self.cache))
 
 # %% ../00_core.ipynb
 @patch
