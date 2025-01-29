@@ -2,6 +2,16 @@
 
 <!-- do not remove -->
 
+## 0.1.2
+
+### New Features
+
+- Add continuously-updated cache support to Chat and Client ([#54](https://github.com/AnswerDotAI/claudette/pull/54)), thanks to [@bclavie](https://github.com/bclavie)
+- Enhance AsyncChat with improved tool support and message handling ([#52](https://github.com/AnswerDotAI/claudette/pull/52)), thanks to [@ncoop57](https://github.com/ncoop57)
+- Add support for user defined types in tool calling functions ([#51](https://github.com/AnswerDotAI/claudette/pull/51)), thanks to [@austinvhuang](https://github.com/austinvhuang)
+- Add detailed cost breakdown and improve content handling ([#49](https://github.com/AnswerDotAI/claudette/pull/49)), thanks to [@ncoop57](https://github.com/ncoop57)
+
+
 ## 0.1.1
 
 ### New Features
