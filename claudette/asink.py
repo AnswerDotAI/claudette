@@ -19,15 +19,15 @@ from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs
 
 # %% ../02_async.ipynb
 class AsyncClient(Client):
-    def __init__(self, model, cli=None, log=False):
+    def __init__(self, model, cli=None, log=False, cache=False):
         "Async Anthropic messages client."
-        super().__init__(model,cli,log)
+        super().__init__(model,cli,log,cache)
         if not cli: self.c = AsyncAnthropic(default_headers={'anthropic-beta': 'prompt-caching-2024-07-31'})
 
 # %% ../02_async.ipynb
 @patch
 async def _stream(self:AsyncClient, msgs:list, prefill='', **kwargs):
-    async with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs), **kwargs) as s:
+    async with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs, cache=self.cache), **kwargs) as s:
         if prefill: yield prefill
         async for o in s.text_stream: yield o
         self._log(await s.get_final_message(), prefill, msgs, kwargs)
