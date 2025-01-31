@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.1.3
+
+### New Features
+
+- add caching to async client too ([#55](https://github.com/AnswerDotAI/claudette/pull/55)), thanks to [@bclavie](https://github.com/bclavie)
+
+
 ## 0.1.2
 
 ### New Features
