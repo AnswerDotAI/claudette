@@ -22,7 +22,7 @@ from toolslm.funccall import *
 
 from fastcore.meta import delegates
 from fastcore.utils import *
-from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs
+from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs, mk_ant_doc as mk_doc
 
 # %% ../00_core.ipynb
 _all_ = ['mk_msg', 'mk_msgs']
