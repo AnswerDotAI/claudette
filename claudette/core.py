@@ -2,9 +2,9 @@
 
 # %% auto 0
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models',
-           'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'pricing', 'find_block',
-           'usage', 'Client', 'get_pricing', 'get_costs', 'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types',
-           'tool', 'Chat', 'contents', 'mk_msg', 'mk_msgs']
+           'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'pricing', 'can_stream',
+           'can_set_system_prompt', 'can_set_temperature', 'find_block', 'usage', 'Client', 'get_pricing', 'get_costs',
+           'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -62,6 +62,11 @@ text_only_models = ('claude-3-5-haiku-20241022',)
 has_streaming_models = set(all_models)
 has_system_prompt_models = set(all_models)
 has_temperature_models = set(all_models)
+
+# %% ../00_core.ipynb
+def can_stream(m): return m in has_streaming_models
+def can_set_system_prompt(m): return m in has_system_prompt_models
+def can_set_temperature(m): return m in has_temperature_models
 
 # %% ../00_core.ipynb
 def find_block(r:abc.Mapping, # The message to look in
