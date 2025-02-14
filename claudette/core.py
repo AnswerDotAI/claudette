@@ -98,18 +98,24 @@ def usage(inp=0, # input tokens
     return Usage(input_tokens=inp, output_tokens=out, cache_creation_input_tokens=cache_create, cache_read_input_tokens=cache_read)
 
 # %% ../00_core.ipynb
+def _dgetattr(o,s,d): 
+    "Like getattr, but returns the default if the result is None"
+    return getattr(o,s,d) or d
+
 @patch(as_prop=True)
-def total(self:Usage): return self.input_tokens+self.output_tokens+getattr(self, "cache_creation_input_tokens",0)+getattr(self, "cache_read_input_tokens",0)
+def total(self:Usage): return self.input_tokens+self.output_tokens+_dgetattr(self, "cache_creation_input_tokens",0)+_dgetattr(self, "cache_read_input_tokens",0)
 
 # %% ../00_core.ipynb
 @patch
-def __repr__(self:Usage): return f'In: {self.input_tokens}; Out: {self.output_tokens}; Cache create: {getattr(self, "cache_creation_input_tokens",0)}; Cache read: {getattr(self, "cache_read_input_tokens",0)}; Total: {self.total}'
+def __repr__(self:Usage): return f'In: {self.input_tokens}; Out: {self.output_tokens}; Cache create: {_dgetattr(self, "cache_creation_input_tokens",0)}; Cache read: {_dgetattr(self, "cache_read_input_tokens",0)}; Total: {self.total}'
 
 # %% ../00_core.ipynb
 @patch
 def __add__(self:Usage, b):
     "Add together each of `input_tokens` and `output_tokens`"
-    return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens, getattr(self,'cache_creation_input_tokens',0)+getattr(b,'cache_creation_input_tokens',0), getattr(self,'cache_read_input_tokens',0)+getattr(b,'cache_read_input_tokens',0))
+    return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens,
+                 _dgetattr(self,'cache_creation_input_tokens',0)+_dgetattr(b,'cache_creation_input_tokens',0),
+                 _dgetattr(self,'cache_read_input_tokens',0)+_dgetattr(b,'cache_read_input_tokens',0))
 
 # %% ../00_core.ipynb
 class Client:
