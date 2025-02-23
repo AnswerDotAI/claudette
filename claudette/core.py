@@ -4,8 +4,8 @@
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models',
            'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'pricing', 'can_stream',
            'can_set_system_prompt', 'can_set_temperature', 'find_block', 'usage', 'Client', 'get_pricing', 'get_costs',
-           'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'contents', 'cite_msgs',
-           'has_citations', 'mk_msg', 'mk_msgs']
+           'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'cite_msgs', 'has_citations',
+           'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -402,25 +402,18 @@ def _repr_markdown_(self:Chat):
 {det}"""
 
 # %% ../00_core.ipynb
-def contents(r):
-    "Helper to get the contents from Claude response `r`."
-    blk = find_block(r)
-    if not blk and r.content: blk = r.content[0]
-    if hasattr(blk,'text'): return blk.text.strip()
-    elif hasattr(blk,'content'): return blk.content.strip()
-    elif hasattr(blk,'source'): return f'*Media Type - {blk.type}*'
-    return str(blk)
-
-# %% ../00_core.ipynb
 def cite_msgs(msg) -> str:
     """Render a Claude message with citations as markdown."""
     result = []
     for block in msg.content:
+        result.append(block.text)
         if block.citations:
             for c in block.citations:
-                result.append(f"\n> {c.cited_text}\n\n")
-        else:
-            result.append(block.text)
+                cite_desc = f'{c.document_title} - start: {c.start_char_index} end: {c.end_char_index}'
+                lines = c.cited_text.splitlines()
+                quoted_lines = '\n'.join(f"> {ln}" for ln in lines)
+                f = f"\n> {cite_desc}\n> \n> {quoted_lines}\n\n"
+                result.append(f)
     return ''.join(result)
 
 # %% ../00_core.ipynb
