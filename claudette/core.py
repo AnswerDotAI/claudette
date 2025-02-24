@@ -185,7 +185,7 @@ def get_pricing(m, u):
 # %% ../00_core.ipynb
 @patch
 def cost(self:Usage, costs:tuple) -> float:
-    cache_w, cache_r = getattr(self, "cache_creation_input_tokens",0), getattr(self, "cache_read_input_tokens",0)
+    cache_w, cache_r = _dgetattr(self, "cache_creation_input_tokens",0), _dgetattr(self, "cache_read_input_tokens",0)
     return sum([self.input_tokens * costs[0] +  self.output_tokens * costs[1] +  cache_w * costs[2] + cache_r * costs[3]]) / 1e6
 
 # %% ../00_core.ipynb
