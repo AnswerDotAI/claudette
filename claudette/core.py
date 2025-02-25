@@ -4,7 +4,8 @@
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models',
            'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'pricing', 'can_stream',
            'can_set_system_prompt', 'can_set_temperature', 'find_block', 'usage', 'Client', 'get_pricing', 'get_costs',
-           'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'contents', 'mk_msg', 'mk_msgs']
+           'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'cite_msgs', 'has_citations',
+           'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -23,7 +24,7 @@ from toolslm.funccall import *
 
 from fastcore.meta import delegates
 from fastcore.utils import *
-from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs
+from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs, mk_ant_doc as mk_doc
 
 # %% ../00_core.ipynb
 _all_ = ['mk_msg', 'mk_msgs']
@@ -407,9 +408,30 @@ def _repr_markdown_(self:Chat):
 {det}"""
 
 # %% ../00_core.ipynb
+def cite_msgs(msg) -> str:
+    """Render a Claude message with citations as markdown."""
+    result = []
+    for block in msg.content:
+        result.append(block.text)
+        if block.citations:
+            for c in block.citations:
+                cite_desc = f'{c.document_title} - start: {c.start_char_index} end: {c.end_char_index}'
+                lines = c.cited_text.splitlines()
+                quoted_lines = '\n'.join(f"> {ln}" for ln in lines)
+                f = f"\n> {cite_desc}\n> \n> {quoted_lines}\n\n"
+                result.append(f)
+    return ''.join(result)
+
+# %% ../00_core.ipynb
+def has_citations(r):
+    """Check if a Claude response contains any citations"""
+    return any(getattr(block, 'citations', None) and isinstance(block.citations, list)
+               for block in r.content)
+
+# %% ../00_core.ipynb
 def contents(r):
     "Helper to get the contents from Claude response `r`."
-    blk = find_block(r)
+    blk = cite_msgs(r) if has_citations(r) else find_block(r)
     if not blk and r.content: blk = r.content[0]
     if hasattr(blk,'text'): return blk.text.strip()
     elif hasattr(blk,'content'): return blk.content.strip()
