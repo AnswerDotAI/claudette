@@ -38,6 +38,8 @@ model_types = {
     'claude-3-5-sonnet-20241022': 'sonnet',
     'claude-3-haiku-20240307': 'haiku-3',
     'claude-3-5-haiku-20241022': 'haiku-3-5',
+    'claude-3-5-haiku-20241022': 'haiku-3-5',
+    'claude-3-7-sonnet-20250219': 'sonnet-3-7',
     # AWS
     'anthropic.claude-3-opus-20240229-v1:0': 'opus',
     'anthropic.claude-3-5-sonnet-20241022-v2:0': 'sonnet',
@@ -53,7 +55,21 @@ model_types = {
 all_models = list(model_types)
 
 # %% ../00_core.ipynb
-models, models_aws, models_goog = all_models[:4], all_models[3:7], all_models[7:]
+models = all_models[:5]
+
+# %% ../00_core.ipynb
+models_aws = ['claude-3-5-haiku-20241022',
+ 'claude-3-7-sonnet-20250219',
+ 'anthropic.claude-3-opus-20240229-v1:0',
+ 'anthropic.claude-3-5-sonnet-20241022-v2:0']
+
+# %% ../00_core.ipynb
+models_goog = ['anthropic.claude-3-sonnet-20240229-v1:0',
+ 'anthropic.claude-3-haiku-20240307-v1:0',
+ 'claude-3-opus@20240229',
+ 'claude-3-5-sonnet-v2@20241022',
+ 'claude-3-sonnet@20240229',
+ 'claude-3-haiku@20240307']
 
 # %% ../00_core.ipynb
 text_only_models = ('claude-3-5-haiku-20241022',)
