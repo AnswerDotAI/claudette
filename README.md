@@ -90,8 +90,10 @@ models
 ```
 
     ['claude-3-opus-20240229',
+     'claude-3-7-sonnet-20250219',
      'claude-3-5-sonnet-20241022',
-     'claude-3-haiku-20240307']
+     'claude-3-haiku-20240307',
+     'claude-3-5-haiku-20241022']
 
 For these examples, we’ll use Sonnet 3.5, since it’s awesome!
 
@@ -110,20 +112,42 @@ chat = Chat(model, sp="""You are a helpful and concise assistant.""")
 chat("I'm Jeremy")
 ```
 
-Hello Jeremy, nice to meet you.
+Hello, Jeremy! How can I assist you today?
 
 <details>
 
-- id: `msg_015oK9jEcra3TEKHUGYULjWB`
+- id: `msg_01JKhMQx949VK4aVMGdh2x59`
 - content:
-  `[{'text': 'Hello Jeremy, nice to meet you.', 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': 'Hello, Jeremy! How can I assist you today?', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 19, 'output_tokens': 11, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 19, 'output_tokens': 14}`
+
+</details>
+
+``` python
+r = chat("What's my name?")
+r
+```
+
+Your name is Jeremy, as you mentioned in your introduction.
+
+<details>
+
+- id: `msg_01W5rc2j8EAQDFzZWfg1Dikx`
+- content:
+  `[{'citations': None, 'text': 'Your name is Jeremy, as you mentioned in your introduction.', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 41, 'output_tokens': 15}`
 
 </details>
 
@@ -136,36 +160,16 @@ Your name is Jeremy.
 
 <details>
 
-- id: `msg_01Si8sTFJe8d8vq7enanbAwj`
-- content: `[{'text': 'Your name is Jeremy.', 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+- id: `msg_01CFQui4Zobt3WYs7qbUBvyh`
+- content:
+  `[{'citations': None, 'text': 'Your name is Jeremy.', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 38, 'output_tokens': 8, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
-
-</details>
-
-``` python
-r = chat("What's my name?")
-r
-```
-
-Your name is Jeremy.
-
-<details>
-
-- id: `msg_01BHWRoAX8eBsoLn2bzpBkvx`
-- content: `[{'text': 'Your name is Jeremy.', 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
-- role: `assistant`
-- stop_reason: `end_turn`
-- stop_sequence: `None`
-- type: `message`
-- usage:
-  `{'input_tokens': 54, 'output_tokens': 8, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 64, 'output_tokens': 8}`
 
 </details>
 
@@ -177,7 +181,7 @@ collapsible section. Alternatively you can `print` the details:
 print(r)
 ```
 
-    Message(id='msg_01BHWRoAX8eBsoLn2bzpBkvx', content=[TextBlock(text='Your name is Jeremy.', type='text')], model='claude-3-5-sonnet-20241022', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 54; Out: 8; Cache create: 0; Cache read: 0; Total: 62)
+    Message(id='msg_01CFQui4Zobt3WYs7qbUBvyh', content=[TextBlock(citations=None, text='Your name is Jeremy.', type='text')], model='claude-3-7-sonnet-20250219', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 64; Out: 8; Cache create: 0; Cache read: 0; Total: 72)
 
 Claude supports adding an extra `assistant` message at the end, which
 contains the *prefill* – i.e. the text we want Claude to assume the
@@ -188,21 +192,22 @@ chat("Concisely, what is the meaning of life?",
      prefill='According to Douglas Adams,')
 ```
 
-According to Douglas Adams,42. Philosophically, it’s to find personal
-meaning through relationships, purpose, and experiences.
+According to Douglas Adams, 42. Philosophically, it’s often considered
+to be finding personal meaning, happiness, and fulfillment through
+relationships, purpose, and experiences.
 
 <details>
 
-- id: `msg_01R9RvMdFwea9iRX5uYSSHG7`
+- id: `msg_01HtFZp54GYJdfopa4vweb1G`
 - content:
-  `[{'text': "According to Douglas Adams,42. Philosophically, it's to find personal meaning through relationships, purpose, and experiences.", 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': "According to Douglas Adams,  42. Philosophically, it's often considered to be finding personal meaning, happiness, and fulfillment through relationships, purpose, and experiences.", 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 82, 'output_tokens': 23, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 92, 'output_tokens': 34}`
 
 </details>
 
@@ -229,21 +234,22 @@ chat = AsyncChat(model)
 await chat("I'm Jeremy")
 ```
 
-Hi Jeremy! Nice to meet you. I’m Claude, an AI assistant created by
-Anthropic. How can I help you today?
+Hello, Jeremy! It’s nice to meet you. How are you doing today? Is there
+something I can help you with or would you like to chat about something
+specific?
 
 <details>
 
-- id: `msg_016Q8cdc3sPWBS8eXcNj841L`
+- id: `msg_01PqUxGc9uiZVxy6EChRXcuy`
 - content:
-  `[{'text': "Hi Jeremy! Nice to meet you. I'm Claude, an AI assistant created by Anthropic. How can I help you today?", 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': "Hello, Jeremy! It's nice to meet you. How are you doing today? Is there something I can help you with or would you like to chat about something specific?", 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 10, 'output_tokens': 31, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 10, 'output_tokens': 38}`
 
 </details>
 
@@ -255,7 +261,7 @@ async for o in await chat("Concisely, what is the meaning of life?",
     print(o, end='')
 ```
 
-    According to Douglas Adams,  it's 42. But in my view, there's no single universal meaning - each person must find their own purpose through relationships, personal growth, contribution to others, and pursuit of what they find meaningful.
+    According to Douglas Adams,  42. More seriously, the meaning of life is likely what you create through your relationships, pursuits, and values that bring you fulfillment and purpose.
 
 ## Prompt caching
 
@@ -287,8 +293,6 @@ features include:
 2.  Support for prefill (controlling Claude’s initial response words)
 3.  Convenient image handling
 4.  Simple tool use API integration
-5.  Support for multiple model providers (Anthropic, AWS Bedrock, Google
-    Vertex)
 
 The project is notable for being the first “literate nbdev” project,
 meaning its source code is written as a detailed, readable Jupyter
@@ -301,16 +305,16 @@ be needed with the base SDK.
 
 <details>
 
-- id: `msg_014rVQnYoZXZuyWUCMELG1QW`
+- id: `msg_018FtfRtRxkWRdEK69qnASgC`
 - content:
-  `[{'text': 'Claudette is a high-level wrapper for Anthropic\'s Python SDK that automates common tasks and provides additional functionality. Its main features include:\n\n1. A Chat class for stateful dialogs\n2. Support for prefill (controlling Claude\'s initial response words)\n3. Convenient image handling\n4. Simple tool use API integration\n5. Support for multiple model providers (Anthropic, AWS Bedrock, Google Vertex)\n\nThe project is notable for being the first "literate nbdev" project, meaning its source code is written as a detailed, readable Jupyter Notebook that includes explanations, examples, and teaching material alongside the functional code.\n\nThe goal is to simplify working with Claude\'s API while maintaining full control, reducing boilerplate code and manual work that would otherwise be needed with the base SDK.', 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': 'Claudette is a high-level wrapper for Anthropic\'s Python SDK that automates common tasks and provides additional functionality. Its main features include:\n\n1. A Chat class for stateful dialogs\n2. Support for prefill (controlling Claude\'s initial response words)\n3. Convenient image handling\n4. Simple tool use API integration\n\nThe project is notable for being the first "literate nbdev" project, meaning its source code is written as a detailed, readable Jupyter Notebook that includes explanations, examples, and teaching material alongside the functional code.\n\nThe goal is to simplify working with Claude\'s API while maintaining full control, reducing boilerplate code and manual work that would otherwise be needed with the base SDK.', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 4, 'output_tokens': 179, 'cache_creation_input_tokens': 7205, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 9287, 'cache_read_input_tokens': 0, 'input_tokens': 4, 'output_tokens': 157}`
 
 </details>
 
@@ -321,7 +325,7 @@ tokens:
 print(r.usage)
 ```
 
-    Usage(input_tokens=4, output_tokens=179, cache_creation_input_tokens=7205, cache_read_input_tokens=0)
+    Usage(cache_creation_input_tokens=9287, cache_read_input_tokens=0, input_tokens=4, output_tokens=157)
 
 We can now ask a followup question in this chat:
 
@@ -367,16 +371,16 @@ use logic that would be required with the base SDK.
 
 <details>
 
-- id: `msg_01EdUvvFBnpPxMtdLRCaSZAU`
+- id: `msg_011hEtdB23ptoEaWyHgk4m2k`
 - content:
-  `[{'text': 'According to the README, Claudette makes tool use more ergonomic in several ways:\n\n1. It uses docments to make Python function definitions more user-friendly - each parameter and return value should have a type and description\n\n2. It handles the tool calling process automatically - when Claude returns a tool_use message, Claudette manages calling the tool with the provided parameters behind the scenes\n\n3. It provides a`toolloop`method that can handle multiple tool calls in a single step to solve more complex problems\n\n4. It allows you to pass a list of tools to the Chat constructor and optionally force Claude to always use a specific tool via`tool_choice```` \n\nHere\'s a simple example from the README:\n\n```python\ndef sums(\n    a:int,  # First thing to sum \n    b:int=1 # Second thing to sum\n) -> int: # The sum of the inputs\n    "Adds a + b."\n    print(f"Finding the sum of {a} and {b}")\n    return a + b\n\nchat = Chat(model, sp=sp, tools=[sums], tool_choice=\'sums\')\n```\n\nThis makes it much simpler compared to manually handling all the tool use logic that would be required with the base SDK.', 'type': 'text'}] ````
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': 'According to the README, Claudette makes tool use more ergonomic in several ways:\n\n1. It uses docments to make Python function definitions more user-friendly - each parameter and return value should have a type and description\n\n2. It handles the tool calling process automatically - when Claude returns a tool_use message, Claudette manages calling the tool with the provided parameters behind the scenes\n\n3. It provides a`toolloop`method that can handle multiple tool calls in a single step to solve more complex problems\n\n4. It allows you to pass a list of tools to the Chat constructor and optionally force Claude to always use a specific tool via`tool_choice```` \n\nHere\'s a simple example from the README:\n\n```python\ndef sums(\n    a:int,  # First thing to sum \n    b:int=1 # Second thing to sum\n) -> int: # The sum of the inputs\n    "Adds a + b."\n    print(f"Finding the sum of {a} and {b}")\n    return a + b\n\nchat = Chat(model, sp=sp, tools=[sums], tool_choice=\'sums\')\n```\n\nThis makes it much simpler compared to manually handling all the tool use logic that would be required with the base SDK.', 'type': 'text'}] ````
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 197, 'output_tokens': 280, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 7205}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 9287, 'input_tokens': 175, 'output_tokens': 280}`
 
 </details>
 
@@ -387,13 +391,13 @@ context tokens have been read from cache.
 print(r.usage)
 ```
 
-    Usage(input_tokens=197, output_tokens=280, cache_creation_input_tokens=0, cache_read_input_tokens=7205)
+    Usage(cache_creation_input_tokens=0, cache_read_input_tokens=9287, input_tokens=175, output_tokens=280)
 
 ``` python
 chat.use
 ```
 
-    In: 201; Out: 459; Cache create: 7205; Cache read: 7205; Total: 15070
+    In: 179; Out: 437; Cache create: 9287; Cache read: 9287; Total: 19190
 
 ## Tool use
 
@@ -453,21 +457,21 @@ r
 
     Finding the sum of 604542 and 6458932
 
-ToolUseBlock(id=‘toolu_014ip2xWyEq8RnAccVT4SySt’, input={‘a’: 604542,
+ToolUseBlock(id=‘toolu_01915nm3QDrQH1GSzVU7Xvqt’, input={‘a’: 604542,
 ‘b’: 6458932}, name=‘sums’, type=‘tool_use’)
 
 <details>
 
-- id: `msg_014xrPyotyiBmFSctkp1LZHk`
+- id: `msg_01JP7GyAbS9Tp1UCYD9dwThU`
 - content:
-  `[{'id': 'toolu_014ip2xWyEq8RnAccVT4SySt', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'id': 'toolu_01915nm3QDrQH1GSzVU7Xvqt', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `tool_use`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 442, 'output_tokens': 53, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 442, 'output_tokens': 53}`
 
 </details>
 
@@ -478,20 +482,20 @@ happens automatically:
 chat()
 ```
 
-The sum of 604542 and 6458932 is 7063474.
+The sum of 604542 and 6458932 is 7,063,474.
 
 <details>
 
-- id: `msg_01151puJxG8Fa6k6QSmzwKQA`
+- id: `msg_01RDhvKv8wUn5pfC5p1CxTxz`
 - content:
-  `[{'text': 'The sum of 604542 and 6458932 is 7063474.', 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': 'The sum of 604542 and 6458932 is 7,063,474.', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 524, 'output_tokens': 23, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 524, 'output_tokens': 25}`
 
 </details>
 
@@ -503,7 +507,7 @@ You can see how many tokens have been used at any time by checking the
 chat.use
 ```
 
-    In: 966; Out: 76; Cache create: 0; Cache read: 0; Total: 1042
+    In: 966; Out: 78; Cache create: 0; Cache read: 0; Total: 1044
 
 We can do everything needed to use tools in a single step, by using
 [`Chat.toolloop`](https://claudette.answer.ai/toolloop.html#chat.toolloop).
@@ -536,25 +540,25 @@ chat.toolloop(pr, trace_func=print)
 ```
 
     Finding the sum of 604542 and 6458932
-    [{'role': 'user', 'content': [{'type': 'text', 'text': 'Calculate (604542+6458932)*2'}]}, {'role': 'assistant', 'content': [TextBlock(text="I'll help you break this down into steps:\n\nFirst, let's add those numbers:", type='text'), ToolUseBlock(id='toolu_01St5UKxYUU4DKC96p2PjgcD', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')]}, {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'toolu_01St5UKxYUU4DKC96p2PjgcD', 'content': '7063474'}]}]
+    [{'role': 'user', 'content': 'Calculate (604542+6458932)*2'}, {'role': 'assistant', 'content': [TextBlock(citations=None, text="I'll calculate (604542+6458932)*2 for you.\n\nFirst, let me add the numbers inside the parentheses:", type='text'), ToolUseBlock(id='toolu_01SkhYBiVNDAbCPkX3be6X4F', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')]}, {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'toolu_01SkhYBiVNDAbCPkX3be6X4F', 'content': '7063474'}]}]
     Finding the product of 7063474 and 2
-    [{'role': 'assistant', 'content': [TextBlock(text="Now, let's multiply this result by 2:", type='text'), ToolUseBlock(id='toolu_01FpmRG4ZskKEWN1gFZzx49s', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')]}, {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'toolu_01FpmRG4ZskKEWN1gFZzx49s', 'content': '14126948'}]}]
-    [{'role': 'assistant', 'content': [TextBlock(text='The final result is 14,126,948.', type='text')]}]
+    [{'role': 'assistant', 'content': [TextBlock(citations=None, text="Now, I'll multiply this result by 2:", type='text'), ToolUseBlock(id='toolu_01XaagwWimhXuMt2oKMBttWv', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')]}, {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'toolu_01XaagwWimhXuMt2oKMBttWv', 'content': '14126948'}]}]
+    [{'role': 'assistant', 'content': [TextBlock(citations=None, text='The result of (604542+6458932)*2 is 14,126,948.', type='text')]}]
 
-The final result is 14,126,948.
+The result of (604542+6458932)\*2 is 14,126,948.
 
 <details>
 
-- id: `msg_0162teyBcJHriUzZXMPz4r5d`
+- id: `msg_015TzicGDqJnYbYEmVyxPMvd`
 - content:
-  `[{'text': 'The final result is 14,126,948.', 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': 'The result of (604542+6458932)*2 is 14,126,948.', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 741, 'output_tokens': 15, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 752, 'output_tokens': 25}`
 
 </details>
 
@@ -609,7 +613,7 @@ class President:
 cli.structured("Provide key information about the 3rd President of the United States", President)
 ```
 
-    [President(first='Thomas', last='Jefferson', spouse='Martha Wayles', years_in_office='1801-1809', birthplace='Shadwell', birth_year=1743)]
+    [President(first='Thomas', last='Jefferson', spouse='Martha Wayles Skelton', years_in_office='1801-1809', birthplace='Shadwell, Virginia', birth_year=1743)]
 
 ## Images
 
@@ -643,21 +647,23 @@ Prompts to Claudette can be lists, containing text, images, or both, eg:
 chat([img, "In brief, what color flowers are in this image?"])
 ```
 
-In this adorable puppy photo, there are purple/lavender colored flowers
-(appears to be asters or similar daisy-like flowers) in the background.
+The image shows purple flowers (appears to be asters or similar purple
+daisies) blooming next to a small Cavalier King Charles Spaniel puppy.
+The puppy is resting on grass, and the purple flowers create a nice
+contrast with the natural setting.
 
 <details>
 
-- id: `msg_01LHjGv1WwFvDsWUbyLmTEKT`
+- id: `msg_01MEKVkFVbh1MHZwY2PNy8PQ`
 - content:
-  `[{'text': 'In this adorable puppy photo, there are purple/lavender colored flowers (appears to be asters or similar daisy-like flowers) in the background.', 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': 'The image shows purple flowers (appears to be asters or similar purple daisies) blooming next to a small Cavalier King Charles Spaniel puppy. The puppy is resting on grass, and the purple flowers create a nice contrast with the natural setting.', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 110, 'output_tokens': 37, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 110, 'output_tokens': 60}`
 
 </details>
 
@@ -667,7 +673,7 @@ The image is included as input tokens.
 chat.use
 ```
 
-    In: 110; Out: 37; Cache create: 0; Cache read: 0; Total: 147
+    In: 110; Out: 60; Cache create: 0; Cache read: 0; Total: 170
 
 Alternatively, Claudette supports creating a multi-stage chat with
 separate image and text prompts. For instance, you can pass just the
@@ -680,28 +686,28 @@ chat = Chat(model)
 chat(img)
 ```
 
-What an adorable Cavalier King Charles Spaniel puppy! The photo captures
-the classic brown and white coloring of the breed, with those soulful
-dark eyes that are so characteristic. The puppy is lying in the grass,
-and there are lovely purple asters blooming in the background, creating
-a beautiful natural setting. The combination of the puppy’s sweet
-expression and the delicate flowers makes for a charming composition.
-Cavalier King Charles Spaniels are known for their gentle, affectionate
-nature, and this little one certainly seems to embody those traits with
-its endearing look.
+This is an adorable puppy with a white and brown coat, resting on some
+grass. The puppy appears to be a Cavalier King Charles Spaniel or
+similar breed, with distinctive brown patches on its ears and around one
+eye. The puppy has a sweet expression and is lying near some purple
+flowers, likely asters or similar small daisy-like blooms. The setting
+creates a charming garden scene with the natural elements of grass,
+flowers, and what looks like a stone or wooden structure in the
+background. The combination of the cute puppy and the pretty flowers
+makes for a very heartwarming image.
 
 <details>
 
-- id: `msg_01Ciyymq44uwp2iYwRZdKWNN`
+- id: `msg_01CXq96V9U2Jstf578znibrt`
 - content:
-  `[{'text': "What an adorable Cavalier King Charles Spaniel puppy! The photo captures the classic brown and white coloring of the breed, with those soulful dark eyes that are so characteristic. The puppy is lying in the grass, and there are lovely purple asters blooming in the background, creating a beautiful natural setting. The combination of the puppy's sweet expression and the delicate flowers makes for a charming composition. Cavalier King Charles Spaniels are known for their gentle, affectionate nature, and this little one certainly seems to embody those traits with its endearing look.", 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': 'This is an adorable puppy with a white and brown coat, resting on some grass. The puppy appears to be a Cavalier King Charles Spaniel or similar breed, with distinctive brown patches on its ears and around one eye. The puppy has a sweet expression and is lying near some purple flowers, likely asters or similar small daisy-like blooms. The setting creates a charming garden scene with the natural elements of grass, flowers, and what looks like a stone or wooden structure in the background. The combination of the cute puppy and the pretty flowers makes for a very heartwarming image.', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 98, 'output_tokens': 130, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 98, 'output_tokens': 132}`
 
 </details>
 
@@ -709,25 +715,24 @@ its endearing look.
 chat('What direction is the puppy facing?')
 ```
 
-The puppy is facing towards the left side of the image. Its head is
-positioned so we can see its right side profile, though it appears to be
-looking slightly towards the camera, giving us a good view of its
-distinctive brown and white facial markings and one of its dark eyes.
-The puppy is lying down with its white chest/front visible against the
-green grass.
+The puppy is facing toward the camera/viewer, with its head slightly
+angled. You can see its face clearly with both eyes visible, and its
+front paws are extended forward on the grass. The puppy’s body is
+positioned in a relaxed lying down pose with its face as the focal point
+of the image.
 
 <details>
 
-- id: `msg_01AeR9eWjbxa788YF97iErtN`
+- id: `msg_01L6qPiQqqoBUTVCfm2nqg7S`
 - content:
-  `[{'text': 'The puppy is facing towards the left side of the image. Its head is positioned so we can see its right side profile, though it appears to be looking slightly towards the camera, giving us a good view of its distinctive brown and white facial markings and one of its dark eyes. The puppy is lying down with its white chest/front visible against the green grass.', 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': "The puppy is facing toward the camera/viewer, with its head slightly angled. You can see its face clearly with both eyes visible, and its front paws are extended forward on the grass. The puppy's body is positioned in a relaxed lying down pose with its face as the focal point of the image.", 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 239, 'output_tokens': 79, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 241, 'output_tokens': 69}`
 
 </details>
 
@@ -735,25 +740,24 @@ green grass.
 chat('What color is it?')
 ```
 
-The puppy has a classic Cavalier King Charles Spaniel coat with a rich
-chestnut brown (sometimes called Blenheim) coloring on its ears and
-patches on its face, combined with a bright white base color. The white
-is particularly prominent on its face (creating a distinctive blaze down
-the center) and chest area. This brown and white combination is one of
-the most recognizable color patterns for the breed.
+The puppy has a white and brown coat. Its body is predominantly white,
+while it has rich brown/chestnut coloring on its ears and a patch around
+one eye. This color pattern is typical of Cavalier King Charles
+Spaniels, particularly the Blenheim color variety, which features the
+characteristic white base with chestnut or reddish-brown markings.
 
 <details>
 
-- id: `msg_01R91AqXG7pLc8hK24F5mc7x`
+- id: `msg_019z266CT4uu6UCXHsGZ5Qw9`
 - content:
-  `[{'text': 'The puppy has a classic Cavalier King Charles Spaniel coat with a rich chestnut brown (sometimes called Blenheim) coloring on its ears and patches on its face, combined with a bright white base color. The white is particularly prominent on its face (creating a distinctive blaze down the center) and chest area. This brown and white combination is one of the most recognizable color patterns for the breed.', 'type': 'text'}]`
-- model: `claude-3-5-sonnet-20241022`
+  `[{'citations': None, 'text': 'The puppy has a white and brown coat. Its body is predominantly white, while it has rich brown/chestnut coloring on its ears and a patch around one eye. This color pattern is typical of Cavalier King Charles Spaniels, particularly the Blenheim color variety, which features the characteristic white base with chestnut or reddish-brown markings.', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
 - role: `assistant`
 - stop_reason: `end_turn`
 - stop_sequence: `None`
 - type: `message`
 - usage:
-  `{'input_tokens': 326, 'output_tokens': 92, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 318, 'output_tokens': 84}`
 
 </details>
 
@@ -765,7 +769,62 @@ that number of input tokens increases quickly with this kind of chat.
 chat.use
 ```
 
-    In: 663; Out: 301; Cache create: 0; Cache read: 0; Total: 964
+    In: 657; Out: 285; Cache create: 0; Cache read: 0; Total: 942
+
+## Extended Thinking
+
+Claude 3.7 Sonnet has enhanced reasoning capabilities for complex tasks.
+See
+[docs](https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking)
+for more info.
+
+To enable extended thinking simply specify the no. of thinking tokens
+`maxthinktok` you want to use.
+
+``` python
+chat = Chat(first(has_extended_thinking_models))
+```
+
+``` python
+chat('Write a sentence about Python!', maxthinktok=1024)
+```
+
+Python is a versatile, high-level programming language known for its
+readable syntax and wide application in data science, web development,
+artificial intelligence, and automation.
+
+<details>
+
+<summary>
+
+Thinking
+</summary>
+
+I’ll write a simple, informative sentence about the Python programming
+language. I should make it clear that I’m referring to the programming
+language rather than the snake.
+</details>
+
+<details>
+
+- id: `msg_01Cxug4hSBsiDZ3KWfUkQdUF`
+- content:
+  `[{'signature': 'ErUBCkYIARgCIkDVNeCzqoRFz0iS5CTiMQA//IJi/R/cq25udwX71lATHFTFTAvaLG7RoQdLaI1cZppD6BTK4VDE30/O007g5DIeEgzZGw7VTS5rOS2jSEYaDDIK0RzCgTZc+bAlsiIw92rY7M6VJ6HtFk898McV6vfOfhcTJkoEBpHFy8WbqJ/HFq8qpwDRGF5HWS5zUSGmKh24Ex0wiBfWEtD/C0q3o02ulDfjJBhqaRfIdWGJjg==', 'thinking': "I'll write a simple, informative sentence about the Python programming language. I should make it clear that I'm referring to the programming language rather than the snake.", 'type': 'thinking'}, {'citations': None, 'text': 'Python is a versatile, high-level programming language known for its readable syntax and wide application in data science, web development, artificial intelligence, and automation.', 'type': 'text'}]`
+- model: `claude-3-7-sonnet-20250219`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 41, 'output_tokens': 77}`
+
+</details>
+
+``` python
+chat.use
+```
+
+    In: 41; Out: 77; Cache create: 0; Cache read: 0; Total: 118
 
 ## Other model providers
 
@@ -779,10 +838,10 @@ These are the models available through Bedrock:
 models_aws
 ```
 
-    ['anthropic.claude-3-opus-20240229-v1:0',
-     'anthropic.claude-3-5-sonnet-20241022-v2:0',
-     'anthropic.claude-3-sonnet-20240229-v1:0',
-     'anthropic.claude-3-haiku-20240307-v1:0']
+    ['claude-3-5-haiku-20241022',
+     'claude-3-7-sonnet-20250219',
+     'anthropic.claude-3-opus-20240229-v1:0',
+     'anthropic.claude-3-5-sonnet-20241022-v2:0']
 
 To use them, call `AnthropicBedrock` with your access details, and pass
 that to [`Client`](https://claudette.answer.ai/core.html#client):
@@ -808,23 +867,6 @@ chat = Chat(cli=client)
 chat("I'm Jeremy")
 ```
 
-It’s nice to meet you, Jeremy! I’m Claude, an AI assistant created by
-Anthropic. How can I help you today?
-
-<details>
-
-- id: `msg_bdrk_01V3B5RF2Pyzmh3NeR8xMMpq`
-- content:
-  `[{'text': "It's nice to meet you, Jeremy! I'm Claude, an AI assistant created by Anthropic. How can I help you today?", 'type': 'text'}]`
-- model: `claude-3-haiku-20240307`
-- role: `assistant`
-- stop_reason: `end_turn`
-- stop_sequence: `None`
-- type: `message`
-- usage: `{'input_tokens': 10, 'output_tokens': 32}`
-
-</details>
-
 ### Google Vertex
 
 These are the models available through Vertex:
@@ -832,11 +874,6 @@ These are the models available through Vertex:
 ``` python
 models_goog
 ```
-
-    ['claude-3-opus@20240229',
-     'claude-3-5-sonnet-v2@20241022',
-     'claude-3-sonnet@20240229',
-     'claude-3-haiku@20240307']
 
 To use them, call `AnthropicVertex` with your access details, and pass
 that to [`Client`](https://claudette.answer.ai/core.html#client):
