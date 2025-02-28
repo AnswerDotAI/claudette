@@ -112,15 +112,6 @@ async def _stream(self:AsyncChat, res):
 
 # %% ../02_async.ipynb
 @patch
-async def _append_pr(self:AsyncChat,
-                     pr=None,  # Prompt / message
-                    ):
-    prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user'
-    if pr and prev_role == 'user': await self() # already user request pending
-    self._post_pr(pr, prev_role)
-
-# %% ../02_async.ipynb
-@patch
 def _post_pr(self:AsyncChat, pr, prev_role):
     "Process prompt after role check."
     if pr is None and prev_role == 'assistant':
@@ -128,6 +119,15 @@ def _post_pr(self:AsyncChat, pr, prev_role):
             raise ValueError("Prompt must be given after assistant completion, or use `self.cont_pr`.")
         pr = self.cont_pr # No user prompt, keep the chain
     if pr: self.h.append(mk_msg(pr, cache=self.cache))
+
+# %% ../02_async.ipynb
+@patch
+async def _append_pr(self:AsyncChat,
+                     pr=None,  # Prompt / message
+                    ):
+    prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user'
+    if pr and prev_role == 'user': await self() # already user request pending
+    self._post_pr(pr, prev_role)
 
 # %% ../02_async.ipynb
 @patch
