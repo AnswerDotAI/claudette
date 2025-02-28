@@ -24,7 +24,7 @@ from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs
 # %% ../02_async.ipynb
 class AsyncClient(Client):
     def __init__(self, model, cli=None, log=False, cache=False):
-        "Async Anthropic messages client."
+        "Async claudette client"
         self.model,self.use = model,usage()
         self.text_only = model in text_only_models
         self.log = [] if log else None
@@ -34,7 +34,6 @@ class AsyncClient(Client):
 # %% ../02_async.ipynb
 @patch
 async def _log(self:AsyncClient, final, prefill, msgs, maxtok=None, sp=None, temp=None, stream=None, stop=None, **kwargs):
-    "Store the result of the message and accrue total usage."
     self._r(final, prefill)
     if self.log is not None: self.log.append({
         "msgs": msgs, "prefill": prefill,
@@ -46,7 +45,7 @@ async def _log(self:AsyncClient, final, prefill, msgs, maxtok=None, sp=None, tem
 # %% ../02_async.ipynb
 @patch
 async def _stream(self:AsyncClient, msgs:list, prefill='', **kwargs):
-    "Stream response from Claude."
+    "Streaming with async considerations"
     async with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs, cache=self.cache, cache_last_ckpt_only=self.cache), **kwargs) as s:
         if prefill: yield prefill
         async for o in s.text_stream: yield o
@@ -55,7 +54,6 @@ async def _stream(self:AsyncClient, msgs:list, prefill='', **kwargs):
 # %% ../02_async.ipynb
 @patch
 def _precall(self:AsyncClient, msgs, prefill, stop, kwargs):
-    "Prepare messages for a call to Claude."
     pref = [prefill.strip()] if prefill else []
     if not isinstance(msgs,list): msgs = [msgs]
     if stop is not None:
@@ -68,11 +66,11 @@ def _precall(self:AsyncClient, msgs, prefill, stop, kwargs):
 @patch
 @delegates(Client.structured)
 async def structured(self:AsyncClient,
-               msgs:list, # List of messages in the dialog
-               tools:Optional[list]=None, # List of tools to make available to Claude
-               obj:Optional=None, # Class to search for tools  
-               ns:Optional[abc.Mapping]=None, # Namespace to search for tools
-               **kwargs):
+                     msgs:list, # List of messages in the dialog
+                     tools:Optional[list]=None, # List of tools to make available to Claude
+                     obj:Optional=None, # Class to search for tools  
+                     ns:Optional[abc.Mapping]=None, # Namespace to search for tools
+                     **kwargs):
     "Return the value of all tool calls (generally used for structured outputs)"
     tools = listify(tools)
     res = await self(msgs, tools=tools, tool_choice=tools, **kwargs)
@@ -92,7 +90,7 @@ class AsyncChat(Chat):
                  temp=0, # Temperature
                  cont_pr:Optional[str]=None, # User prompt to continue an assistant response: assistant,[user:"..."],assistant
                  cache: bool = False):
-        "Anthropic async chat client."
+        "Asynchroneous claudette chat."
         assert model or cli
         assert cont_pr != "", "cont_pr may not be an empty string"
         self.c = (cli or AsyncClient(model, cache=cache))
@@ -109,16 +107,14 @@ def cost(self: AsyncChat) -> float: return self.c.cost
 # %% ../02_async.ipynb
 @patch
 async def _stream(self:AsyncChat, res):
-    "Handle streaming response from Claude."
     async for o in res: yield o
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
 
 # %% ../02_async.ipynb
 @patch
 async def _append_pr(self:AsyncChat,
-               pr=None,  # Prompt / message
-              ):
-    "Append prompt to history, handling role alternation."
+                     pr=None,  # Prompt / message
+                    ):
     prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user'
     if pr and prev_role == 'user': await self() # already user request pending
     self._post_pr(pr, prev_role)
@@ -136,13 +132,13 @@ def _post_pr(self:AsyncChat, pr, prev_role):
 # %% ../02_async.ipynb
 @patch
 async def __call__(self:AsyncChat,
-             pr=None,  # Prompt / message
-             temp=None, # Temperature
-             maxtok=4096, # Maximum tokens
-             stream=False, # Stream response?
-             prefill='', # Optional prefill to pass to Claude as start of its response
-             tool_choice:Optional[dict]=None, # Optionally force use of some tool
-             **kw):
+                   pr=None,  # Prompt / message
+                   temp=None, # Temperature
+                   maxtok=4096, # Maximum tokens
+                   stream=False, # Stream response?
+                   prefill='', # Optional prefill to pass to Claude as start of its response
+                   tool_choice:Optional[dict]=None, # Optionally force use of some tool
+                   **kw):
     "Make an async call to Claude via the chat interface."
     if temp is None: temp=self.temp
     await self._append_pr(pr)
@@ -156,11 +152,11 @@ async def __call__(self:AsyncChat,
 @patch
 @delegates(AsyncChat.__call__)
 async def toolloop(self:AsyncChat,
-             pr, # Prompt to pass to Claude
-             max_steps=10, # Maximum number of tool requests to loop through  
-             trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
-             cont_func:Optional[callable]=noop, # Function that stops loop if returns False
-             **kwargs):
+                   pr, # Prompt to pass to Claude
+                   max_steps=10, # Maximum number of tool requests to loop through  
+                   trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
+                   cont_func:Optional[callable]=noop, # Function that stops loop if returns False
+                   **kwargs):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
     n_msgs = len(self.h)
     r = await self(pr, **kwargs)
