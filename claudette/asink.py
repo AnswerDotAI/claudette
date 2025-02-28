@@ -9,9 +9,13 @@ from collections import abc
 try: from IPython import display
 except: display=None
 
-from anthropic import AsyncAnthropic
-from anthropic.types import ToolUseBlock
-from toolslm.funccall import get_schema, mk_ns, call_func
+from anthropic import AsyncAnthropic, AsyncAnthropicBedrock, AsyncAnthropicVertex
+from anthropic.types import Usage, TextBlock, Message, ToolUseBlock
+from anthropic.resources import messages
+
+import toolslm
+from toolslm.funccall import *
+
 from fastcore.meta import delegates
 from fastcore.utils import *
 from .core import *
@@ -21,44 +25,48 @@ from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs
 class AsyncClient(Client):
     def __init__(self, model, cli=None, log=False, cache=False):
         "Async Anthropic messages client."
-        super().__init__(model,cli,log,cache)
-        if not cli: self.c = AsyncAnthropic(default_headers={'anthropic-beta': 'prompt-caching-2024-07-31'})
+        self.model,self.use = model,usage()
+        self.text_only = model in text_only_models
+        self.log = [] if log else None
+        self.c = (cli or AsyncAnthropic(default_headers={'anthropic-beta': 'prompt-caching-2024-07-31'}))
+        self.cache = cache
+
+# %% ../02_async.ipynb
+@patch
+async def _log(self:AsyncClient, final, prefill, msgs, maxtok=None, sp=None, temp=None, stream=None, stop=None, **kwargs):
+    "Store the result of the message and accrue total usage."
+    self._r(final, prefill)
+    if self.log is not None: self.log.append({
+        "msgs": msgs, "prefill": prefill,
+        "maxtok": maxtok, "sp": sp, "temp": temp, "stream": stream, "stop": stop, **kwargs,
+        "result": self.result, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
+    })
+    return self.result
 
 # %% ../02_async.ipynb
 @patch
 async def _stream(self:AsyncClient, msgs:list, prefill='', **kwargs):
-    async with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs, cache=self.cache), **kwargs) as s:
+    "Stream response from Claude."
+    async with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs, cache=self.cache, cache_last_ckpt_only=self.cache), **kwargs) as s:
         if prefill: yield prefill
         async for o in s.text_stream: yield o
-        self._log(await s.get_final_message(), prefill, msgs, kwargs)
+        await self._log(await s.get_final_message(), prefill, msgs, **kwargs)
 
 # %% ../02_async.ipynb
 @patch
-@delegates(Client)
-async def __call__(self:AsyncClient,
-             msgs:list, # List of messages in the dialog
-             sp='', # The system prompt
-             temp=0, # Temperature
-             maxtok=4096, # Maximum tokens
-             prefill='', # Optional prefill to pass to Claude as start of its response
-             stream:bool=False, # Stream response?
-             stop=None, # Stop sequence
-             tools:Optional[list]=None, # List of tools to make available to Claude
-             tool_choice:Optional[dict]=None, # Optionally force use of some tool
-             **kwargs):
-    "Make an async call to Claude."
-    if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
-    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
-    msgs = self._precall(msgs, prefill, stop, kwargs)
-    if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
-    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    res = await self.c.messages.create(
-        model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
+def _precall(self:AsyncClient, msgs, prefill, stop, kwargs):
+    "Prepare messages for a call to Claude."
+    pref = [prefill.strip()] if prefill else []
+    if not isinstance(msgs,list): msgs = [msgs]
+    if stop is not None:
+        if not isinstance(stop, (list)): stop = [stop]
+        kwargs["stop_sequences"] = stop
+    msgs = mk_msgs(msgs+pref, cache=self.cache, cache_last_ckpt_only=self.cache)
+    return msgs
 
 # %% ../02_async.ipynb
 @patch
-@delegates(Client.__call__)
+@delegates(Client.structured)
 async def structured(self:AsyncClient,
                msgs:list, # List of messages in the dialog
                tools:Optional[list]=None, # List of tools to make available to Claude
@@ -67,51 +75,99 @@ async def structured(self:AsyncClient,
                **kwargs):
     "Return the value of all tool calls (generally used for structured outputs)"
     tools = listify(tools)
+    res = await self(msgs, tools=tools, tool_choice=tools, **kwargs)
     if ns is None: ns=mk_ns(*tools)
     if obj is not None: ns = mk_ns(obj)
-    res = await self(msgs, tools=tools, tool_choice=tools,**kwargs)
     cts = getattr(res, 'content', [])
     tcs = [call_func(o.name, o.input, ns=ns) for o in cts if isinstance(o,ToolUseBlock)]
     return tcs
 
 # %% ../02_async.ipynb
-@delegates()
 class AsyncChat(Chat):
     def __init__(self,
                  model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
                  cli:Optional[Client]=None, # Client to use (leave empty if passing `model`)
-                 **kwargs):
+                 sp='', # Optional system prompt
+                 tools:Optional[list]=None, # List of tools to make available to Claude
+                 temp=0, # Temperature
+                 cont_pr:Optional[str]=None, # User prompt to continue an assistant response: assistant,[user:"..."],assistant
+                 cache: bool = False):
         "Anthropic async chat client."
-        super().__init__(model, cli, **kwargs)
-        if not cli: self.c = AsyncClient(model)
+        assert model or cli
+        assert cont_pr != "", "cont_pr may not be an empty string"
+        self.c = (cli or AsyncClient(model, cache=cache))
+        if tools: tools = [tool(t) for t in tools]
+        self.h,self.sp,self.tools,self.cont_pr,self.temp,self.cache = [],sp,tools,cont_pr,temp,cache
+
+    @property
+    def use(self): return self.c.use
+
+# %% ../02_async.ipynb
+@patch(as_prop=True)
+def cost(self: AsyncChat) -> float: return self.c.cost
 
 # %% ../02_async.ipynb
 @patch
 async def _stream(self:AsyncChat, res):
+    "Handle streaming response from Claude."
     async for o in res: yield o
     self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
 
 # %% ../02_async.ipynb
 @patch
-async def _append_pr(self:AsyncChat, pr=None):
-    prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user' if no history
-    if pr and prev_role == 'user': await self()
+async def _append_pr(self:AsyncChat,
+               pr=None,  # Prompt / message
+              ):
+    "Append prompt to history, handling role alternation."
+    prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user'
+    if pr and prev_role == 'user': await self() # already user request pending
     self._post_pr(pr, prev_role)
 
 # %% ../02_async.ipynb
 @patch
+def _post_pr(self:AsyncChat, pr, prev_role):
+    "Process prompt after role check."
+    if pr is None and prev_role == 'assistant':
+        if self.cont_pr is None:
+            raise ValueError("Prompt must be given after assistant completion, or use `self.cont_pr`.")
+        pr = self.cont_pr # No user prompt, keep the chain
+    if pr: self.h.append(mk_msg(pr, cache=self.cache))
+
+# %% ../02_async.ipynb
+@patch
 async def __call__(self:AsyncChat,
-                   pr=None,  # Prompt / message
-                   temp=None, # Temperature
-                   maxtok=4096, # Maximum tokens
-                   stream=False, # Stream response?
-                   prefill='', # Optional prefill to pass to Claude as start of its response
-                   tool_choice:Optional[Union[str,bool,dict]]=None, # Optionally force use of some tool
-                   **kw):
+             pr=None,  # Prompt / message
+             temp=None, # Temperature
+             maxtok=4096, # Maximum tokens
+             stream=False, # Stream response?
+             prefill='', # Optional prefill to pass to Claude as start of its response
+             tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             **kw):
+    "Make an async call to Claude via the chat interface."
     if temp is None: temp=self.temp
     await self._append_pr(pr)
     res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok,
                  tools=self.tools, tool_choice=tool_choice,**kw)
     if stream: return self._stream(res)
-    self.h += mk_toolres(self.c.result, ns=mk_ns(*listify(self.tools)))
+    self.h += mk_toolres(self.c.result, ns=self.tools)
     return res
+
+# %% ../02_async.ipynb
+@patch
+@delegates(AsyncChat.__call__)
+async def toolloop(self:AsyncChat,
+             pr, # Prompt to pass to Claude
+             max_steps=10, # Maximum number of tool requests to loop through  
+             trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
+             cont_func:Optional[callable]=noop, # Function that stops loop if returns False
+             **kwargs):
+    "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
+    n_msgs = len(self.h)
+    r = await self(pr, **kwargs)
+    for i in range(max_steps):
+        if r.stop_reason!='tool_use': break
+        if trace_func: trace_func(self.h[n_msgs:]); n_msgs = len(self.h)
+        r = await self(**kwargs)
+        if not (cont_func or noop)(self.h[-2]): break
+    if trace_func: trace_func(self.h[n_msgs:])
+    return r
