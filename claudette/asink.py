@@ -90,7 +90,7 @@ class AsyncChat(Chat):
                  temp=0, # Temperature
                  cont_pr:Optional[str]=None, # User prompt to continue an assistant response: assistant,[user:"..."],assistant
                  cache: bool = False):
-        "Asynchroneous claudette chat."
+        "Asynchronous claudette chat."
         assert model or cli
         assert cont_pr != "", "cont_pr may not be an empty string"
         self.c = (cli or AsyncClient(model, cache=cache))
