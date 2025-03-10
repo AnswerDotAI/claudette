@@ -280,10 +280,11 @@ def __call__(self:Client,
              stream:bool=False, # Stream response?
              stop=None, # Stop sequence
              tools:Optional[list]=None, # List of tools to make available to Claude
+             tools_serialized:Optional[list[dict]]=None, # List of tools to make available to Claude
              tool_choice:Optional[dict]=None, # Optionally force use of some tool
              **kwargs):
     "Make a call to Claude."
-    if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
+    if tools or tools_serialized: kwargs['tools'] = tools_serialized or [get_schema(o) for o in listify(tools)]
     if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
     msgs = self._precall(msgs, prefill, stop, kwargs)
     if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
