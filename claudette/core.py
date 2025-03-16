@@ -283,7 +283,7 @@ def __call__(self:Client,
              tool_choice:Optional[dict]=None, # Optionally force use of some tool
              **kwargs):
     "Make a call to Claude."
-    if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
+    if tools: kwargs['tools'] = [get_schema(o) if callable(o) else o for o in listify(tools)]
     if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
     msgs = self._precall(msgs, prefill, stop, kwargs)
     if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
