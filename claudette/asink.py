@@ -34,30 +34,6 @@ async def _stream(self:AsyncClient, msgs:list, prefill='', **kwargs):
 
 # %% ../02_async.ipynb
 @patch
-@delegates(Client)
-async def __call__(self:AsyncClient,
-             msgs:list, # List of messages in the dialog
-             sp='', # The system prompt
-             temp=0, # Temperature
-             maxtok=4096, # Maximum tokens
-             prefill='', # Optional prefill to pass to Claude as start of its response
-             stream:bool=False, # Stream response?
-             stop=None, # Stop sequence
-             tools:Optional[list]=None, # List of tools to make available to Claude
-             tool_choice:Optional[dict]=None, # Optionally force use of some tool
-             **kwargs):
-    "Make an async call to Claude."
-    if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
-    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
-    msgs = self._precall(msgs, prefill, stop, kwargs)
-    if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
-    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    res = await self.c.messages.create(
-        model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
-
-# %% ../02_async.ipynb
-@patch
 @delegates(Client.__call__)
 async def structured(self:AsyncClient,
                msgs:list, # List of messages in the dialog
@@ -100,18 +76,46 @@ async def _append_pr(self:AsyncChat, pr=None):
 
 # %% ../02_async.ipynb
 @patch
+@delegates(Client)
+async def __call__(self:AsyncClient,
+             msgs:list, # List of messages in the dialog
+             sp='', # The system prompt
+             temp=0, # Temperature
+             maxtok=4096, # Maximum tokens
+             maxthinktok=0, # Maximum thinking tokens
+             prefill='', # Optional prefill to pass to Claude as start of its response
+             stream:bool=False, # Stream response?
+             stop=None, # Stop sequence
+             tools:Optional[list]=None, # List of tools to make available to Claude
+             tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             **kwargs):
+    "Make an async call to Claude."
+    if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
+    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
+    if maxthinktok: 
+        kwargs['thinking']={'type':'enabled', 'budget_tokens':maxthinktok} 
+        temp=1; prefill=''
+    msgs = self._precall(msgs, prefill, stop, kwargs)
+    if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
+    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
+    res = await self.c.messages.create(
+        model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
+    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
+
+# %% ../02_async.ipynb
+@patch
 async def __call__(self:AsyncChat,
                    pr=None,  # Prompt / message
                    temp=None, # Temperature
                    maxtok=4096, # Maximum tokens
+                   maxthinktok=0, # Maximum thinking tokens
                    stream=False, # Stream response?
                    prefill='', # Optional prefill to pass to Claude as start of its response
                    tool_choice:Optional[Union[str,bool,dict]]=None, # Optionally force use of some tool
                    **kw):
     if temp is None: temp=self.temp
     await self._append_pr(pr)
-    res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok,
-                 tools=self.tools, tool_choice=tool_choice,**kw)
+    res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice,**kw)
     if stream: return self._stream(res)
     self.h += mk_toolres(self.c.result, ns=mk_ns(*listify(self.tools)))
     return res

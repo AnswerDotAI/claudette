@@ -2,9 +2,10 @@
 
 # %% auto 0
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models',
-           'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'pricing', 'can_stream',
-           'can_set_system_prompt', 'can_set_temperature', 'find_block', 'usage', 'Client', 'get_pricing', 'get_costs',
-           'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'contents', 'mk_msg', 'mk_msgs']
+           'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'has_extended_thinking_models',
+           'pricing', 'can_stream', 'can_set_system_prompt', 'can_set_temperature', 'can_use_extended_thinking',
+           'find_block', 'usage', 'Client', 'get_pricing', 'get_costs', 'mk_tool_choice', 'mk_funcres', 'mk_toolres',
+           'get_types', 'tool', 'Chat', 'think_md', 'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -15,7 +16,7 @@ from typing import get_type_hints
 from functools import wraps
 
 from anthropic import Anthropic, AnthropicBedrock, AnthropicVertex
-from anthropic.types import Usage, TextBlock, Message, ToolUseBlock
+from anthropic.types import Usage, TextBlock, Message, ToolUseBlock, ThinkingBlock
 from anthropic.resources import messages
 
 import toolslm
@@ -77,11 +78,13 @@ text_only_models = ('claude-3-5-haiku-20241022',)
 has_streaming_models = set(all_models)
 has_system_prompt_models = set(all_models)
 has_temperature_models = set(all_models)
+has_extended_thinking_models = {'claude-3-7-sonnet-20250219'}
 
 # %% ../00_core.ipynb
 def can_stream(m): return m in has_streaming_models
 def can_set_system_prompt(m): return m in has_system_prompt_models
 def can_set_temperature(m): return m in has_temperature_models
+def can_use_extended_thinking(m): return m in has_extended_thinking_models
 
 # %% ../00_core.ipynb
 def find_block(r:abc.Mapping, # The message to look in
@@ -270,29 +273,6 @@ def get_types(msgs):
 
 # %% ../00_core.ipynb
 @patch
-@delegates(messages.Messages.create)
-def __call__(self:Client,
-             msgs:list, # List of messages in the dialog
-             sp='', # The system prompt
-             temp=0, # Temperature
-             maxtok=4096, # Maximum tokens
-             prefill='', # Optional prefill to pass to Claude as start of its response
-             stream:bool=False, # Stream response?
-             stop=None, # Stop sequence
-             tools:Optional[list]=None, # List of tools to make available to Claude
-             tool_choice:Optional[dict]=None, # Optionally force use of some tool
-             **kwargs):
-    "Make a call to Claude."
-    if tools: kwargs['tools'] = [get_schema(o) if callable(o) else o for o in listify(tools)]
-    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
-    msgs = self._precall(msgs, prefill, stop, kwargs)
-    if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
-    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    res = self.c.messages.create(model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
-
-# %% ../00_core.ipynb
-@patch
 @delegates(Client.__call__)
 def structured(self:Client,
                msgs:list, # List of messages in the dialog
@@ -381,24 +361,6 @@ def _append_pr(self:Chat,
 
 # %% ../00_core.ipynb
 @patch
-def __call__(self:Chat,
-             pr=None,  # Prompt / message
-             temp=None, # Temperature
-             maxtok=4096, # Maximum tokens
-             stream=False, # Stream response?
-             prefill='', # Optional prefill to pass to Claude as start of its response
-             tool_choice:Optional[dict]=None, # Optionally force use of some tool
-             **kw):
-    if temp is None: temp=self.temp
-    self._append_pr(pr)
-    res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok,
-                 tools=self.tools, tool_choice=tool_choice,**kw)
-    if stream: return self._stream(res)
-    self.h += mk_toolres(self.c.result, ns=self.tools)
-    return res
-
-# %% ../00_core.ipynb
-@patch
 def _repr_markdown_(self:Chat):
     if not hasattr(self.c, 'result'): return 'No results yet'
     last_msg = contents(self.c.result)
@@ -422,9 +384,67 @@ def _repr_markdown_(self:Chat):
 {det}"""
 
 # %% ../00_core.ipynb
+@patch
+@delegates(messages.Messages.create)
+def __call__(self:Client,
+             msgs:list, # List of messages in the dialog
+             sp='', # The system prompt
+             temp=0, # Temperature
+             maxtok=4096, # Maximum tokens
+             maxthinktok=0, # Maximum thinking tokens
+             prefill='', # Optional prefill to pass to Claude as start of its response
+             stream:bool=False, # Stream response?
+             stop=None, # Stop sequence
+             tools:Optional[list]=None, # List of tools to make available to Claude
+             tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             **kwargs):
+    "Make a call to Claude."
+    if tools: kwargs['tools'] = [get_schema(o) if callable(o) else o for o in listify(tools)]
+    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
+    if maxthinktok: 
+        kwargs['thinking']={'type':'enabled', 'budget_tokens':maxthinktok} 
+        temp=1; prefill=''
+    msgs = self._precall(msgs, prefill, stop, kwargs)
+    if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
+    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
+    res = self.c.messages.create(model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
+    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
+
+# %% ../00_core.ipynb
+@patch
+def __call__(self:Chat,
+             pr=None,  # Prompt / message
+             temp=None, # Temperature
+             maxtok=4096, # Maximum tokens
+             maxthinktok=0, # Maximum thinking tokens
+             stream=False, # Stream response?
+             prefill='', # Optional prefill to pass to Claude as start of its response
+             tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             **kw):
+    if temp is None: temp=self.temp
+    self._append_pr(pr)
+    res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice,**kw)
+    if stream: return self._stream(res)
+    self.h += mk_toolres(self.c.result, ns=self.tools)
+    return res
+
+# %% ../00_core.ipynb
+def think_md(txt, thk):
+    return f"""
+{txt}
+
+<details>
+<summary>Thinking</summary>
+{thk}
+</details>
+"""
+
+# %% ../00_core.ipynb
 def contents(r):
     "Helper to get the contents from Claude response `r`."
     blk = find_block(r)
+    tk_blk = find_block(r, blk_type=ThinkingBlock)
+    if tk_blk: return think_md(blk.text.strip(), tk_blk.thinking.strip())
     if not blk and r.content: blk = r.content[0]
     if hasattr(blk,'text'): return blk.text.strip()
     elif hasattr(blk,'content'): return blk.content.strip()
