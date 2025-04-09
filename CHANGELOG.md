@@ -2,6 +2,19 @@
 
 <!-- do not remove -->
 
+## 0.1.5
+
+### New Features
+
+- add extended thinking ([#65](https://github.com/AnswerDotAI/claudette/pull/65)), thanks to [@comhar](https://github.com/comhar)
+- Make Sonnet 3.7 the default sonnet model ([#63](https://github.com/AnswerDotAI/claudette/issues/63))
+- Add model capabilities attributes `has_streaming_models`, `has_temperature_models`, and `has_system_prompt_models` ([#57](https://github.com/AnswerDotAI/claudette/pull/57)), thanks to [@austinvhuang](https://github.com/austinvhuang)
+
+### Bugs Squashed
+
+- fix bedrock usage reporting ([#60](https://github.com/AnswerDotAI/claudette/pull/60)), thanks to [@hamelsmu](https://github.com/hamelsmu)
+
+
 ## 0.1.3
 
 ### New Features
