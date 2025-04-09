@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.1.6
+
+### Bugs Squashed
+
+- Bump required `anthropic` version
+
+
 ## 0.1.5
 
 ### New Features
