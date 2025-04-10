@@ -38,7 +38,7 @@ links to API details which will take you to relevant parts of the
 source. The reason this project is a new kind of literal program is
 because we take seriously Knuth’s call to action, that we have a “*moral
 commitment*” to never write an “*illiterate program*” – and so we have a
-commitment to making literate programming and easy and pleasant
+commitment to making literate programming an easy and pleasant
 experience. (For more on this, see [this
 talk](https://www.youtube.com/watch?v=rX1yGxJijsI) from Hamel Husain.)
 
