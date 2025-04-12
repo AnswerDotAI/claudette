@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.1.7
+
+### Bugs Squashed
+
+- Bump required `msglm` version
+
+
 ## 0.1.6
 
 ### Bugs Squashed
