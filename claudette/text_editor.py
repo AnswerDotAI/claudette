@@ -7,7 +7,7 @@ __all__ = ['text_editor_conf', 'view', 'create', 'insert', 'str_replace', 'str_r
 from pathlib import Path
 
 # %% ../03_text_editor.ipynb
-def view(path:str, rng:tuple[int,int]=None, nums:bool=False):
+def view(path:str, view_range:tuple[int,int]=None, nums:bool=False):
     'View directory or file contents with optional line range and numbers'
     try:
         p = Path(path).expanduser().resolve()
@@ -17,8 +17,8 @@ def view(path:str, rng:tuple[int,int]=None, nums:bool=False):
         
         lines = p.read_text().splitlines()
         s,e = 1,len(lines)
-        if rng:
-            s,e = rng
+        if view_range:
+            s,e = view_range
             if not (1 <= s <= len(lines)): return f'Error: Invalid start line {s}'
             if e != -1 and not (s <= e <= len(lines)): return f'Error: Invalid end line {e}'
             lines = lines[s-1:None if e==-1 else e]
@@ -74,7 +74,7 @@ def str_replace(path: str, old_str: str, new_str: str) -> str:
 
 # %% ../03_text_editor.ipynb
 def str_replace_editor(**kwargs: dict[str, str]) -> str:
-    'Doc'
+    'Dispatcher for Anthropic Text Editor tool commands: view, str_replace, create, insert, undo_edit.'
     cmd = kwargs.pop('command', '')
     if cmd == 'view': return view(**kwargs)
     elif cmd == 'str_replace': return str_replace(**kwargs) 
