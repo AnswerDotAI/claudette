@@ -303,6 +303,7 @@ def _convert(val: Dict, # dictionary argument being passed in
 
 # %% ../00_core.ipynb
 def tool(func):
+    if isinstance(func, dict): return func # already a json schema
     hints = get_type_hints(func)
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -420,12 +421,13 @@ def __call__(self:Chat,
              stream=False, # Stream response?
              prefill='', # Optional prefill to pass to Claude as start of its response
              tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             ns:Optional[dict]=None, # Optionally pass a namespace to the tools
              **kw):
     if temp is None: temp=self.temp
     self._append_pr(pr)
     res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice,**kw)
     if stream: return self._stream(res)
-    self.h += mk_toolres(self.c.result, ns=self.tools)
+    self.h += mk_toolres(self.c.result, ns=ns or self.tools)
     return res
 
 # %% ../00_core.ipynb
