@@ -20,7 +20,7 @@ def toolloop(self:Chat,
              cont_func:Optional[callable]=noop, # Function that stops loop if returns False
              **kwargs):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
-    n_msgs = len(self.h)
+    init_n = n_msgs = len(self.h)
     r = self(pr, **kwargs)
     for i in range(max_steps):
         if r.stop_reason!='tool_use': break
@@ -28,4 +28,29 @@ def toolloop(self:Chat,
         r = self(**kwargs)
         if not (cont_func or noop)(self.h[-2]): break
     if trace_func: trace_func(self.h[n_msgs:])
+    r.steps = self.h[init_n:]
+    return r
+
+# %% ../01_toolloop.ipynb
+from .asink import AsyncChat
+
+# %% ../01_toolloop.ipynb
+@patch
+@delegates(AsyncChat.__call__)
+async def toolloop(self:AsyncChat,
+             pr, # Prompt to pass to Claude
+             max_steps=10, # Maximum number of tool requests to loop through
+             trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
+             cont_func:Optional[callable]=noop, # Function that stops loop if returns False
+             **kwargs):
+    "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
+    init_n = n_msgs = len(self.h)
+    r = await self(pr, **kwargs)
+    for i in range(max_steps):
+        if r.stop_reason!='tool_use': break
+        if trace_func: trace_func(self.h[n_msgs:]); n_msgs = len(self.h)
+        r = await self(**kwargs)
+        if not (cont_func or noop)(self.h[-2]): break
+    if trace_func: trace_func(self.h[n_msgs:])
+    r.steps = self.h[init_n+1:]
     return r
