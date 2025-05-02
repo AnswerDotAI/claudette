@@ -95,7 +95,7 @@ models
      'claude-3-haiku-20240307',
      'claude-3-5-haiku-20241022']
 
-For these examples, we’ll use Sonnet 3.5, since it’s awesome!
+For these examples, we’ll use Sonnet 3.7, since it’s awesome!
 
 ``` python
 model = models[1]
