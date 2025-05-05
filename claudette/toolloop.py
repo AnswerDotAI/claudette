@@ -11,6 +11,8 @@ from fastcore.meta import delegates
 from anthropic.types import TextBlock, Message, ToolUseBlock
 
 # %% ../01_toolloop.ipynb
+_final_prompt = "You have no more tool uses. Please summarize your findings. If you did not complete your goal please tell the user what further work needs to be done so they can choose how best to proceed."
+
 @patch
 @delegates(Chat.__call__)
 def toolloop(self:Chat,
@@ -18,6 +20,7 @@ def toolloop(self:Chat,
              max_steps=10, # Maximum number of tool requests to loop through
              trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
              cont_func:Optional[callable]=noop, # Function that stops loop if returns False
+             final_prompt=_final_prompt, # Prompt to add if last message is a tool call
              **kwargs):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
     init_n = n_msgs = len(self.h)
@@ -27,6 +30,11 @@ def toolloop(self:Chat,
         if trace_func: trace_func(self.h[n_msgs:]); n_msgs = len(self.h)
         r = self(**kwargs)
         if not (cont_func or noop)(self.h[-2]): break
+    
+    if r.stop_reason == 'tool_use':
+        if trace_func: trace_func(self.h[n_msgs:])
+        r = self(final_prompt, **kwargs)
+    
     if trace_func: trace_func(self.h[n_msgs:])
     r.steps = self.h[init_n:]
     return r
@@ -42,6 +50,7 @@ async def toolloop(self:AsyncChat,
              max_steps=10, # Maximum number of tool requests to loop through
              trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
              cont_func:Optional[callable]=noop, # Function that stops loop if returns False
+             final_prompt=_final_prompt, # Prompt to add if last message is a tool call
              **kwargs):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
     init_n = n_msgs = len(self.h)
@@ -51,6 +60,11 @@ async def toolloop(self:AsyncChat,
         if trace_func: trace_func(self.h[n_msgs:]); n_msgs = len(self.h)
         r = await self(**kwargs)
         if not (cont_func or noop)(self.h[-2]): break
+    
+    if r.stop_reason == 'tool_use':
+        if trace_func: trace_func(self.h[n_msgs:])
+        r = await self(final_prompt, **kwargs)
+    
     if trace_func: trace_func(self.h[n_msgs:])
-    r.steps = self.h[init_n+1:]
+    r.steps = self.h[init_n:]
     return r
