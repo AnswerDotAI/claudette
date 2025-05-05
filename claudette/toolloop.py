@@ -36,7 +36,7 @@ def toolloop(self:Chat,
         r = self(final_prompt, **kwargs)
     
     if trace_func: trace_func(self.h[n_msgs:])
-    r.steps = self.h[init_n:]
+    r.steps = self.h[init_n+1:]
     return r
 
 # %% ../01_toolloop.ipynb
@@ -66,5 +66,5 @@ async def toolloop(self:AsyncChat,
         r = await self(final_prompt, **kwargs)
     
     if trace_func: trace_func(self.h[n_msgs:])
-    r.steps = self.h[init_n:]
+    r.steps = self.h[init_n+1:]
     return r
