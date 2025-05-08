@@ -331,8 +331,7 @@ def _convert(val: Dict, # dictionary argument being passed in
 
 # %% ../00_core.ipynb
 def tool(func):
-    if isinstance(func, dict): # it's a schema, so don't change
-        return func
+    if isinstance(func, dict): return func # it's a schema, so don't change
     hints = get_type_hints(func)
     @wraps(func)
     def wrapper(*args, **kwargs):
