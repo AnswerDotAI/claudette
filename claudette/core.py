@@ -5,7 +5,7 @@ __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models
            'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'has_extended_thinking_models',
            'pricing', 'can_stream', 'can_set_system_prompt', 'can_set_temperature', 'can_use_extended_thinking',
            'find_block', 'usage', 'Client', 'get_pricing', 'get_costs', 'mk_tool_choice', 'mk_funcres', 'mk_toolres',
-           'get_types', 'tool', 'Chat', 'think_md', 'contents', 'mk_msg', 'mk_msgs']
+           'get_types', 'tool', 'Chat', 'think_md', 'contents', 'search_conf', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -449,11 +449,57 @@ def think_md(txt, thk):
 # %% ../00_core.ipynb
 def contents(r):
     "Helper to get the contents from Claude response `r`."
-    blk = find_block(r)
+    text_sections, citations = [], []
+
+    for blk in getattr(r, "content", []):
+        # Handle normal text blocks
+        if isinstance(blk, TextBlock) and blk.text:
+            section = blk.text.strip()
+
+            # Add numbered markers for each citation in this block
+            if blk.citations:
+                markers = []
+                for cit in blk.citations:
+                    citations.append(cit)
+                    markers.append(f"[{len(citations)}]") # maintain global citation order
+                section += " " + " ".join(markers)
+
+            text_sections.append(section)
+
+        # Show a placeholder for media blocks
+        elif hasattr(blk, "source"): text_sections.append(f"*Media Type - {blk.type}*")
+        elif hasattr(blk, "input"): text_sections.append(f"*Tool Use Type - {blk.name}*")
+        # Generic fallback for any other block with a `content` attribute and not tool uses/responses
+        elif not hasattr(blk, "tool_use_id") and hasattr(blk, "content") and blk.content:
+            text_sections.append(str(blk.content).strip())
+
+    body = "\n\n".join(text_sections).strip()
+
+    # Append reference list if citations were collected
+    if citations:
+        refs = "\n".join(f"[{i+1}]: {cit.url}" for i, cit in enumerate(citations))
+        body = f"{body}\n\n{refs}" if body else refs
+
+    # Fallback to original single-block logic if no sections were produced
+    if not body:
+        blk = find_block(r)
+        if not blk and getattr(r, "content", None): blk = r.content[0]
+        if hasattr(blk, "text"): body = blk.text.strip()
+        elif hasattr(blk, "content"): body = blk.content.strip()
+        elif hasattr(blk, "source"): body = f"*Media Type - {blk.type}*"
+        else: body = str(blk)
+
+    # Wrap with collapsible thinking details when a ThinkingBlock is present
     tk_blk = find_block(r, blk_type=ThinkingBlock)
-    if tk_blk: return think_md(blk.text.strip(), tk_blk.thinking.strip())
-    if not blk and r.content: blk = r.content[0]
-    if hasattr(blk,'text'): return blk.text.strip()
-    elif hasattr(blk,'content'): return blk.content.strip()
-    elif hasattr(blk,'source'): return f'*Media Type - {blk.type}*'
-    return str(blk)
+    if tk_blk: body = think_md(body, tk_blk.thinking.strip())
+
+    return body
+
+# %% ../00_core.ipynb
+def search_conf(max_uses:int=None, allowed_domains:list=None, blocked_domains:list=None, user_location:dict=None):
+    conf = {'type': 'web_search_20250305', 'name': 'web_search'}
+    if max_uses: conf['max_uses'] = max_uses
+    if allowed_domains: conf['allowed_domains'] = allowed_domains
+    if blocked_domains: conf['blocked_domains'] = blocked_domains
+    if user_location: conf['user_location'] = user_location
+    return conf
