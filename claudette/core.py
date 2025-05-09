@@ -3,9 +3,10 @@
 # %% auto 0
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models',
            'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'has_extended_thinking_models',
-           'pricing', 'can_stream', 'can_set_system_prompt', 'can_set_temperature', 'can_use_extended_thinking',
-           'find_block', 'usage', 'Client', 'get_pricing', 'get_costs', 'mk_tool_choice', 'mk_funcres', 'mk_toolres',
-           'get_types', 'tool', 'Chat', 'think_md', 'contents', 'search_conf', 'mk_msg', 'mk_msgs']
+           'pricing', 'server_tool_pricing', 'can_stream', 'can_set_system_prompt', 'can_set_temperature',
+           'can_use_extended_thinking', 'find_block', 'Client', 'get_pricing', 'get_costs', 'mk_tool_choice',
+           'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'think_md', 'server_tool_usage', 'usage',
+           'contents', 'search_conf', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -16,7 +17,7 @@ from typing import get_type_hints
 from functools import wraps
 
 from anthropic import Anthropic, AnthropicBedrock, AnthropicVertex
-from anthropic.types import Usage, TextBlock, Message, ToolUseBlock, ThinkingBlock
+from anthropic.types import Usage, TextBlock, Message, ToolUseBlock, ThinkingBlock, ServerToolUsage
 from anthropic.resources import messages
 
 import toolslm
@@ -105,15 +106,6 @@ def _repr_markdown_(self:(Message)):
 - {det}
 
 </details>"""
-
-# %% ../00_core.ipynb
-def usage(inp=0, # input tokens
-          out=0,  # Output tokens
-          cache_create=0, # Cache creation tokens
-          cache_read=0 # Cache read tokens
-         ):
-    "Slightly more concise version of `Usage`."
-    return Usage(input_tokens=inp, output_tokens=out, cache_creation_input_tokens=cache_create, cache_read_input_tokens=cache_read)
 
 # %% ../00_core.ipynb
 def _dgetattr(o,s,d): 
@@ -447,6 +439,60 @@ def think_md(txt, thk):
 """
 
 # %% ../00_core.ipynb
+def server_tool_usage(web_search_requests=0):
+    return ServerToolUsage(web_search_requests=web_search_requests)
+
+# %% ../00_core.ipynb
+def usage(inp=0, # input tokens
+          out=0,  # Output tokens
+          cache_create=0, # Cache creation tokens
+          cache_read=0, # Cache read tokens
+          server_tool_use=server_tool_usage() # server tool use
+         ):
+    "Slightly more concise version of `Usage`."
+    return Usage(input_tokens=inp, output_tokens=out, cache_creation_input_tokens=cache_create,
+                 cache_read_input_tokens=cache_read, server_tool_use=server_tool_use)
+
+# %% ../00_core.ipynb
+@patch
+def __add__(self:ServerToolUsage, b):
+    "Add together each of `input_tokens` and `output_tokens`"
+    return ServerToolUsage(web_search_requests=self.web_search_requests+b.web_search_requests)
+
+# %% ../00_core.ipynb
+@patch
+def __add__(self:Usage, b):
+    "Add together each of `input_tokens` and `output_tokens`"
+    return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens,
+                 _dgetattr(self,'cache_creation_input_tokens',0)+_dgetattr(b,'cache_creation_input_tokens',0),
+                 _dgetattr(self,'cache_read_input_tokens',0)+_dgetattr(b,'cache_read_input_tokens',0),
+                 _dgetattr(self,'server_tool_use',server_tool_usage())+_dgetattr(b,'server_tool_use',server_tool_usage()))
+
+# %% ../00_core.ipynb
+@patch
+def __repr__(self:Usage):
+    io_toks = f'In: {self.input_tokens}; Out: {self.output_tokens}'
+    cache_toks = f'Cache create: {_dgetattr(self, "cache_creation_input_tokens",0)}; Cache read: {_dgetattr(self, "cache_read_input_tokens",0)}'
+    server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
+    server_tool_use_str = f'Server tool use (web search requests): {server_tool_use.web_search_requests}'
+    total_tok = f'Total Tokens: {self.total}'
+    return f'{io_toks}; {cache_toks}; {total_tok}; {server_tool_use_str}'
+
+# %% ../00_core.ipynb
+server_tool_pricing = {
+    'web_search_requests': 10, # $10 per 1,000
+}
+
+# %% ../00_core.ipynb
+@patch
+def cost(self:Usage, costs:tuple) -> float:
+    cache_w, cache_r = _dgetattr(self, "cache_creation_input_tokens",0), _dgetattr(self, "cache_read_input_tokens",0)
+    tok_cost = sum([self.input_tokens * costs[0] +  self.output_tokens * costs[1] +  cache_w * costs[2] + cache_r * costs[3]]) / 1e6
+    server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
+    server_tool_cost = server_tool_use.web_search_requests * server_tool_pricing['web_search_requests'] / 1e3
+    return tok_cost + server_tool_cost
+
+# %% ../00_core.ipynb
 def contents(r):
     "Helper to get the contents from Claude response `r`."
     text_sections, citations = [], []
@@ -503,3 +549,33 @@ def search_conf(max_uses:int=None, allowed_domains:list=None, blocked_domains:li
     if blocked_domains: conf['blocked_domains'] = blocked_domains
     if user_location: conf['user_location'] = user_location
     return conf
+
+# %% ../00_core.ipynb
+def get_costs(c):
+    costs = pricing[model_types[c.model]]
+    
+    inp_cost = c.use.input_tokens * costs[0] / 1e6
+    out_cost = c.use.output_tokens * costs[1] / 1e6
+
+    cache_w = c.use.cache_creation_input_tokens   
+    cache_r = c.use.cache_read_input_tokens
+    cache_cost = cache_w * costs[2] + cache_r * costs[3] / 1e6
+
+    server_tool_use = c.use.server_tool_use
+    server_tool_cost = server_tool_use.web_search_requests * server_tool_pricing['web_search_requests'] / 1e3
+    return inp_cost, out_cost, cache_cost, cache_w + cache_r, server_tool_cost
+#| exports
+@patch
+def _repr_markdown_(self:Client):
+    if not hasattr(self,'result'): return 'No results yet'
+    msg = contents(self.result)
+    inp_cost, out_cost, cache_cost, cached_toks, server_tool_cost = get_costs(self)
+    return f"""{msg}
+
+| Metric | Count | Cost (USD) |
+|--------|------:|-----:|
+| Input tokens | {self.use.input_tokens:,} | {inp_cost:.6f} |
+| Output tokens | {self.use.output_tokens:,} | {out_cost:.6f} |
+| Cache tokens | {cached_toks:,} | {cache_cost:.6f} |
+| Server tool use | {self.use.server_tool_use.web_search_requests:,} | {server_tool_cost:.6f} |
+| **Total** | **{self.use.total:,}** | **${self.cost:.6f}** |"""
