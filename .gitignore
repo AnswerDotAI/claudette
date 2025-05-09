@@ -1,3 +1,4 @@
+CLAUDE.md
 .gitattributes
 _proc/
 index_files/
@@ -148,3 +149,5 @@ checklink/cookies.txt
 _docs
 
 /.quarto/
+
+**/.claude/settings.local.json
