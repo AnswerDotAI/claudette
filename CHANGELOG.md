@@ -2,6 +2,17 @@
 
 <!-- do not remove -->
 
+## 0.1.8
+
+### New Features
+
+- Add exhausted tool loop warning ([#75](https://github.com/AnswerDotAI/claudette/issues/75))
+- Text editor tool implementation ([#71](https://github.com/AnswerDotAI/claudette/pull/71)), thanks to [@ncoop57](https://github.com/ncoop57)
+- Async tool loop ([#70](https://github.com/AnswerDotAI/claudette/issues/70))
+- Pre-serialized funcs in tool calling ([#67](https://github.com/AnswerDotAI/claudette/pull/67)), thanks to [@erikgaas](https://github.com/erikgaas)
+- Extended Thinking ([#66](https://github.com/AnswerDotAI/claudette/issues/66))
+
+
 ## 0.1.7
 
 ### Bugs Squashed
