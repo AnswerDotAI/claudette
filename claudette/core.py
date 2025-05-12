@@ -443,6 +443,16 @@ def server_tool_usage(web_search_requests=0):
     return ServerToolUsage(web_search_requests=web_search_requests)
 
 # %% ../00_core.ipynb
+@patch
+def __repr__(self:Usage):
+    io_toks = f'In: {self.input_tokens}; Out: {self.output_tokens}'
+    cache_toks = f'Cache create: {_dgetattr(self, "cache_creation_input_tokens",0)}; Cache read: {_dgetattr(self, "cache_read_input_tokens",0)}'
+    server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
+    server_tool_use_str = f'Server tool use (web search requests): {server_tool_use.web_search_requests}'
+    total_tok = f'Total Tokens: {self.total}'
+    return f'{io_toks}; {cache_toks}; {total_tok}; {server_tool_use_str}'
+
+# %% ../00_core.ipynb
 def usage(inp=0, # input tokens
           out=0,  # Output tokens
           cache_create=0, # Cache creation tokens
@@ -467,16 +477,6 @@ def __add__(self:Usage, b):
                  _dgetattr(self,'cache_creation_input_tokens',0)+_dgetattr(b,'cache_creation_input_tokens',0),
                  _dgetattr(self,'cache_read_input_tokens',0)+_dgetattr(b,'cache_read_input_tokens',0),
                  _dgetattr(self,'server_tool_use',server_tool_usage())+_dgetattr(b,'server_tool_use',server_tool_usage()))
-
-# %% ../00_core.ipynb
-@patch
-def __repr__(self:Usage):
-    io_toks = f'In: {self.input_tokens}; Out: {self.output_tokens}'
-    cache_toks = f'Cache create: {_dgetattr(self, "cache_creation_input_tokens",0)}; Cache read: {_dgetattr(self, "cache_read_input_tokens",0)}'
-    server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
-    server_tool_use_str = f'Server tool use (web search requests): {server_tool_use.web_search_requests}'
-    total_tok = f'Total Tokens: {self.total}'
-    return f'{io_toks}; {cache_toks}; {total_tok}; {server_tool_use_str}'
 
 # %% ../00_core.ipynb
 server_tool_pricing = {
@@ -564,7 +564,8 @@ def get_costs(c):
     server_tool_use = c.use.server_tool_use
     server_tool_cost = server_tool_use.web_search_requests * server_tool_pricing['web_search_requests'] / 1e3
     return inp_cost, out_cost, cache_cost, cache_w + cache_r, server_tool_cost
-#| exports
+
+# %% ../00_core.ipynb
 @patch
 def _repr_markdown_(self:Client):
     if not hasattr(self,'result'): return 'No results yet'
