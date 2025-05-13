@@ -492,17 +492,20 @@ def search_conf(max_uses:int=None, allowed_domains:list=None, blocked_domains:li
     return conf
 
 # %% ../00_core.ipynb
-def find_blocks(r, blk_type=TextBlock):
+def find_blocks(r, blk_type=TextBlock, type='text'):
     "Helper to find all blocks of type `blk_type` in response `r`."
-    return [b for b in getattr(r, "content", []) if isinstance(b, blk_type)]
+    if isinstance(r, dict): f = lambda b: b.get('type') == 'text'
+    else: f = lambda b: isinstance(b, TextBlock)
+    return [b for b in getattr(r, "content", []) if f(b)]
 
 # %% ../00_core.ipynb
 def fmt_txt(txt_blks):
     "Helper to get the contents from a list of `TextBlock`s, with citations."
     text_sections, citations = [], []
     for blk in txt_blks:
+        if isinstance(blk, dict): blk = AttrDict(blk)
         section = blk.text
-        if blk.citations:
+        if getattr(blk, 'citations', None):
             markers = []
             for cit in blk.citations:
                 citations.append(cit)
