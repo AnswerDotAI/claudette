@@ -4,9 +4,9 @@
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models',
            'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'has_extended_thinking_models',
            'pricing', 'server_tool_pricing', 'can_stream', 'can_set_system_prompt', 'can_set_temperature',
-           'can_use_extended_thinking', 'find_block', 'Client', 'get_pricing', 'get_costs', 'mk_tool_choice',
-           'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'think_md', 'server_tool_usage', 'usage',
-           'contents', 'search_conf', 'mk_msg', 'mk_msgs']
+           'can_use_extended_thinking', 'find_block', 'server_tool_usage', 'usage', 'Client', 'get_pricing',
+           'get_costs', 'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'think_md',
+           'search_conf', 'find_blocks', 'fmt_txt', 'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -17,7 +17,9 @@ from typing import get_type_hints
 from functools import wraps
 
 from anthropic import Anthropic, AnthropicBedrock, AnthropicVertex
-from anthropic.types import Usage, TextBlock, Message, ToolUseBlock, ThinkingBlock, ServerToolUsage
+from anthropic.types import (Usage, TextBlock, ServerToolUseBlock,
+                             WebSearchToolResultBlock, Message, ToolUseBlock,
+                             ThinkingBlock, ServerToolUsage)
 from anthropic.resources import messages
 
 import toolslm
@@ -108,6 +110,22 @@ def _repr_markdown_(self:(Message)):
 </details>"""
 
 # %% ../00_core.ipynb
+def server_tool_usage(web_search_requests=0):
+    'Little helper to create a server tool usage object'
+    return ServerToolUsage(web_search_requests=web_search_requests)
+
+# %% ../00_core.ipynb
+def usage(inp=0, # input tokens
+          out=0,  # Output tokens
+          cache_create=0, # Cache creation tokens
+          cache_read=0, # Cache read tokens
+          server_tool_use=server_tool_usage() # server tool use
+         ):
+    'Slightly more concise version of `Usage`.'
+    return Usage(input_tokens=inp, output_tokens=out, cache_creation_input_tokens=cache_create,
+                 cache_read_input_tokens=cache_read, server_tool_use=server_tool_use)
+
+# %% ../00_core.ipynb
 def _dgetattr(o,s,d): 
     "Like getattr, but returns the default if the result is None"
     return getattr(o,s,d) or d
@@ -117,7 +135,19 @@ def total(self:Usage): return self.input_tokens+self.output_tokens+_dgetattr(sel
 
 # %% ../00_core.ipynb
 @patch
-def __repr__(self:Usage): return f'In: {self.input_tokens}; Out: {self.output_tokens}; Cache create: {_dgetattr(self, "cache_creation_input_tokens",0)}; Cache read: {_dgetattr(self, "cache_read_input_tokens",0)}; Total: {self.total}'
+def __repr__(self:Usage):
+    io_toks = f'In: {self.input_tokens}; Out: {self.output_tokens}'
+    cache_toks = f'Cache create: {_dgetattr(self, "cache_creation_input_tokens",0)}; Cache read: {_dgetattr(self, "cache_read_input_tokens",0)}'
+    server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
+    server_tool_use_str = f'Server tool use (web search requests): {server_tool_use.web_search_requests}'
+    total_tok = f'Total Tokens: {self.total}'
+    return f'{io_toks}; {cache_toks}; {total_tok}; {server_tool_use_str}'
+
+# %% ../00_core.ipynb
+@patch
+def __add__(self:ServerToolUsage, b):
+    "Add together each of the server tool use counts"
+    return ServerToolUsage(web_search_requests=self.web_search_requests+b.web_search_requests)
 
 # %% ../00_core.ipynb
 @patch
@@ -125,7 +155,8 @@ def __add__(self:Usage, b):
     "Add together each of `input_tokens` and `output_tokens`"
     return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens,
                  _dgetattr(self,'cache_creation_input_tokens',0)+_dgetattr(b,'cache_creation_input_tokens',0),
-                 _dgetattr(self,'cache_read_input_tokens',0)+_dgetattr(b,'cache_read_input_tokens',0))
+                 _dgetattr(self,'cache_read_input_tokens',0)+_dgetattr(b,'cache_read_input_tokens',0),
+                 _dgetattr(self,'server_tool_use',server_tool_usage())+_dgetattr(b,'server_tool_use',server_tool_usage()))
 
 # %% ../00_core.ipynb
 class Client:
@@ -193,10 +224,18 @@ def get_pricing(m, u):
     return pricing[m][:3] if u.prompt_token_count < 128_000 else pricing[m][3:]
 
 # %% ../00_core.ipynb
+server_tool_pricing = {
+    'web_search_requests': 10, # $10 per 1,000
+}
+
+# %% ../00_core.ipynb
 @patch
 def cost(self:Usage, costs:tuple) -> float:
     cache_w, cache_r = _dgetattr(self, "cache_creation_input_tokens",0), _dgetattr(self, "cache_read_input_tokens",0)
-    return sum([self.input_tokens * costs[0] +  self.output_tokens * costs[1] +  cache_w * costs[2] + cache_r * costs[3]]) / 1e6
+    tok_cost = sum([self.input_tokens * costs[0] +  self.output_tokens * costs[1] +  cache_w * costs[2] + cache_r * costs[3]]) / 1e6
+    server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
+    server_tool_cost = server_tool_use.web_search_requests * server_tool_pricing['web_search_requests'] / 1e3
+    return tok_cost + server_tool_cost
 
 # %% ../00_core.ipynb
 @patch(as_prop=True)
@@ -212,14 +251,17 @@ def get_costs(c):
     cache_w = c.use.cache_creation_input_tokens   
     cache_r = c.use.cache_read_input_tokens
     cache_cost = cache_w * costs[2] + cache_r * costs[3] / 1e6
-    return inp_cost, out_cost, cache_cost, cache_w + cache_r
+
+    server_tool_use = c.use.server_tool_use
+    server_tool_cost = server_tool_use.web_search_requests * server_tool_pricing['web_search_requests'] / 1e3
+    return inp_cost, out_cost, cache_cost, cache_w + cache_r, server_tool_cost
 
 # %% ../00_core.ipynb
 @patch
 def _repr_markdown_(self:Client):
     if not hasattr(self,'result'): return 'No results yet'
     msg = contents(self.result)
-    inp_cost, out_cost, cache_cost, cached_toks = get_costs(self)
+    inp_cost, out_cost, cache_cost, cached_toks, server_tool_cost = get_costs(self)
     return f"""{msg}
 
 | Metric | Count | Cost (USD) |
@@ -227,6 +269,7 @@ def _repr_markdown_(self:Client):
 | Input tokens | {self.use.input_tokens:,} | {inp_cost:.6f} |
 | Output tokens | {self.use.output_tokens:,} | {out_cost:.6f} |
 | Cache tokens | {cached_toks:,} | {cache_cost:.6f} |
+| Server tool use | {self.use.server_tool_use.web_search_requests:,} | {server_tool_cost:.6f} |
 | **Total** | **{self.use.total:,}** | **${self.cost:.6f}** |"""
 
 # %% ../00_core.ipynb
@@ -439,110 +482,8 @@ def think_md(txt, thk):
 """
 
 # %% ../00_core.ipynb
-def server_tool_usage(web_search_requests=0):
-    return ServerToolUsage(web_search_requests=web_search_requests)
-
-# %% ../00_core.ipynb
-@patch
-def __repr__(self:Usage):
-    io_toks = f'In: {self.input_tokens}; Out: {self.output_tokens}'
-    cache_toks = f'Cache create: {_dgetattr(self, "cache_creation_input_tokens",0)}; Cache read: {_dgetattr(self, "cache_read_input_tokens",0)}'
-    server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
-    server_tool_use_str = f'Server tool use (web search requests): {server_tool_use.web_search_requests}'
-    total_tok = f'Total Tokens: {self.total}'
-    return f'{io_toks}; {cache_toks}; {total_tok}; {server_tool_use_str}'
-
-# %% ../00_core.ipynb
-def usage(inp=0, # input tokens
-          out=0,  # Output tokens
-          cache_create=0, # Cache creation tokens
-          cache_read=0, # Cache read tokens
-          server_tool_use=server_tool_usage() # server tool use
-         ):
-    "Slightly more concise version of `Usage`."
-    return Usage(input_tokens=inp, output_tokens=out, cache_creation_input_tokens=cache_create,
-                 cache_read_input_tokens=cache_read, server_tool_use=server_tool_use)
-
-# %% ../00_core.ipynb
-@patch
-def __add__(self:ServerToolUsage, b):
-    "Add together each of `input_tokens` and `output_tokens`"
-    return ServerToolUsage(web_search_requests=self.web_search_requests+b.web_search_requests)
-
-# %% ../00_core.ipynb
-@patch
-def __add__(self:Usage, b):
-    "Add together each of `input_tokens` and `output_tokens`"
-    return usage(self.input_tokens+b.input_tokens, self.output_tokens+b.output_tokens,
-                 _dgetattr(self,'cache_creation_input_tokens',0)+_dgetattr(b,'cache_creation_input_tokens',0),
-                 _dgetattr(self,'cache_read_input_tokens',0)+_dgetattr(b,'cache_read_input_tokens',0),
-                 _dgetattr(self,'server_tool_use',server_tool_usage())+_dgetattr(b,'server_tool_use',server_tool_usage()))
-
-# %% ../00_core.ipynb
-server_tool_pricing = {
-    'web_search_requests': 10, # $10 per 1,000
-}
-
-# %% ../00_core.ipynb
-@patch
-def cost(self:Usage, costs:tuple) -> float:
-    cache_w, cache_r = _dgetattr(self, "cache_creation_input_tokens",0), _dgetattr(self, "cache_read_input_tokens",0)
-    tok_cost = sum([self.input_tokens * costs[0] +  self.output_tokens * costs[1] +  cache_w * costs[2] + cache_r * costs[3]]) / 1e6
-    server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
-    server_tool_cost = server_tool_use.web_search_requests * server_tool_pricing['web_search_requests'] / 1e3
-    return tok_cost + server_tool_cost
-
-# %% ../00_core.ipynb
-def contents(r):
-    "Helper to get the contents from Claude response `r`."
-    text_sections, citations = [], []
-
-    for blk in getattr(r, "content", []):
-        # Handle normal text blocks
-        if isinstance(blk, TextBlock) and blk.text:
-            section = blk.text.strip()
-
-            # Add numbered markers for each citation in this block
-            if blk.citations:
-                markers = []
-                for cit in blk.citations:
-                    citations.append(cit)
-                    markers.append(f"[{len(citations)}]") # maintain global citation order
-                section += " " + " ".join(markers)
-
-            text_sections.append(section)
-
-        # Show a placeholder for media blocks
-        elif hasattr(blk, "source"): text_sections.append(f"*Media Type - {blk.type}*")
-        elif hasattr(blk, "input"): text_sections.append(f"*Tool Use Type - {blk.name}*")
-        # Generic fallback for any other block with a `content` attribute and not tool uses/responses
-        elif not hasattr(blk, "tool_use_id") and hasattr(blk, "content") and blk.content:
-            text_sections.append(str(blk.content).strip())
-
-    body = "\n\n".join(text_sections).strip()
-
-    # Append reference list if citations were collected
-    if citations:
-        refs = "\n".join(f"[{i+1}]: {cit.url}" for i, cit in enumerate(citations))
-        body = f"{body}\n\n{refs}" if body else refs
-
-    # Fallback to original single-block logic if no sections were produced
-    if not body:
-        blk = find_block(r)
-        if not blk and getattr(r, "content", None): blk = r.content[0]
-        if hasattr(blk, "text"): body = blk.text.strip()
-        elif hasattr(blk, "content"): body = blk.content.strip()
-        elif hasattr(blk, "source"): body = f"*Media Type - {blk.type}*"
-        else: body = str(blk)
-
-    # Wrap with collapsible thinking details when a ThinkingBlock is present
-    tk_blk = find_block(r, blk_type=ThinkingBlock)
-    if tk_blk: body = think_md(body, tk_blk.thinking.strip())
-
-    return body
-
-# %% ../00_core.ipynb
 def search_conf(max_uses:int=None, allowed_domains:list=None, blocked_domains:list=None, user_location:dict=None):
+    'Little helper to create a search tool config'
     conf = {'type': 'web_search_20250305', 'name': 'web_search'}
     if max_uses: conf['max_uses'] = max_uses
     if allowed_domains: conf['allowed_domains'] = allowed_domains
@@ -551,32 +492,42 @@ def search_conf(max_uses:int=None, allowed_domains:list=None, blocked_domains:li
     return conf
 
 # %% ../00_core.ipynb
-def get_costs(c):
-    costs = pricing[model_types[c.model]]
-    
-    inp_cost = c.use.input_tokens * costs[0] / 1e6
-    out_cost = c.use.output_tokens * costs[1] / 1e6
-
-    cache_w = c.use.cache_creation_input_tokens   
-    cache_r = c.use.cache_read_input_tokens
-    cache_cost = cache_w * costs[2] + cache_r * costs[3] / 1e6
-
-    server_tool_use = c.use.server_tool_use
-    server_tool_cost = server_tool_use.web_search_requests * server_tool_pricing['web_search_requests'] / 1e3
-    return inp_cost, out_cost, cache_cost, cache_w + cache_r, server_tool_cost
+def find_blocks(r, blk_type=TextBlock):
+    "Helper to find all blocks of type `blk_type` in response `r`."
+    return [b for b in getattr(r, "content", []) if isinstance(b, blk_type)]
 
 # %% ../00_core.ipynb
-@patch
-def _repr_markdown_(self:Client):
-    if not hasattr(self,'result'): return 'No results yet'
-    msg = contents(self.result)
-    inp_cost, out_cost, cache_cost, cached_toks, server_tool_cost = get_costs(self)
-    return f"""{msg}
+def fmt_txt(txt_blks):
+    "Helper to get the contents from a list of `TextBlock`s, with citations."
+    text_sections, citations = [], []
+    for blk in txt_blks:
+        section = blk.text
+        if blk.citations:
+            markers = []
+            for cit in blk.citations:
+                citations.append(cit)
+                markers.append(f"[^{len(citations)}]") # maintain global citation order
+            section = f"{section} " + " ".join(markers)
+        text_sections.append(section)
+    body = "".join(text_sections)
+    if citations:
+        refs = "\n\n".join(f"[^{i+1}]: {c.url}\n\t\"{c.cited_text}\"" for i, c in enumerate(citations))
+        body = f"{body}\n\n{refs}" if body else refs
+    return body
 
-| Metric | Count | Cost (USD) |
-|--------|------:|-----:|
-| Input tokens | {self.use.input_tokens:,} | {inp_cost:.6f} |
-| Output tokens | {self.use.output_tokens:,} | {out_cost:.6f} |
-| Cache tokens | {cached_toks:,} | {cache_cost:.6f} |
-| Server tool use | {self.use.server_tool_use.web_search_requests:,} | {server_tool_cost:.6f} |
-| **Total** | **{self.use.total:,}** | **${self.cost:.6f}** |"""
+# %% ../00_core.ipynb
+def contents(r):
+    "Helper to get the contents from Claude response `r`."
+    blks = find_blocks(r, blk_type=TextBlock)
+    tk_blk = find_block(r, blk_type=ThinkingBlock)
+    content = None
+    if blks: content = fmt_txt(blks) # text or text with citations
+    if tk_blk: return think_md(content, tk_blk.thinking.strip()) # text with thinking
+    if not content:
+        blk = find_block(r)
+        if not blk and getattr(r, "content", None): blk = r.content[0]
+        if hasattr(blk, "text"): content = blk.text.strip()
+        elif hasattr(blk, "content"): content = blk.content.strip()
+        elif hasattr(blk, "source"): content = f"*Media Type - {blk.type}*"
+        else: content = str(blk)
+    return content
