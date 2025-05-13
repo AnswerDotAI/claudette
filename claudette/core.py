@@ -250,7 +250,7 @@ def get_costs(c):
 
     cache_w = c.use.cache_creation_input_tokens   
     cache_r = c.use.cache_read_input_tokens
-    cache_cost = cache_w * costs[2] + cache_r * costs[3] / 1e6
+    cache_cost = (cache_w * costs[2] + cache_r * costs[3]) / 1e6
 
     server_tool_use = c.use.server_tool_use
     server_tool_cost = server_tool_use.web_search_requests * server_tool_pricing['web_search_requests'] / 1e3
