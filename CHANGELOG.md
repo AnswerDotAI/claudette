@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.1.9
+
+### New Features
+
+- Tool loop now continues when function calls return an error ([#78](https://github.com/AnswerDotAI/claudette/pull/78)), thanks to [@erikgaas](https://github.com/erikgaas)
+- feat: add text editor tool implementation ([#71](https://github.com/AnswerDotAI/claudette/pull/71)), thanks to [@ncoop57](https://github.com/ncoop57)
+
 
 ## 0.1.8
 
