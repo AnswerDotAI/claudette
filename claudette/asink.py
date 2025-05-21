@@ -63,7 +63,7 @@ async def __call__(self:AsyncClient,
 # %% ../02_async.ipynb
 async def mk_funcres_async(fc, ns):
     "Given tool use block `fc`, get tool result, and create a tool_result response."
-    res = await call_func_async(fc.name, fc.input, ns=ns)
+    res = await call_func_async(fc.name, fc.input, ns=ns, raise_on_err=False)
     return dict(type="tool_result", tool_use_id=fc.id, content=str(res))
 
 # %% ../02_async.ipynb

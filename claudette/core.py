@@ -280,7 +280,7 @@ def mk_tool_choice(choose:Union[str,bool,None])->dict:
 # %% ../00_core.ipynb
 def mk_funcres(fc, ns):
     "Given tool use block `fc`, get tool result, and create a tool_result response."
-    res = call_func(fc.name, fc.input, ns=ns)
+    res = call_func(fc.name, fc.input, ns=ns, raise_on_err=False)
     return dict(type="tool_result", tool_use_id=fc.id, content=str(res))
 
 # %% ../00_core.ipynb
