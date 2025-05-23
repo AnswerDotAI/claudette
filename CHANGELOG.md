@@ -2,6 +2,14 @@
 
 <!-- do not remove -->
 
+## 0.1.11
+
+### New Features
+
+- Use updated text editor tool ([#80](https://github.com/AnswerDotAI/claudette/issues/80))
+- Skip hidden directories in `view()`
+
+
 ## 0.1.10
 
 ### New Features
