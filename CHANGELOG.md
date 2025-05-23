@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.1.10
+
+### New Features
+
+- Support Claude 4 ([#79](https://github.com/AnswerDotAI/claudette/issues/79))
+
+
 ## 0.1.9
 
 ### New Features
