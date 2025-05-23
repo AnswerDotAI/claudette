@@ -38,8 +38,10 @@ empty = inspect.Parameter.empty
 # %% ../00_core.ipynb
 model_types = {
     # Anthropic
-    'claude-3-opus-20240229': 'opus',
-    'claude-3-7-sonnet-20250219': 'sonnet',
+    'claude-opus-4-20250514': 'opus',
+    'claude-sonnet-4-20250514': 'sonnet',
+    'claude-3-opus-20240229': 'opus-3',
+    'claude-3-7-sonnet-20250219': 'sonnet-3-7',
     'claude-3-5-sonnet-20241022': 'sonnet-3-5',
     'claude-3-haiku-20240307': 'haiku-3',
     'claude-3-5-haiku-20241022': 'haiku-3-5',
@@ -81,7 +83,7 @@ text_only_models = ('claude-3-5-haiku-20241022',)
 has_streaming_models = set(all_models)
 has_system_prompt_models = set(all_models)
 has_temperature_models = set(all_models)
-has_extended_thinking_models = {'claude-3-7-sonnet-20250219'}
+has_extended_thinking_models = {'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-3-7-sonnet-20250219'}
 
 # %% ../00_core.ipynb
 def can_stream(m): return m in has_streaming_models
@@ -460,14 +462,17 @@ def _repr_markdown_(self:Chat):
     history = '\n\n'.join(f"**{m['role']}**: {fmt_msg(m)}" 
                          for m in self.h)
     det = self.c._repr_markdown_().split('\n\n')[-1]
-    return f"""{last_msg}
-
+    if history: history = f"""
 <details>
-<summary>History</summary>
+<summary>► History</summary>
 
 {history}
-</details>
 
+</details>
+"""
+
+    return f"""{last_msg}
+{history}
 {det}"""
 
 # %% ../00_core.ipynb
