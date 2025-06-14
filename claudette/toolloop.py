@@ -13,31 +13,28 @@ from anthropic.types import TextBlock, Message, ToolUseBlock
 # %% ../01_toolloop.ipynb
 _final_prompt = "You have no more tool uses. Please summarize your findings. If you did not complete your goal please tell the user what further work needs to be done so they can choose how best to proceed."
 
+# %% ../01_toolloop.ipynb
 @patch
 @delegates(Chat.__call__)
 def toolloop(self:Chat,
              pr, # Prompt to pass to Claude
              max_steps=10, # Maximum number of tool requests to loop through
-             trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
-             cont_func:Optional[callable]=noop, # Function that stops loop if returns False
+             cont_func:callable=noop, # Function that stops loop if returns False
              final_prompt=_final_prompt, # Prompt to add if last message is a tool call
              **kwargs):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
-    init_n = n_msgs = len(self.h)
-    r = self(pr, **kwargs)
-    for i in range(max_steps):
-        if r.stop_reason!='tool_use': break
-        if trace_func: trace_func(self.h[n_msgs:]); n_msgs = len(self.h)
-        r = self(**kwargs)
-        if not (cont_func or noop)(self.h[-2]): break
-    
-    if r.stop_reason == 'tool_use':
-        if trace_func: trace_func(self.h[n_msgs:])
-        r = self(final_prompt, **kwargs)
-    
-    if trace_func: trace_func(self.h[n_msgs:])
-    r.steps = self.h[init_n+1:]
-    return r
+    class _Loop:
+        def __iter__(a):
+            init_n = len(self.h)
+            r = self(pr, **kwargs)
+            yield r
+            for i in range(max_steps-1):
+                if self.c.stop_reason!='tool_use': break
+                r = self(final_prompt if i==max_steps-2 else None, **kwargs)
+                yield r
+                if not cont_func(*self.h[-3:]): break
+            a.value = self.h[init_n:]
+    return _Loop()
 
 # %% ../01_toolloop.ipynb
 from .asink import AsyncChat
@@ -45,26 +42,24 @@ from .asink import AsyncChat
 # %% ../01_toolloop.ipynb
 @patch
 @delegates(AsyncChat.__call__)
-async def toolloop(self:AsyncChat,
-             pr, # Prompt to pass to Claude
-             max_steps=10, # Maximum number of tool requests to loop through
-             trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
-             cont_func:Optional[callable]=noop, # Function that stops loop if returns False
-             final_prompt=_final_prompt, # Prompt to add if last message is a tool call
-             **kwargs):
+def toolloop(
+    self: AsyncChat,
+    pr, # Prompt to pass to Claude
+    max_steps=10, # Maximum number of tool requests to loop through
+    cont_func: callable = noop, # Function that stops loop if returns False
+    final_prompt = _final_prompt, # Prompt to add if last message is a tool call
+    **kwargs
+):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
-    init_n = n_msgs = len(self.h)
-    r = await self(pr, **kwargs)
-    for i in range(max_steps):
-        if r.stop_reason!='tool_use': break
-        if trace_func: trace_func(self.h[n_msgs:]); n_msgs = len(self.h)
-        r = await self(**kwargs)
-        if not (cont_func or noop)(self.h[-2]): break
-    
-    if r.stop_reason == 'tool_use':
-        if trace_func: trace_func(self.h[n_msgs:])
-        r = await self(final_prompt, **kwargs)
-    
-    if trace_func: trace_func(self.h[n_msgs:])
-    r.steps = self.h[init_n+1:]
-    return r
+    class _Loop:
+        async def __aiter__(a):
+            init_n = len(self.h)
+            r = await self(pr, **kwargs)
+            yield r
+            for i in range(max_steps-1):
+                if self.c.stop_reason != 'tool_use': break
+                r = await self(final_prompt if i==max_steps-2 else None, **kwargs)
+                yield r
+                if not cont_func(*self.h[-3:]): break
+            a.value = self.h[init_n:]
+    return _Loop()
