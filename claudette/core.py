@@ -395,7 +395,7 @@ class Chat:
         assert cont_pr != "", "cont_pr may not be an empty string"
         self.c = (cli or Client(model, cache=cache))
         if hist is None: hist=[]
-        if tools: tools = [tool(t) for t in tools]
+        if tools: tools = [tool(t) for t in listify(tools)]
         if ns is None: ns=tools
         self.h,self.sp,self.tools,self.cont_pr,self.temp,self.cache,self.ns = hist,sp,tools,cont_pr,temp,cache,ns
 
@@ -410,7 +410,7 @@ def cost(self: Chat) -> float: return self.c.cost
 @patch
 def _stream(self:Chat, res):
     yield from res
-    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
+    self.h += mk_toolres(self.c.result, ns=self.ns) #, obj=self)
 
 # %% ../00_core.ipynb
 @patch
