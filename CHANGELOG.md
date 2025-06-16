@@ -2,6 +2,18 @@
 
 <!-- do not remove -->
 
+## 0.2.0
+
+### Breaking Changes
+
+- `toolloop` now returns an iterator of every message, including each tool request and result
+
+### New Features
+
+- Add tool call results to toolloop result ([#83](https://github.com/AnswerDotAI/claudette/issues/83))
+- `show_thk` param for `contents` ([#82](https://github.com/AnswerDotAI/claudette/issues/82))
+
+
 ## 0.1.11
 
 ### New Features
