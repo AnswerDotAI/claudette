@@ -6,7 +6,7 @@ __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models
            'pricing', 'server_tool_pricing', 'can_stream', 'can_set_system_prompt', 'can_set_temperature',
            'can_use_extended_thinking', 'find_block', 'server_tool_usage', 'usage', 'Client', 'get_pricing',
            'get_costs', 'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'think_md',
-           'search_conf', 'find_blocks', 'fmt_txt', 'contents', 'mk_msg', 'mk_msgs']
+           'search_conf', 'find_blocks', 'blks2cited_txt', 'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
@@ -504,7 +504,7 @@ def find_blocks(r, blk_type=TextBlock, type='text'):
     return [b for b in getattr(r, "content", []) if f(b)]
 
 # %% ../00_core.ipynb
-def fmt_txt(txt_blks):
+def blks2cited_txt(txt_blks):
     "Helper to get the contents from a list of `TextBlock`s, with citations."
     text_sections, citations = [], []
     for blk in txt_blks:
@@ -524,13 +524,14 @@ def fmt_txt(txt_blks):
     return body
 
 # %% ../00_core.ipynb
-def contents(r):
+def contents(r, show_thk=True):
     "Helper to get the contents from Claude response `r`."
     blks = find_blocks(r, blk_type=TextBlock)
-    tk_blk = find_block(r, blk_type=ThinkingBlock)
     content = None
-    if blks: content = fmt_txt(blks) # text or text with citations
-    if tk_blk: return think_md(content, tk_blk.thinking.strip()) # text with thinking
+    if blks: content = blks2cited_txt(blks)
+    if show_thk:
+        tk_blk = find_block(r, blk_type=ThinkingBlock)
+        if tk_blk: return think_md(content, tk_blk.thinking.strip())
     if not content:
         blk = find_block(r)
         if not blk and getattr(r, "content", None): blk = r.content[0]
