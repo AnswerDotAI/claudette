@@ -7,6 +7,7 @@ __all__ = []
 from .core import *
 from fastcore.utils import *
 from fastcore.meta import delegates
+from functools import wraps
 
 from anthropic.types import TextBlock, Message, ToolUseBlock
 
@@ -28,12 +29,14 @@ def toolloop(self:Chat,
             init_n = len(self.h)
             r = self(pr, **kwargs)
             yield r
+            if len(self.last)>1: yield self.last[1]
             for i in range(max_steps-1):
                 if self.c.stop_reason!='tool_use': break
                 r = self(final_prompt if i==max_steps-2 else None, **kwargs)
                 yield r
+                if len(self.last)>1: yield self.last[1]
                 if not cont_func(*self.h[-3:]): break
-            a.value = self.h[init_n:]
+            a.value = self.h[init_n+1:]
     return _Loop()
 
 # %% ../01_toolloop.ipynb
@@ -56,10 +59,12 @@ def toolloop(
             init_n = len(self.h)
             r = await self(pr, **kwargs)
             yield r
+            if len(self.last)>1: yield self.last[1]
             for i in range(max_steps-1):
                 if self.c.stop_reason != 'tool_use': break
                 r = await self(final_prompt if i==max_steps-2 else None, **kwargs)
                 yield r
+                if len(self.last)>1: yield self.last[1]
                 if not cont_func(*self.h[-3:]): break
-            a.value = self.h[init_n:]
+            a.value = self.h[init_n+1:]
     return _Loop()

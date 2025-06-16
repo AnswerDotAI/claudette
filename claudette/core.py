@@ -92,11 +92,16 @@ def can_set_temperature(m): return m in has_temperature_models
 def can_use_extended_thinking(m): return m in has_extended_thinking_models
 
 # %% ../00_core.ipynb
+def _type(x):
+    try: return x.type
+    except AttributeError: return x.get('type')
+
 def find_block(r:abc.Mapping, # The message to look in
-               blk_type:type=TextBlock  # The type of block to find
+               blk_type:type|str=TextBlock  # The type of block to find
               ):
     "Find the first block of type `blk_type` in `r.content`."
-    return first(o for o in r.content if isinstance(o,blk_type))
+    f = (lambda x:_type(x)==blk_type) if isinstance(blk_type,str) else (lambda x:isinstance(x,blk_type))
+    return first(o for o in r.content if f(o))
 
 # %% ../00_core.ipynb
 @patch
@@ -410,7 +415,8 @@ def cost(self: Chat) -> float: return self.c.cost
 @patch
 def _stream(self:Chat, res):
     yield from res
-    self.h += mk_toolres(self.c.result, ns=self.ns) #, obj=self)
+    self.last = mk_toolres(self.c.result, ns=self.ns) #, obj=self)
+    self.h += self.last
 
 # %% ../00_core.ipynb
 @patch
@@ -445,7 +451,8 @@ def __call__(self:Chat,
     self._append_pr(pr)
     res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice,**kw)
     if stream: return self._stream(res)
-    self.h += mk_toolres(self.c.result, ns=self.ns)
+    self.last = mk_toolres(self.c.result, ns=self.ns)
+    self.h += self.last
     return res
 
 # %% ../00_core.ipynb

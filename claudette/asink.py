@@ -114,7 +114,8 @@ class AsyncChat(Chat):
 @patch
 async def _stream(self:AsyncChat, res):
     async for o in res: yield o
-    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
+    self.last = mk_toolres(self.c.result, ns=self.tools, obj=self)
+    self.h += self.last
 
 # %% ../02_async.ipynb
 @patch
@@ -138,5 +139,6 @@ async def __call__(self:AsyncChat,
     await self._append_pr(pr)
     res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice, **kw)
     if stream: return self._stream(res)
-    self.h += await mk_toolres_async(self.c.result, ns=self.ns)
+    self.last = await mk_toolres_async(self.c.result, ns=self.ns)
+    self.h += self.last
     return res
