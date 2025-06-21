@@ -4,15 +4,13 @@
 __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models_goog', 'text_only_models',
            'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'has_extended_thinking_models',
            'pricing', 'server_tool_pricing', 'can_stream', 'can_set_system_prompt', 'can_set_temperature',
-           'can_use_extended_thinking', 'find_block', 'server_tool_usage', 'usage', 'Client', 'get_pricing',
-           'get_costs', 'mk_tool_choice', 'mk_funcres', 'mk_toolres', 'get_types', 'tool', 'Chat', 'think_md',
+           'can_use_extended_thinking', 'find_block', 'server_tool_usage', 'usage', 'Client', 'get_types',
+           'mk_tool_choice', 'get_pricing', 'get_costs', 'mk_funcres', 'mk_toolres', 'tool', 'Chat', 'think_md',
            'search_conf', 'find_blocks', 'blks2cited_txt', 'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
 from collections import abc
-try: from IPython import display
-except: display=None
 from typing import get_type_hints
 from functools import wraps
 
@@ -27,6 +25,7 @@ from toolslm.funccall import *
 
 from fastcore.meta import delegates
 from fastcore.utils import *
+from fastcore.xtras import save_iter
 from msglm import mk_msg_anthropic as mk_msg, mk_msgs_anthropic as mk_msgs
 
 # %% ../00_core.ipynb
@@ -63,10 +62,13 @@ all_models = list(model_types)
 models = all_models[:5]
 
 # %% ../00_core.ipynb
-models_aws = ['claude-3-5-haiku-20241022',
- 'claude-3-7-sonnet-20250219',
- 'anthropic.claude-3-opus-20240229-v1:0',
- 'anthropic.claude-3-5-sonnet-20241022-v2:0']
+models_aws = [
+    'anthropic.claude-sonnet-4-20250514-v1:0',
+    'claude-3-5-haiku-20241022',
+    'claude-3-7-sonnet-20250219',
+    'anthropic.claude-3-opus-20240229-v1:0',
+    'anthropic.claude-3-5-sonnet-20241022-v2:0'
+]
 
 # %% ../00_core.ipynb
 models_goog = ['anthropic.claude-3-sonnet-20240229-v1:0',
@@ -146,7 +148,7 @@ def __repr__(self:Usage):
     io_toks = f'In: {self.input_tokens}; Out: {self.output_tokens}'
     cache_toks = f'Cache create: {_dgetattr(self, "cache_creation_input_tokens",0)}; Cache read: {_dgetattr(self, "cache_read_input_tokens",0)}'
     server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
-    server_tool_use_str = f'Server tool use (web search requests): {server_tool_use.web_search_requests}'
+    server_tool_use_str = f'Search: {server_tool_use.web_search_requests}'
     total_tok = f'Total Tokens: {self.total}'
     return f'{io_toks}; {cache_toks}; {total_tok}; {server_tool_use_str}'
 
@@ -181,7 +183,7 @@ def _r(self:Client, r:Message, prefill=''):
     "Store the result of the message and accrue total usage."
     if prefill:
         blk = find_block(r)
-        blk.text = prefill + (blk.text or '')
+        if blk: blk.text = prefill + (blk.text or '')
     self.result = r
     self.use += r.usage
     self.stop_reason = r.stop_reason
@@ -190,33 +192,84 @@ def _r(self:Client, r:Message, prefill=''):
 
 # %% ../00_core.ipynb
 @patch
-def _log(self:Client, final, prefill, msgs, maxtok=None, sp=None, temp=None, stream=None, stop=None, **kwargs):
+def _log(self:Client, final, prefill, msgs, **kwargs):
     self._r(final, prefill)
     if self.log is not None: self.log.append({
-        "msgs": msgs, "prefill": prefill, **kwargs,
-        "msgs": msgs, "prefill": prefill, "maxtok": maxtok, "sp": sp, "temp": temp, "stream": stream, "stop": stop, **kwargs,
+        "msgs": msgs, **kwargs,
         "result": self.result, "use": self.use, "stop_reason": self.stop_reason, "stop_sequence": self.stop_sequence
     })
     return self.result
 
 # %% ../00_core.ipynb
-@patch
-def _stream(self:Client, msgs:list, prefill='', **kwargs):
-    with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs, cache=self.cache, cache_last_ckpt_only=self.cache), **kwargs) as s:
-        if prefill: yield(prefill)
+@save_iter
+def _stream(o, cm, prefill, cb):
+    with cm as s:
+        yield prefill
         yield from s.text_stream
-        self._log(s.get_final_message(), prefill, msgs, **kwargs)
+        o.value = s.get_final_message()
+        cb(o.value)
+
+# %% ../00_core.ipynb
+def get_types(msgs):
+    types = []
+    for m in msgs:
+        content = m.get('content', [])
+        if isinstance(content, list): types.extend(getattr(c, 'type', None) or c['type'] for c in content)
+        else: types.append('text')
+    return types
+
+# %% ../00_core.ipynb
+def mk_tool_choice(choose:Union[str,bool,None])->dict:
+    "Create a `tool_choice` dict that's 'auto' if `choose` is `None`, 'any' if it is True, or 'tool' otherwise"
+    return {"type": "tool", "name": choose} if isinstance(choose,str) else {'type':'any'} if choose else {'type':'auto'}
 
 # %% ../00_core.ipynb
 @patch
-def _precall(self:Client, msgs, prefill, stop, kwargs):
+def _precall(self:Client, msgs, prefill, sp, temp, maxtok, maxthinktok, stream,
+             stop, tools, tool_choice, kwargs):
+    if tools: kwargs['tools'] = [get_schema(o) if callable(o) else o for o in listify(tools)]
+    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
+    if maxthinktok: 
+        kwargs['thinking'] = {'type':'enabled', 'budget_tokens':maxthinktok} 
+        temp,prefill = 1,''
     pref = [prefill.strip()] if prefill else []
     if not isinstance(msgs,list): msgs = [msgs]
     if stop is not None:
         if not isinstance(stop, (list)): stop = [stop]
         kwargs["stop_sequences"] = stop
     msgs = mk_msgs(msgs+pref, cache=self.cache, cache_last_ckpt_only=self.cache)
-    return msgs
+    assert not ('image' in get_types(msgs) and self.text_only), f"Images not supported by: {self.model}"
+    kwargs |= dict(max_tokens=maxtok, system=sp, temperature=temp)
+    return msgs, kwargs
+
+# %% ../00_core.ipynb
+@patch
+@delegates(messages.Messages.create)
+def __call__(self:Client,
+             msgs:list, # List of messages in the dialog
+             sp='', # The system prompt
+             temp=0, # Temperature
+             maxtok=4096, # Maximum tokens
+             maxthinktok=0, # Maximum thinking tokens
+             prefill='', # Optional prefill to pass to Claude as start of its response
+             stream:bool=False, # Stream response?
+             stop=None, # Stop sequence
+             tools:Optional[list]=None, # List of tools to make available to Claude
+             tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             cb=None, # Callback to pass result to when complete
+             **kwargs):
+    "Make a call to Claude."
+    msgs,kwargs = self._precall(msgs, prefill, sp, temp, maxtok, maxthinktok, stream,
+                                stop, tools, tool_choice, kwargs)
+    m = self.c.messages
+    f = m.stream if stream else m.create
+    res = f(model=self.model, messages=msgs, **kwargs)
+    def _cb(v):
+        self._log(v, prefill=prefill, msgs=msgs, **kwargs)
+        if cb: cb(v)
+    if stream: return _stream(res, prefill, _cb)
+    try: return res
+    finally: _cb(res)
 
 # %% ../00_core.ipynb
 pricing = {  # model type: $ / million tokens (input, output, cache write, cache read)
@@ -280,11 +333,6 @@ def _repr_markdown_(self:Client):
 | **Total** | **{self.use.total:,}** | **${self.cost:.6f}** |"""
 
 # %% ../00_core.ipynb
-def mk_tool_choice(choose:Union[str,bool,None])->dict:
-    "Create a `tool_choice` dict that's 'auto' if `choose` is `None`, 'any' if it is True, or 'tool' otherwise"
-    return {"type": "tool", "name": choose} if isinstance(choose,str) else {'type':'any'} if choose else {'type':'auto'}
-
-# %% ../00_core.ipynb
 def mk_funcres(fc, ns):
     "Given tool use block `fc`, get tool result, and create a tool_result response."
     res = call_func(fc.name, fc.input, ns=ns, raise_on_err=False)
@@ -304,42 +352,6 @@ def mk_toolres(
     tcs = [mk_funcres(o, ns) for o in cts if isinstance(o,ToolUseBlock)]
     if tcs: res.append(mk_msg(tcs))
     return res
-
-# %% ../00_core.ipynb
-def get_types(msgs):
-    types = []
-    for m in msgs:
-        content = m.get('content', [])
-        if isinstance(content, list): types.extend(getattr(c, 'type', None) or c['type'] for c in content)
-        else: types.append('text')
-    return types
-
-# %% ../00_core.ipynb
-@patch
-@delegates(messages.Messages.create)
-def __call__(self:Client,
-             msgs:list, # List of messages in the dialog
-             sp='', # The system prompt
-             temp=0, # Temperature
-             maxtok=4096, # Maximum tokens
-             maxthinktok=0, # Maximum thinking tokens
-             prefill='', # Optional prefill to pass to Claude as start of its response
-             stream:bool=False, # Stream response?
-             stop=None, # Stop sequence
-             tools:Optional[list]=None, # List of tools to make available to Claude
-             tool_choice:Optional[dict]=None, # Optionally force use of some tool
-             **kwargs):
-    "Make a call to Claude."
-    if tools: kwargs['tools'] = [get_schema(o) if callable(o) else o for o in listify(tools)]
-    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
-    if maxthinktok: 
-        kwargs['thinking']={'type':'enabled', 'budget_tokens':maxthinktok} 
-        temp=1; prefill=''
-    msgs = self._precall(msgs, prefill, stop, kwargs)
-    if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
-    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    res = self.c.messages.create(model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
 
 # %% ../00_core.ipynb
 @patch
@@ -413,25 +425,16 @@ def cost(self: Chat) -> float: return self.c.cost
 
 # %% ../00_core.ipynb
 @patch
-def _stream(self:Chat, res):
-    yield from res
-    self.last = mk_toolres(self.c.result, ns=self.ns) #, obj=self)
-    self.h += self.last
-
-# %% ../00_core.ipynb
-@patch
 def _post_pr(self:Chat, pr, prev_role):
     if pr is None and prev_role == 'assistant':
         if self.cont_pr is None:
-            raise ValueError("Prompt must be given after assistant completion, or use `self.cont_pr`.")
+            raise ValueError("Prompt must be given after completion, or use `self.cont_pr`.")
         pr = self.cont_pr # No user prompt, keep the chain
     if pr: self.h.append(mk_msg(pr, cache=self.cache))
 
 # %% ../00_core.ipynb
 @patch
-def _append_pr(self:Chat,
-               pr=None,  # Prompt / message
-              ):
+def _append_pr(self:Chat, pr=None):
     prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user'
     if pr and prev_role == 'user': self() # already user request pending
     self._post_pr(pr, prev_role)
@@ -449,11 +452,11 @@ def __call__(self:Chat,
              **kw):
     if temp is None: temp=self.temp
     self._append_pr(pr)
-    res = self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice,**kw)
-    if stream: return self._stream(res)
-    self.last = mk_toolres(self.c.result, ns=self.ns)
-    self.h += self.last
-    return res
+    def _cb(v):
+        self.last = mk_toolres(v, ns=self.ns)
+        self.h += self.last
+    return self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok,
+                 tools=self.tools, tool_choice=tool_choice, cb=_cb, **kw)
 
 # %% ../00_core.ipynb
 @patch

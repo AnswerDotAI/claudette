@@ -6,8 +6,6 @@ __all__ = ['AsyncClient', 'mk_funcres_async', 'mk_toolres_async', 'AsyncChat']
 # %% ../02_async.ipynb
 import inspect, typing, mimetypes, base64, json
 from collections import abc
-try: from IPython import display
-except: display=None
 
 from anthropic import AsyncAnthropic
 from anthropic.types import ToolUseBlock
@@ -25,12 +23,13 @@ class AsyncClient(Client):
         if not cli: self.c = AsyncAnthropic(default_headers={'anthropic-beta': 'prompt-caching-2024-07-31'})
 
 # %% ../02_async.ipynb
-@patch
-async def _stream(self:AsyncClient, msgs:list, prefill='', **kwargs):
-    async with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs, cache=self.cache), **kwargs) as s:
-        if prefill: yield prefill
-        async for o in s.text_stream: yield o
-        self._log(await s.get_final_message(), prefill, msgs, kwargs)
+@asave_iter
+async def _astream(o, cm, prefill, cb):
+    async with cm as s:
+        yield prefill
+        async for x in s.text_stream: yield x
+        o.value = await s.get_final_message()
+        cb(o.value)
 
 # %% ../02_async.ipynb
 @patch
@@ -46,19 +45,21 @@ async def __call__(self:AsyncClient,
              stop=None, # Stop sequence
              tools:Optional[list]=None, # List of tools to make available to Claude
              tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             cb=None, # Callback to pass result to when complete
              **kwargs):
     "Make an async call to Claude."
-    if tools: kwargs['tools'] = [get_schema(o) for o in listify(tools)]
-    if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
-    if maxthinktok: 
-        kwargs['thinking']={'type':'enabled', 'budget_tokens':maxthinktok} 
-        temp=1; prefill=''
-    msgs = self._precall(msgs, prefill, stop, kwargs)
-    if any(t == 'image' for t in get_types(msgs)): assert not self.text_only, f"Images are not supported by the current model type: {self.model}"
-    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    res = await self.c.messages.create(
-        model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
-    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
+    msgs,kwargs = self._precall(msgs, prefill, sp, temp, maxtok, maxthinktok, stream,
+                                stop, tools, tool_choice, kwargs)
+    m = self.c.messages
+    f = m.stream if stream else m.create
+    res = f(model=self.model, messages=msgs, **kwargs)
+    def _cb(v):
+        self._log(v, prefill=prefill, msgs=msgs, **kwargs)
+        if cb: cb(v)
+    if stream: return _astream(res, prefill, _cb)
+    res = await res
+    try: return res
+    finally: _cb(res)
 
 # %% ../02_async.ipynb
 async def mk_funcres_async(fc, ns):
@@ -112,13 +113,6 @@ class AsyncChat(Chat):
 
 # %% ../02_async.ipynb
 @patch
-async def _stream(self:AsyncChat, res):
-    async for o in res: yield o
-    self.last = mk_toolres(self.c.result, ns=self.tools, obj=self)
-    self.h += self.last
-
-# %% ../02_async.ipynb
-@patch
 async def _append_pr(self:AsyncChat, pr=None):
     prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user' if no history
     if pr and prev_role == 'user': await self()
@@ -137,8 +131,7 @@ async def __call__(self:AsyncChat,
                    **kw):
     if temp is None: temp=self.temp
     await self._append_pr(pr)
-    res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice, **kw)
-    if stream: return self._stream(res)
-    self.last = await mk_toolres_async(self.c.result, ns=self.ns)
-    self.h += self.last
-    return res
+    def _cb(v):
+        self.last = mk_toolres(v, ns=self.ns)
+        self.h += self.last
+    return await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice, cb=_cb, **kw)
