@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Claudette is Claude’s friend">
+
+<title>claudette</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-e3214a26c7bbc517fc91b4894247a828.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="claudette">
+<meta property="og:description" content="Claudette is Claude’s friend">
+<meta property="og:image" content="https://claudette.answer.ai/index_files/figure-html/cell-35-output-1.jpeg">
+<meta property="og:site_name" content="claudette">
+<meta name="twitter:title" content="claudette">
+<meta name="twitter:description" content="Claudette is Claude’s friend">
+<meta name="twitter:image" content="https://claudette.answer.ai/index_files/figure-html/cell-35-output-1.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">claudette</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">claudette</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">claudette</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Claudette’s source</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./toolloop.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tool loop</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./async.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The async version</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text_editor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Editor</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#install" id="toc-install" class="nav-link active" data-scroll-target="#install">Install</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting started</a></li>
+  <li><a href="#chat" id="toc-chat" class="nav-link" data-scroll-target="#chat">Chat</a>
+  <ul class="collapse">
+  <li><a href="#async" id="toc-async" class="nav-link" data-scroll-target="#async">Async</a></li>
+  </ul></li>
+  <li><a href="#prompt-caching" id="toc-prompt-caching" class="nav-link" data-scroll-target="#prompt-caching">Prompt caching</a></li>
+  <li><a href="#tool-use" id="toc-tool-use" class="nav-link" data-scroll-target="#tool-use">Tool use</a></li>
+  <li><a href="#structured-data" id="toc-structured-data" class="nav-link" data-scroll-target="#structured-data">Structured data</a></li>
+  <li><a href="#images" id="toc-images" class="nav-link" data-scroll-target="#images">Images</a></li>
+  <li><a href="#extended-thinking" id="toc-extended-thinking" class="nav-link" data-scroll-target="#extended-thinking">Extended Thinking</a></li>
+  <li><a href="#web-search-and-server-tools" id="toc-web-search-and-server-tools" class="nav-link" data-scroll-target="#web-search-and-server-tools">Web Search and Server Tools</a></li>
+  <li><a href="#text-editor-tool" id="toc-text-editor-tool" class="nav-link" data-scroll-target="#text-editor-tool">Text Editor Tool</a></li>
+  <li><a href="#other-model-providers" id="toc-other-model-providers" class="nav-link" data-scroll-target="#other-model-providers">Other model providers</a>
+  <ul class="collapse">
+  <li><a href="#amazon-bedrock" id="toc-amazon-bedrock" class="nav-link" data-scroll-target="#amazon-bedrock">Amazon Bedrock</a></li>
+  <li><a href="#google-vertex" id="toc-google-vertex" class="nav-link" data-scroll-target="#google-vertex">Google Vertex</a></li>
+  </ul></li>
+  <li><a href="#extensions" id="toc-extensions" class="nav-link" data-scroll-target="#extensions">Extensions</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/AnswerDotAI/claudette/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">claudette</h1>
+</div>
+
+<div>
+  <div class="description">
+    Claudette is Claude’s friend
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<blockquote class="blockquote">
+<p><strong>NB</strong>: If you are reading this in GitHub’s readme, we recommend you instead read the much more nicely formatted <a href="https://claudette.answer.ai/">documentation format</a> of this tutorial.</p>
+</blockquote>
+<p><em>Claudette</em> is a wrapper for Anthropic’s <a href="https://github.com/anthropics/anthropic-sdk-python">Python SDK</a>.</p>
+<p>The SDK works well, but it is quite low level – it leaves the developer to do a lot of stuff manually. That’s a lot of extra work and boilerplate! Claudette automates pretty much everything that can be automated, whilst providing full control. Amongst the features provided:</p>
+<ul>
+<li>A <a href="https://claudette.answer.ai/core.html#chat"><code>Chat</code></a> class that creates stateful dialogs</li>
+<li>Support for <em>prefill</em>, which tells Claude what to use as the first few words of its response</li>
+<li>Convenient image support</li>
+<li>Simple and convenient support for Claude’s new Tool Use API.</li>
+</ul>
+<p>You’ll need to set the <code>ANTHROPIC_API_KEY</code> environment variable to the key provided to you by Anthropic in order to use this library.</p>
+<p>Note that this library is the first ever “literate nbdev” project. That means that the actual source code for the library is a rendered Jupyter Notebook which includes callout notes and tips, HTML tables and images, detailed explanations, and teaches <em>how</em> and <em>why</em> the code is written the way it is. Even if you’ve never used the Anthropic Python SDK or Claude API before, you should be able to read the source code. Click <a href="https://claudette.answer.ai/core.html">Claudette’s Source</a> to read it, or clone the git repo and execute the notebook yourself to see every step of the creation process in action. The tutorial below includes links to API details which will take you to relevant parts of the source. The reason this project is a new kind of literal program is because we take seriously Knuth’s call to action, that we have a “<em>moral commitment</em>” to never write an “<em>illiterate program</em>” – and so we have a commitment to making literate programming an easy and pleasant experience. (For more on this, see <a href="https://www.youtube.com/watch?v=rX1yGxJijsI">this talk</a> from Hamel Husain.)</p>
+<blockquote class="blockquote">
+<p>“<em>Let us change our traditional attitude to the construction of programs: Instead of imagining that our main task is to instruct a <strong>computer</strong> what to do, let us concentrate rather on explaining to <strong>human beings</strong> what we want a computer to do.</em>” Donald E. Knuth, <a href="https://www.cs.tufts.edu/~nr/cs257/archive/literate-programming/01-knuth-lp.pdf">Literate Programming</a> (1984)</p>
+</blockquote>
+<section id="install" class="level2">
+<h2 class="anchored" data-anchor-id="install">Install</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install claudette</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
+<p>Anthropic’s Python SDK will automatically be installed with Claudette, if you don’t already have it.</p>
+<div id="6647ace5" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># os.environ['ANTHROPIC_LOG'] = 'debug'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To print every HTTP request and response in full, uncomment the above line.</p>
+<div id="4c049838" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> claudette <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Claudette only exports the symbols that are needed to use the library, so you can use <code>import *</code> to import them. Alternatively, just use:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> claudette</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>…and then add the prefix <code>claudette.</code> to any usages of the module.</p>
+<p>Claudette provides <code>models</code>, which is a list of models currently available from the SDK.</p>
+<div id="cfd8f432" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>models</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>['claude-opus-4-20250514',
+ 'claude-sonnet-4-20250514',
+ 'claude-3-opus-20240229',
+ 'claude-3-7-sonnet-20250219',
+ 'claude-3-5-sonnet-20241022']</code></pre>
+</div>
+</div>
+<p>For these examples, we’ll use Sonnet 4, since it’s awesome!</p>
+<div id="8dde0ab6" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> models[<span class="dv">1</span>]</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'claude-sonnet-4-20250514'</code></pre>
+</div>
+</div>
+</section>
+<section id="chat" class="level2">
+<h2 class="anchored" data-anchor-id="chat">Chat</h2>
+<p>The main interface to Claudette is the <a href="https://claudette.answer.ai/core.html#chat"><code>Chat</code></a> class, which provides a stateful interface to Claude:</p>
+<div id="d92fe1f9" class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(model, sp<span class="op">=</span><span class="st">"""You are a helpful and concise assistant."""</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>chat(<span class="st">"I'm Jeremy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Hello Jeremy! Nice to meet you. How can I help you today?</p>
+<details>
+<ul>
+<li>id: <code>msg_01NNfbziMKnAULhH72Upzpzg</code></li>
+<li>content: <code>[{'citations': None, 'text': 'Hello Jeremy! Nice to meet you. How can I help you today?', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 19, 'output_tokens': 18, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="44200c5e" class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> chat(<span class="st">"What's my name?"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Your name is Jeremy.</p>
+<details>
+<ul>
+<li>id: <code>msg_01HoboBZtq6dtocz2UWht9ia</code></li>
+<li>content: <code>[{'citations': None, 'text': 'Your name is Jeremy.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 45, 'output_tokens': 8, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="8e603357" class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> chat(<span class="st">"What's my name?"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Your name is Jeremy.</p>
+<details>
+<ul>
+<li>id: <code>msg_01SUAYui6JS3Jf65KYfsGWhU</code></li>
+<li>content: <code>[{'citations': None, 'text': 'Your name is Jeremy.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 61, 'output_tokens': 8, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>As you see above, displaying the results of a call in a notebook shows just the message contents, with the other details hidden behind a collapsible section. Alternatively you can <code>print</code> the details:</p>
+<div id="50881e3f" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Message(id='msg_01SUAYui6JS3Jf65KYfsGWhU', content=[TextBlock(citations=None, text='Your name is Jeremy.', type='text')], model='claude-sonnet-4-20250514', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 61; Out: 8; Cache create: 0; Cache read: 0; Total Tokens: 69; Search: 0)</code></pre>
+</div>
+</div>
+<p>Claude supports adding an extra <code>assistant</code> message at the end, which contains the <em>prefill</em> – i.e.&nbsp;the text we want Claude to assume the response starts with. Let’s try it out:</p>
+<div id="830a6bf8" class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>chat(<span class="st">"Concisely, what is the meaning of life?"</span>,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>     prefill<span class="op">=</span><span class="st">'According to Douglas Adams,'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>According to Douglas Adams,it’s 42. More seriously, many find meaning through relationships, personal growth, contributing to others, and pursuing what brings fulfillment.</p>
+<details>
+<ul>
+<li>id: <code>msg_01UkHn37YePdXg8NVrXk9Qu3</code></li>
+<li>content: <code>[{'citations': None, 'text': "According to Douglas Adams,it's 42. More seriously, many find meaning through relationships, personal growth, contributing to others, and pursuing what brings fulfillment.", 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 89, 'output_tokens': 32, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>You can add <code>stream=True</code> to stream the results as soon as they arrive (although you will only see the gradual generation if you execute the notebook yourself, of course!)</p>
+<div id="8949a074" class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> o <span class="kw">in</span> chat(<span class="st">"Concisely, what book was that in?"</span>, prefill<span class="op">=</span><span class="st">'It was in'</span>, stream<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(o, end<span class="op">=</span><span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>It was in "The Hitchhiker's Guide to the Galaxy."</code></pre>
+</div>
+</div>
+<section id="async" class="level3">
+<h3 class="anchored" data-anchor-id="async">Async</h3>
+<p>Alternatively, you can use <a href="https://claudette.answer.ai/async.html#asyncchat"><code>AsyncChat</code></a> (or <a href="https://claudette.answer.ai/async.html#asyncclient"><code>AsyncClient</code></a>) for the async versions, e.g:</p>
+<div id="6a927d3d" class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> AsyncChat(model)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> chat(<span class="st">"I'm Jeremy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Nice to meet you, Jeremy! How are you doing today? Is there anything I can help you with?</p>
+<details>
+<ul>
+<li>id: <code>msg_01HyDqMjwcKEc2V39xLWTwFf</code></li>
+<li>content: <code>[{'citations': None, 'text': 'Nice to meet you, Jeremy! How are you doing today? Is there anything I can help you with?', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 10, 'output_tokens': 25, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>Remember to use <code>async for</code> when streaming in this case:</p>
+<div id="82019712" class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">for</span> o <span class="kw">in</span> <span class="cf">await</span> chat(<span class="st">"Concisely, what is the meaning of life?"</span>,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                          prefill<span class="op">=</span><span class="st">'According to Douglas Adams,'</span>, stream<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(o, end<span class="op">=</span><span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>According to Douglas Adams,it's 42. But more seriously, the meaning of life is likely something you create through your relationships, contributions, growth, and what brings you fulfillment - rather than something you discover pre-made.</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="prompt-caching" class="level2">
+<h2 class="anchored" data-anchor-id="prompt-caching">Prompt caching</h2>
+<p>Claude supports <a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching">prompt caching</a>, which can significantly reduce token usage costs when working with large contexts or repetitive elements. When you use <code>mk_msg(msg, cache=True)</code>, Claudette adds the necessary cache control headers to make that message cacheable.</p>
+<p>Prompt caching works by marking segments of your prompt for efficient reuse. When a cached segment is encountered again, Claude reads it from the cache rather than processing the full content, resulting in a 90% reduction in token costs for those segments.</p>
+<p>Some key points about prompt caching: - Cache writes cost 25% more than normal input tokens - Cache reads cost 90% less than normal input tokens - Minimum cacheable length is model-dependent (1024-2048 tokens) - Cached segments must be completely identical to be reused - Works well for system prompts, tool definitions, and large context blocks</p>
+<p>For instance, here we use caching when asking about Claudette’s readme file:</p>
+<div id="08032142" class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(model, sp<span class="op">=</span><span class="st">"""You are a helpful and concise assistant."""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="6195a0f5" class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nbtxt <span class="op">=</span> Path(<span class="st">'README.txt'</span>).read_text()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>msg <span class="op">=</span> <span class="ss">f'''&lt;README&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>nbtxt<span class="sc">}</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/README&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ss">In brief, what is the purpose of this project based on the readme?'''</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> chat(mk_msg(msg, cache<span class="op">=</span><span class="va">True</span>))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Based on the README, Claudette is a high-level wrapper for Anthropic’s Python SDK that aims to simplify and automate working with Claude’s API. Its main purposes are:</p>
+<ol type="1">
+<li><p><strong>Reduce boilerplate and manual work</strong> - It automates tasks that would otherwise require manual handling with the base SDK</p></li>
+<li><p><strong>Provide convenient features</strong> like:</p>
+<ul>
+<li>Stateful chat dialogs via the <a href="https://claudette.answer.ai/core.html#chat"><code>Chat</code></a> class</li>
+<li>Support for prefill (controlling Claude’s response start)</li>
+<li>Easy image handling</li>
+<li>Simplified tool use API</li>
+<li>Prompt caching support</li>
+</ul></li>
+<li><p><strong>Maintain full control</strong> while providing automation - you get convenience without losing flexibility</p></li>
+<li><p><strong>Educational value</strong> - It’s the first “literate nbdev” project, meaning the source code is written as a readable Jupyter Notebook with detailed explanations, making it both functional software and a teaching resource</p></li>
+</ol>
+<p>The project essentially makes Claude’s API more ergonomic and user-friendly while preserving all the underlying capabilities.</p>
+<details>
+<ul>
+<li>id: <code>msg_011SNy9u95nspNq6PSnQuwBF</code></li>
+<li>content: <code>[{'citations': None, 'text': 'Based on the README, Claudette is a high-level wrapper for Anthropic\'s Python SDK that aims to simplify and automate working with Claude\'s API. Its main purposes are:\n\n1. **Reduce boilerplate and manual work** - It automates tasks that would otherwise require manual handling with the base SDK\n2. **Provide convenient features** like:\n   - Stateful chat dialogs via the [</code>Chat<code>](https://claudette.answer.ai/core.html#chat) class\n   - Support for prefill (controlling Claude\'s response start)\n   - Easy image handling\n   - Simplified tool use API\n   - Prompt caching support\n\n3. **Maintain full control** while providing automation - you get convenience without losing flexibility\n\n4. **Educational value** - It\'s the first "literate nbdev" project, meaning the source code is written as a readable Jupyter Notebook with detailed explanations, making it both functional software and a teaching resource\n\nThe project essentially makes Claude\'s API more ergonomic and user-friendly while preserving all the underlying capabilities.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 9287, 'input_tokens': 4, 'output_tokens': 223, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>The response records the a cache has been created using these input tokens:</p>
+<div id="eeb6a6eb" class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r.usage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Usage(cache_creation_input_tokens=0, cache_read_input_tokens=9287, input_tokens=4, output_tokens=223, server_tool_use=None, service_tier='standard')</code></pre>
+</div>
+</div>
+<p>We can now ask a followup question in this chat:</p>
+<div id="15e74543" class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> chat(<span class="st">'How does it make tool use more ergonomic?'</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Based on the README, Claudette makes tool use more ergonomic in several key ways:</p>
+<section id="simplified-function-definitions" class="level2">
+<h2 class="anchored" data-anchor-id="simplified-function-definitions">1. <strong>Simplified Function Definitions</strong></h2>
+<p>Uses docments to make Python function definitions more user-friendly - you just need type hints and comments:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sums(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    a:<span class="bu">int</span>,  <span class="co"># First thing to sum</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    b:<span class="bu">int</span><span class="op">=</span><span class="dv">1</span> <span class="co"># Second thing to sum</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">int</span>: <span class="co"># The sum of the inputs</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Adds a + b."</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">+</span> b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="automatic-tool-execution" class="level2">
+<h2 class="anchored" data-anchor-id="automatic-tool-execution">2. <strong>Automatic Tool Execution</strong></h2>
+<p>Handles the tool calling process automatically. When Claude returns a <code>tool_use</code> message, you just call <code>chat()</code> again and Claudette: - Calls the tool with the provided parameters - Passes the result back to Claude - Returns Claude’s final response</p>
+<p>No manual parameter extraction or result handling needed.</p>
+</section>
+<section id="multi-step-tool-workflows" class="level2">
+<h2 class="anchored" data-anchor-id="multi-step-tool-workflows">3. <strong>Multi-step Tool Workflows</strong></h2>
+<p>The <code>toolloop</code> method can handle multiple tool calls in sequence to solve complex problems. For example, calculating <code>(a+b)*2</code> automatically uses both addition and multiplication tools in the right order.</p>
+</section>
+<section id="easy-tool-integration" class="level2">
+<h2 class="anchored" data-anchor-id="easy-tool-integration">4. <strong>Easy Tool Integration</strong></h2>
+<ul>
+<li>Pass tools as a simple list to the <a href="https://claudette.answer.ai/core.html#chat"><code>Chat</code></a> constructor</li>
+<li>Optionally force tool usage with <code>tool_choice</code> parameter</li>
+<li>Get structured data directly with <a href="https://claudette.answer.ai/core.html#client.structured"><code>Client.structured()</code></a></li>
+</ul>
+</section>
+<section id="reduced-complexity" class="level2">
+<h2 class="anchored" data-anchor-id="reduced-complexity">5. <strong>Reduced Complexity</strong></h2>
+<p>Instead of manually handling tool use messages, parameter parsing, function calls, and result formatting that the base SDK requires, Claudette abstracts all of this away while maintaining full functionality.</p>
+<p>This makes tool use feel more like natural function calling rather than complex API orchestration.</p>
+<details>
+<ul>
+<li>id: <code>msg_01XDJNpxiTkhTY9kbu17Q73L</code></li>
+<li>content: <code>[{'citations': None, 'text': 'Based on the README, Claudette makes tool use more ergonomic in several key ways:\n\n## 1. **Simplified Function Definitions**\nUses docments to make Python function definitions more user-friendly - you just need type hints and comments:\n\n```python\ndef sums(\n    a:int,  # First thing to sum\n    b:int=1 # Second thing to sum\n) -&gt; int: # The sum of the inputs\n    "Adds a + b."\n    return a + b\n```\n\n## 2. **Automatic Tool Execution**\nHandles the tool calling process automatically. When Claude returns a</code>tool_use<code>message, you just call</code>chat()<code>again and Claudette:\n- Calls the tool with the provided parameters\n- Passes the result back to Claude\n- Returns Claude\'s final response\n\nNo manual parameter extraction or result handling needed.\n\n## 3. **Multi-step Tool Workflows**\nThe</code>toolloop<code>method can handle multiple tool calls in sequence to solve complex problems. For example, calculating</code>(a+b)*2<code>automatically uses both addition and multiplication tools in the right order.\n\n## 4. **Easy Tool Integration**\n- Pass tools as a simple list to the [</code>Chat<code>](https://claudette.answer.ai/core.html#chat) constructor\n- Optionally force tool usage with</code>tool_choice<code>parameter\n- Get structured data directly with [</code>Client.structured()<code>](https://claudette.answer.ai/core.html#client.structured)\n\n## 5. **Reduced Complexity**\nInstead of manually handling tool use messages, parameter parsing, function calls, and result formatting that the base SDK requires, Claudette abstracts all of this away while maintaining full functionality.\n\nThis makes tool use feel more like natural function calling rather than complex API orchestration.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 9287, 'input_tokens': 241, 'output_tokens': 374, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</section>
+</div>
+</div>
+<p>We can see that this only used ~200 regular input tokens – the 7000+ context tokens have been read from cache.</p>
+<div id="ec96adbd" class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r.usage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Usage(cache_creation_input_tokens=0, cache_read_input_tokens=9287, input_tokens=241, output_tokens=374, server_tool_use=None, service_tier='standard')</code></pre>
+</div>
+</div>
+<div id="a456dc38" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>chat.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 245; Out: 597; Cache create: 0; Cache read: 18574; Total Tokens: 19416; Search: 0</code></pre>
+</div>
+</div>
+</section>
+<section id="tool-use" class="level2">
+<h2 class="anchored" data-anchor-id="tool-use">Tool use</h2>
+<p><a href="https://docs.anthropic.com/claude/docs/tool-use">Tool use</a> lets Claude use external tools.</p>
+<p>We use <a href="https://fastcore.fast.ai/docments.html">docments</a> to make defining Python functions as ergonomic as possible. Each parameter (and the return value) should have a type, and a docments comment with the description of what it is. As an example we’ll write a simple function that adds numbers together, and will tell us when it’s being called:</p>
+<div id="b9fbfc57" class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sums(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    a:<span class="bu">int</span>,  <span class="co"># First thing to sum</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    b:<span class="bu">int</span><span class="op">=</span><span class="dv">1</span> <span class="co"># Second thing to sum</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">int</span>: <span class="co"># The sum of the inputs</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Adds a + b."</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Finding the sum of </span><span class="sc">{</span>a<span class="sc">}</span><span class="ss"> and </span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">+</span> b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Sometimes Claude will try to add stuff up “in its head”, so we’ll use a system prompt to ask it not to.</p>
+<div id="3549e7b4" class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>sp <span class="op">=</span> <span class="st">"Always use tools if math ops are needed."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’ll get Claude to add up some long numbers:</p>
+<div id="7a5bc98a" class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>a,b <span class="op">=</span> <span class="dv">604542</span>,<span class="dv">6458932</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> <span class="ss">f"What is </span><span class="sc">{</span>a<span class="sc">}</span><span class="ss">+</span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">?"</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>pr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'What is 604542+6458932?'</code></pre>
+</div>
+</div>
+<p>To use tools, pass a list of them to <a href="https://claudette.answer.ai/core.html#chat"><code>Chat</code></a>:</p>
+<div id="84bf4c91" class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(model, sp<span class="op">=</span>sp, tools<span class="op">=</span>[sums])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To force Claude to always answer using a tool, set <code>tool_choice</code> to that function name. When Claude needs to use a tool, it doesn’t return the answer, but instead returns a <code>tool_use</code> message, which means we have to call the named tool with the provided parameters.</p>
+<div id="7b1e3446" class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> chat(pr, tool_choice<span class="op">=</span><span class="st">'sums'</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Finding the sum of 604542 and 6458932</code></pre>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>ToolUseBlock(id=‘toolu_01UUWNqtkMHQss345r1ir17q’, input={‘a’: 604542, ‘b’: 6458932}, name=‘sums’, type=‘tool_use’)</p>
+<details>
+<ul>
+<li>id: <code>msg_0199dXeVq11rc2veGNJVWc4k</code></li>
+<li>content: <code>[{'id': 'toolu_01UUWNqtkMHQss345r1ir17q', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>tool_use</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 445, 'output_tokens': 53, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>Claudette handles all that for us – we just call it again, and it all happens automatically:</p>
+<div id="2399deae" class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>chat()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>604542 + 6458932 = 7,063,474</p>
+<details>
+<ul>
+<li>id: <code>msg_014wmCxnwQpgvnqKKto3RrxA</code></li>
+<li>content: <code>[{'citations': None, 'text': '604542 + 6458932 = 7,063,474', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 527, 'output_tokens': 19, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>You can see how many tokens have been used at any time by checking the <code>use</code> property. Note that (as of May 2024) tool use in Claude uses a <em>lot</em> of tokens, since it automatically adds a large system prompt.</p>
+<div id="c2dbea0c" class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>chat.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 972; Out: 72; Cache create: 0; Cache read: 0; Total Tokens: 1044; Search: 0</code></pre>
+</div>
+</div>
+<p>We can do everything needed to use tools in a single step, by using <a href="https://claudette.answer.ai/toolloop.html#chat.toolloop"><code>Chat.toolloop</code></a>. This can even call multiple tools as needed solve a problem. For example, let’s define a tool to handle multiplication:</p>
+<div id="b3071fac" class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mults(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    a:<span class="bu">int</span>,  <span class="co"># First thing to multiply</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    b:<span class="bu">int</span><span class="op">=</span><span class="dv">1</span> <span class="co"># Second thing to multiply</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">int</span>: <span class="co"># The product of the inputs</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Multiplies a * b."</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Finding the product of </span><span class="sc">{</span>a<span class="sc">}</span><span class="ss"> and </span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">*</span> b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now with a single call we can calculate <code>(a+b)*2</code> – by passing <code>show_trace</code> we can see each response from Claude in the process:</p>
+<div id="32c582a9" class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(model, sp<span class="op">=</span>sp, tools<span class="op">=</span>[sums,mults])</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> <span class="ss">f'Calculate (</span><span class="sc">{</span>a<span class="sc">}</span><span class="ss">+</span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">)*2'</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>pr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'Calculate (604542+6458932)*2'</code></pre>
+</div>
+</div>
+<div id="1db03730" class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> o <span class="kw">in</span> chat.toolloop(pr): display(o)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Finding the sum of 604542 and 6458932</code></pre>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>I’ll help you calculate (604542+6458932)*2. I need to first add the two numbers, then multiply the result by 2.</p>
+<details>
+<ul>
+<li>id: <code>msg_019DZznw7qiEM2uEEcpNTnKs</code></li>
+<li>content: <code>[{'citations': None, 'text': "I'll help you calculate (604542+6458932)*2. I need to first add the two numbers, then multiply the result by 2.", 'type': 'text'}, {'id': 'toolu_016NZ7MtE8oWHs5BSkxMcAN7', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>tool_use</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 539, 'output_tokens': 105, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<div class="sourceCode" id="cb45"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="er">'content'</span><span class="fu">:</span> <span class="ot">[</span> <span class="fu">{</span> <span class="er">'content'</span><span class="fu">:</span> <span class="er">'</span><span class="dv">7063474</span><span class="er">'</span><span class="fu">,</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>                 <span class="er">'tool_use_id'</span><span class="fu">:</span> <span class="er">'toolu_016NZ7MtE8oWHs5BSkxMcAN7'</span><span class="fu">,</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>                 <span class="er">'type'</span><span class="fu">:</span> <span class="er">'tool_result'</span><span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">'role'</span><span class="fu">:</span> <span class="er">'user'</span><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Finding the product of 7063474 and 2</code></pre>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Now I’ll multiply that result by 2:</p>
+<details>
+<ul>
+<li>id: <code>msg_01LmQiMRWAtTQz6sChqsbtMy</code></li>
+<li>content: <code>[{'citations': None, 'text': "Now I'll multiply that result by 2:", 'type': 'text'}, {'id': 'toolu_019BQuhBzEkCWC1JMp6VtcfD', 'input': {'a': 7063474, 'b': 2}, 'name': 'mults', 'type': 'tool_use'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>tool_use</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 659, 'output_tokens': 82, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<div class="sourceCode" id="cb47"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="er">'content'</span><span class="fu">:</span> <span class="ot">[</span> <span class="fu">{</span> <span class="er">'content'</span><span class="fu">:</span> <span class="er">'</span><span class="dv">14126948</span><span class="er">'</span><span class="fu">,</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>                 <span class="er">'tool_use_id'</span><span class="fu">:</span> <span class="er">'toolu_019BQuhBzEkCWC1JMp6VtcfD'</span><span class="fu">,</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>                 <span class="er">'type'</span><span class="fu">:</span> <span class="er">'tool_result'</span><span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="er">'role'</span><span class="fu">:</span> <span class="er">'user'</span><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>The answer is <strong>14,126,948</strong>.</p>
+<p>To break it down: - 604,542 + 6,458,932 = 7,063,474 - 7,063,474 × 2 = 14,126,948</p>
+<details>
+<ul>
+<li>id: <code>msg_0119DdeQ2goLFwGkXTXHFDsv</code></li>
+<li>content: <code>[{'citations': None, 'text': 'The answer is **14,126,948**.\n\nTo break it down:\n- 604,542 + 6,458,932 = 7,063,474\n- 7,063,474 × 2 = 14,126,948', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 756, 'output_tokens': 61, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+</section>
+<section id="structured-data" class="level2">
+<h2 class="anchored" data-anchor-id="structured-data">Structured data</h2>
+<p>If you just want the immediate result from a single tool, use <a href="https://claudette.answer.ai/core.html#client.structured"><code>Client.structured</code></a>.</p>
+<div id="34e621f1" class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>cli <span class="op">=</span> Client(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="ad97cde0" class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sums(</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    a:<span class="bu">int</span>,  <span class="co"># First thing to sum</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    b:<span class="bu">int</span><span class="op">=</span><span class="dv">1</span> <span class="co"># Second thing to sum</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> <span class="bu">int</span>: <span class="co"># The sum of the inputs</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Adds a + b."</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Finding the sum of </span><span class="sc">{</span>a<span class="sc">}</span><span class="ss"> and </span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a <span class="op">+</span> b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="2455fe48" class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>cli.structured(<span class="st">"What is 604542+6458932"</span>, sums)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Finding the sum of 604542 and 6458932</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>[7063474]</code></pre>
+</div>
+</div>
+<p>This is particularly useful for getting back structured information, e.g:</p>
+<div id="da5f7780" class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> President:</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Information about a president of the United States"</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, </span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>                first:<span class="bu">str</span>, <span class="co"># first name</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>                last:<span class="bu">str</span>, <span class="co"># last name</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>                spouse:<span class="bu">str</span>, <span class="co"># name of spouse</span></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>                years_in_office:<span class="bu">str</span>, <span class="co"># format: "{start_year}-{end_year}"</span></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>                birthplace:<span class="bu">str</span>, <span class="co"># name of city</span></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>                birth_year:<span class="bu">int</span> <span class="co"># year of birth, `0` if unknown</span></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>        ):</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> re.match(<span class="vs">r'</span><span class="dv">\d</span><span class="op">{4}</span><span class="vs">-</span><span class="dv">\d</span><span class="op">{4}</span><span class="vs">'</span>, years_in_office), <span class="st">"Invalid format: `years_in_office`"</span></span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>        store_attr()</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">__repr__</span> <span class="op">=</span> basic_repr(<span class="st">'first, last, spouse, years_in_office, birthplace, birth_year'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="53285a0c" class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>cli.structured(<span class="st">"Provide key information about the 3rd President of the United States"</span>, President)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>[President(first='Thomas', last='Jefferson', spouse='Martha Wayles Skelton Jefferson', years_in_office='1801-1809', birthplace='Shadwell, Virginia', birth_year=1743)]</code></pre>
+</div>
+</div>
+</section>
+<section id="images" class="level2">
+<h2 class="anchored" data-anchor-id="images">Images</h2>
+<p>Claude can handle image data as well. As everyone knows, when testing image APIs you have to use a cute puppy.</p>
+<div id="517fd00e" class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>fn <span class="op">=</span> Path(<span class="st">'samples/puppy.jpg'</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>Image(filename<span class="op">=</span>fn, width<span class="op">=</span><span class="dv">200</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-35-output-1.jpeg" class="img-fluid figure-img" width="200"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We create a <a href="https://claudette.answer.ai/core.html#chat"><code>Chat</code></a> object as before:</p>
+<div id="61690121" class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Claudette expects images as a list of bytes, so we read in the file:</p>
+<div id="0e8edb1f" class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> fn.read_bytes()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Prompts to Claudette can be lists, containing text, images, or both, eg:</p>
+<div id="c2f9fd7a" class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>chat([img, <span class="st">"In brief, what color flowers are in this image?"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>The flowers in this image are purple.</p>
+<details>
+<ul>
+<li>id: <code>msg_01N2NCd5JW3gNsGysgmyMx9F</code></li>
+<li>content: <code>[{'citations': None, 'text': 'The flowers in this image are purple.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 110, 'output_tokens': 11, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>The image is included as input tokens.</p>
+<div id="e275b311" class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>chat.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 110; Out: 11; Cache create: 0; Cache read: 0; Total Tokens: 121; Search: 0</code></pre>
+</div>
+</div>
+<p>Alternatively, Claudette supports creating a multi-stage chat with separate image and text prompts. For instance, you can pass just the image as the initial prompt (in which case Claude will make some general comments about what it sees), and then follow up with questions in additional prompts:</p>
+<div id="f41b7887" class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(model)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>chat(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>What an adorable puppy! This looks like a Cavalier King Charles Spaniel puppy with the classic Blenheim coloring (chestnut and white markings). The puppy has those characteristic sweet, gentle eyes and silky coat that the breed is known for. The setting with the purple flowers in the background makes for a lovely portrait - it really highlights the puppy’s beautiful coloring and sweet expression. Cavalier King Charles Spaniels are known for being friendly, affectionate companions. Is this your puppy?</p>
+<details>
+<ul>
+<li>id: <code>msg_01Jat1obwo79eEz5JMFAF4Mh</code></li>
+<li>content: <code>[{'citations': None, 'text': "What an adorable puppy! This looks like a Cavalier King Charles Spaniel puppy with the classic Blenheim coloring (chestnut and white markings). The puppy has those characteristic sweet, gentle eyes and silky coat that the breed is known for. The setting with the purple flowers in the background makes for a lovely portrait - it really highlights the puppy's beautiful coloring and sweet expression. Cavalier King Charles Spaniels are known for being friendly, affectionate companions. Is this your puppy?", 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 98, 'output_tokens': 118, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="c8925b57" class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>chat(<span class="st">'What direction is the puppy facing?'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>The puppy is facing toward the camera/viewer. You can see the puppy’s face straight-on, with both eyes visible and looking directly at the camera. The puppy appears to be lying down with its head up and oriented forward, giving us a clear frontal view of its sweet face.</p>
+<details>
+<ul>
+<li>id: <code>msg_018EqaD7EFveLCzSPbQmMMuE</code></li>
+<li>content: <code>[{'citations': None, 'text': "The puppy is facing toward the camera/viewer. You can see the puppy's face straight-on, with both eyes visible and looking directly at the camera. The puppy appears to be lying down with its head up and oriented forward, giving us a clear frontal view of its sweet face.", 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 227, 'output_tokens': 65, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="f19a2b54" class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>chat(<span class="st">'What color is it?'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>The puppy has a chestnut (reddish-brown) and white coat. The ears and patches around the eyes are a rich chestnut or reddish-brown color, while the face has a white blaze down the center and the chest/front appears to be white as well. This is the classic “Blenheim” color pattern that’s common in Cavalier King Charles Spaniels - the combination of chestnut and white markings.</p>
+<details>
+<ul>
+<li>id: <code>msg_01HzUTvRziMrSfdEjbo1kHnh</code></li>
+<li>content: <code>[{'citations': None, 'text': 'The puppy has a chestnut (reddish-brown) and white coat. The ears and patches around the eyes are a rich chestnut or reddish-brown color, while the face has a white blaze down the center and the chest/front appears to be white as well. This is the classic "Blenheim" color pattern that\'s common in Cavalier King Charles Spaniels - the combination of chestnut and white markings.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 300, 'output_tokens': 103, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>Note that the image is passed in again for every input in the dialog, so that number of input tokens increases quickly with this kind of chat. (For large images, using prompt caching might be a good idea.)</p>
+<div id="48258e8d" class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>chat.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 625; Out: 286; Cache create: 0; Cache read: 0; Total Tokens: 911; Search: 0</code></pre>
+</div>
+</div>
+</section>
+<section id="extended-thinking" class="level2">
+<h2 class="anchored" data-anchor-id="extended-thinking">Extended Thinking</h2>
+<p>Claude &gt;=3.7 Sonnet and Opus have enhanced reasoning capabilities through <a href="https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking">extended thinking</a>. This feature allows Claude to think through complex problems step-by-step, making its reasoning process transparent and its final answers more reliable.</p>
+<p>To enable extended thinking, simply specify the number of thinking tokens using the <code>maxthinktok</code> parameter when making a call to Chat. The thinking process will appear in a collapsible section in the response.</p>
+<p>Some important notes about extended thinking:</p>
+<ul>
+<li>Only available with select models</li>
+<li>Automatically sets <code>temperature=1</code> when enabled (required for thinking to work)</li>
+<li>Cannot be used with <code>prefill</code> (these features are incompatible)</li>
+<li>Thinking is presented in a separate collapsible block in the response</li>
+<li>The thinking tokens count toward your usage but help with complex reasoning</li>
+</ul>
+<p>To access models that support extended thinking, you can use <code>has_extended_thinking_models</code>.</p>
+<div id="86bac582" class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>has_extended_thinking_models</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'claude-3-7-sonnet-20250219',
+ 'claude-opus-4-20250514',
+ 'claude-sonnet-4-20250514'}</code></pre>
+</div>
+</div>
+<div id="e2dbf72e" class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="95d5f995" class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>chat(<span class="st">'Write a sentence about Python!'</span>, maxthinktok<span class="op">=</span><span class="dv">1024</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Python is a versatile, high-level programming language known for its readable syntax and extensive libraries, making it popular for everything from web development to data science and machine learning.</p>
+<details>
+<summary>
+Thinking
+</summary>
+<p>The user is asking for a sentence about Python. Since they didn’t specify, this could refer to either: 1. Python the programming language 2. Python the snake</p>
+Given the context and common usage, they’re most likely referring to the programming language Python. I’ll write a sentence about Python the programming language that’s informative and concise.
+</details>
+<details>
+<ul>
+<li>id: <code>msg_017EgYhUjsQxWkXN1zrRjFxK</code></li>
+<li>content: <code>[{'signature': 'EokECkYIBBgCKkDNuftW7kYi6z6RSuzj4DNdtNRxcj486/U8U2NJHg51M+vGmQ1eN7ypz+w4/tpZCFHgWR9KFPXElnHrp3SkoWJrEgzJthIeSKqmoUbrP5YaDKGgUdib0TYhZriKcCIwDrQ2GTZ3D7zE0RVouKJLbzyRl+sQ6FQ+NwNQb5qrHw5Ylmzqxxk4Sa4GuzOEY8zVKvAC+7LfNqCd7jBjPVqaoSRmCubkKuWWeg60G39UCYm/W9VUsrDT1IHLTvOuK3KOYTQL1zqWt1XlBFj52haZIWRmjVU1w2S8EyKIJIThNRYFfT9CDuAeCYwUae8BFL4wm/MEUw+2tDNH3ei7JUvb4sk17cTrePvzpiQNtmHN8TctDBP2RgD7PpTUbjNUsvoRJFBSLLfNsd8wlvAkcph96fDV5dUJ/W3mkluG4XbTTY3ns/rlikAFLTphaoXeqM6buvm889Sep8BQdHuujHcuKWD3auTusayXE5O/9yYcWrU9qPxZ2bxF72tZ1Y65bTBYzhm9ohtB1LTy0x0XvOS76gfGZ8XaJ4vj3OMz1Cn5GSTCNbELTHHVBh5azPSCI9Qu44/ZBE2ZsFA0mtPCiP8cyhZmzAaHFnz2QaKwuTlfz5VnDPmNSNy8rqHywWlkMMA4g9+0SDZSxYJkCYBO+OUs1gNqlwwJQUyYOc1SEmpBkVQee2kYAQ==', 'thinking': "The user is asking for a sentence about Python. Since they didn't specify, this could refer to either:\n1. Python the programming language\n2. Python the snake\n\nGiven the context and common usage, they're most likely referring to the programming language Python. I'll write a sentence about Python the programming language that's informative and concise.", 'type': 'thinking'}, {'citations': None, 'text': 'Python is a versatile, high-level programming language known for its readable syntax and extensive libraries, making it popular for everything from web development to data science and machine learning.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 41, 'output_tokens': 119, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+</section>
+<section id="web-search-and-server-tools" class="level2">
+<h2 class="anchored" data-anchor-id="web-search-and-server-tools">Web Search and Server Tools</h2>
+<p>Claude supports server-side tools that run on Anthropic’s infrastructure. The flagship example is the web search tool, which allows Claude to search the web for up-to-date information to answer questions.</p>
+<p>Unlike client-side tools (where you provide functionality), server-side tools are managed by Anthropic. Claudette makes these easy to use with helper functions like <a href="https://claudette.answer.ai/core.html#search_conf"><code>search_conf()</code></a>.</p>
+<div id="07fca757" class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(model, sp<span class="op">=</span><span class="st">'Be concise in your responses.'</span>, tools<span class="op">=</span>[search_conf()])</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>pr <span class="op">=</span> <span class="st">'What is the current weather in San Diego?'</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> chat(pr)</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Based on the search results, here’s the current weather information for San Diego:</p>
+<p>Today (Saturday, June 21st) has a high of 67°F <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> with cloudy conditions early with partial sunshine expected later <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. Winds are from the SSW at 10 to 15 mph <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>.</p>
+<p>Tonight’s low will be around 62°F with overcast conditions and SSW winds at 10 to 15 mph <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>.</p>
+<p>Temperatures are running about 4-7 degrees below normal for most areas <a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>, making it a cooler day than typical for this time of year in San Diego.</p>
+<p>Air quality is currently at an unhealthy level for sensitive groups, so those with breathing sensitivities should reduce outdoor time if experiencing symptoms <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a>.</p>
+<details>
+<ul>
+<li>id: <code>msg_01Kg3aNFF7ibUcWZxPpFNmu8</code></li>
+<li>content: <code>[{'id': 'srvtoolu_01YazfLE5GfK4ET2Z4rsfcuz', 'input': {'query': 'San Diego weather today'}, 'name': 'web_search', 'type': 'server_tool_use'}, {'content': [{'encrypted_content': 'EqcCCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDF5HWNC1GnRw10SRnBoMsafoy8BqdMy4chO3IjALzgdeA/d4dT1Qx7JKFu6XeXmrHYIe2lxVFl7TqZkRDnKmPpA6mnvpkwGh9eW8RJgqqgGtR4kEv8KoMeWf9VHjh1oYyscLkN5LJq00R4X3C/Cfw9oLLdIAiN9tvq9g2Rzm0Qb/IP5GcdVfiwx7w5dRfL67oaWQ5IFIXSvv9ByLW/ERFI30UKhhKFYumApVuZEIge6CL0j56OQFXAkPVENWIlSnro+9BIKgf866WWvRo0kx2d+SiX9p3ainG+Zqbl55Bq+mvyOUgVabtSEfr+oY6FQPJYYT9ad0QxYUOxgD', 'page_age': '3 days ago', 'title': '10-Day Weather Forecast for San Diego, CA - The Weather Channel | weather.com', 'type': 'web_search_result', 'url': 'https://weather.com/weather/tenday/l/San+Diego+CA?canonicalCityId=3b2b39ed755b459b725bf2a29c71d678'}, {'encrypted_content': 'EroMCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDKBkST0tPvpOGw/SWxoMgJ/iK5dTJy/vMfmsIjAfH72hWmf/naqyXr46jfw0V/iSDaZJPzeQlCOJvENkQwXPp1sup75iYszy/zgR/YMqvQuXXkSUyo9y/bG3wdm4EkiaXeXkz5QSx0o2/SrZPqhOL9EXrQZAdEPo6KZZQeQdLKkwuEeoNj7vHE55EFXmwTLkN+QTPBsZ4mJ9gC/+3SGgbAMGdubcNnzUIlty+u0wAGTLDaJGeKlkIreF1znKqB9RefmQrpaErVDj7za3noPpsqUFRfDzTPfDUzOsRBKo3DNA2f86rYA1V6ot9qpSNOi1WFTnne5tMl68x/QTEXdgVpxolLK243bkcW1lBdAhwHdik+B/z1RHIXpyJWOLZgUwUtlGYm7jqacVVVF7rut/OlppO7+RA5mgpVjx47J40MUq7rmrcn+e9dXSUWduDPgsSCGtyM5jn0WgUgYyNRccdRPhLAeYcqa4xFYUmpbkGn5o7JrtkiU/OzS1pCeKfFRcjEtdCYeOHkj1FXsAJj31/qAlTZcWE3x4DuQbVt+yqpK4BXkpqTqd6ML3SaMm3/ac9TIaAz6Ob/ThK+A5qypeCB4YW9fyL5xG0oyHEKTefh+5If1nF23IW9Kbze5wZVTMobdolFr3uhS547DV2lngv0wEoTpOyADO6bz3qj0w2pB5DAxLPaW+4YPPRz8bKJEwMgLuDH+EP4wiUKpVrSjmBspXwM1WUSxD4X2lh7r6S4Jo7HUHTravhHuzuODKQ9fLCz2xnwto0fGs2uYQ9sQjIXOAYCBRpFfdYVYE68Br+7Ply0pD6J+Xix2NGHSYHpjMUbtCaYqvqwDO8UmlYA7YNyLs9Q/oFAcRXDqtUEZYD0d0h0mOS3zFYMySD9SfYNVx4SX1g3i6f+xCKfgdDMQ5B+jERSzkcHgR4jRifKE89qxfUCd4j72LhmJp8FJYxe993mqa7TXgm/SHe8AJrnG0EIo2dbWrTzn9SeQmZQzCvl0dpE79Qkgfb8j9BXQvmSfF2f8UOcymWo6vjPBCuPc1lvpvISLjcVIY06pAvh9zp3KUMxhc+K9qmyDTlglwj6feZZw/uyNux21y6CpSSITbEv+KuEJd5WaWphw5bqel0B/u/bwV/G2jkgbcwrb75HPGeJt+eNjyClvvJSsu6IgtkchIabdxo2zedcrilzAU9arLRJlcFNANSB0WilNrmmbc3jk+7RUmnc782nB1fz92JI6Cb7dvbncG1m4HHJy3Mh60ednlMO5GXTTnvIjAF2FaQp+MivMCin2YVwOn3N0GyKhVrbcD7EDrsXWA6yFls+AWAubYMJUS9ll/HeJhfSqD1zHyYQZ4Twic+W5kj4QCWYa0EWtnYs6NO76aRHOPSwbF8+/9XQmCUb4rHTXuPjxEL/uXktDE7K52sEq9v81wKz54urHiSGV1/TmARD6KSLhEejlrS5ydv4Du3YOdEXE5G2e4xPDQ1C1pwTEYKyLf/yrdeeKST9TiOxoj+bMIpwfyEq86+C4eajyNWZYnpx8IZviEo3jWOdiXFb53zyl7fIOeWBhWbrWmPjCazjSGofKGbFOz8jGTUOFqIpf94sqT1ent5X+nQTJ5rlrQPLXDfZbTrgP9pTZtZLlvezsYlIuqIFVWnnBOd0Y4IUqOw8e/3WYThftfGW5OkEp4sLMFd/4QnmoXqBtjf87fZLLkLV6ZZv26catrYFdv68doNSO6oTr7Gb1TtgrCJAgRhRarm/4MI3NpYD7D6oxspLjwPp85mND2g9jVtilz51L7NXpbGKcCc5o+e1MbpzZbKvzF6xSAtk2qKZ/i6P9p2tW/BMYG9O7wRDwRENWOwqA41BNdQpJ18a+emVgn5795o1AfLQVlm99so8izdz0sA8+fp1OjT9ziuRgsk9bOH1QhPYovNql0nQwulZJwYfQLz9okhXtM36aC2SGtNrE8IMbPdCIUdMQ0PznqgI17UPXjILvfdXBXCmbRT+CVbOHeeAx1juxSMwML9pWcymLRsAKowOPMj4meHF4relkA72QKR1uGEVIB/Wvl66WBDAcQyRgD', 'page_age': '3 days ago', 'title': 'San Diego, CA Weather Forecast | AccuWeather', 'type': 'web_search_result', 'url': 'https://www.accuweather.com/en/us/san-diego/92101/weather-forecast/347628'}, {'encrypted_content': 'Er0ECioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDBGutrl0Yo/Ph3ytgxoMmv0PMZzhuX1bUMAaIjB8A47OiTekaB3+wTaHtqniXxv1Syc6JTwDJgaWgpy/MxfY+iOIS58xXsHOd7d/vrUqwAOQc9TMOqSb0LGZCGaGxIwiXICeBOu9KYGmqzNtUJm31yQlCGwdOFeznCgec0B2/jhLUZMpoDuoL3ayVUeBYC7IlyW4Lrh7DR8+MUOf27YxozzhkdWKDDDqCf0hN40Qn69bGemDOFejCWrTyCj8ffYa29MAKRcAvQv0TQUehsNOy0xKYzeBA2z9zjzZp9GOesvqBv5/2AxQrVwygU31bLYEeiqHqLrfeQ798HK9oDFlAiHaS/gWmpK1+0d3UA+Y5KCKipBmUxy15LkEmoG0MoG3/OEDZ7mOGuuY5RqCW4hkdT4dzm6OsKfmiLoDG/XI2HNkpcTnCd3tO0yUZdwY3lX4vSjAS2wvFxNsl7b8YbaKM/U8H3JaTVntwyh7GHWYezHYaYXNiMK05KcQMKJlP/bZx82sQkq83jl15k55Nf5NR/R/1PHi/fqzLDwPOSug5RJ8dwdduWd1SF4qcfStBaOZ4fRdTwbxJgiAC6gmxWMAGfXg29iVSNsTBYVaGk+GPrUSIFxU0x36xejO0Vaz7wHL6XPwjvXMhVrWbuf5xMXKRNW3XG3X0AEB7h40x+0MN23BmmJ9G6+JQ5Ngog6z2An4GAM=', 'page_age': '3 days ago', 'title': 'San Diego weather forecast – NBC 7 San Diego', 'type': 'web_search_result', 'url': 'https://www.nbcsandiego.com/weather/'}, {'encrypted_content': 'EpcCCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDGlljWS7qosG4mSt3BoM6gy+Gh0f2zdXJ8kAIjAL5PfnNZR7Vex2zcFoqLody/xA+Yyoob62LVGMQ4+EhXd4CKgvxQEfpQLQgVvIH3UqmgGByQGU45dvgEJrKexyCEvra2CIAoYOTUiKNt6p7dVfp8++dfq28UU2mt5h10bL8ul8y0xeBu6new/tfwFJ6+GS/Bh6p+M+p87Jy65QQ/dgMhV+M7q3EAQUZjh642YMayI4nimm2yIwbLzNRXEszsp2kdmKKhxDpO3C5wp8fWLy5UpWvimjh5WSMnAzEpMoVDqD99FavgHvaPF7GAM=', 'page_age': '3 days ago', 'title': 'Weather Forecast and Conditions for San Diego, CA - The Weather Channel | Weather.com', 'type': 'web_search_result', 'url': 'https://weather.com/weather/today/l/San+Diego+CA?canonicalCityId=3b2b39ed755b459b725bf2a29c71d678'}, {'encrypted_content': 'ErEDCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDKDodoc/BpOij6btVBoMdtlDIIQ1rjzAl3XyIjAUXhC+GWPaQwx74WpJR7Xo+cVP0RjwhWd5LPSL+skOIE8sHVqz0Ry9jmq5jGri3wcqtAJrH5qNCAGieGFHQijAS1lfA2rn0EDH/tLBmC4nKW0MGQz/NLn49FuAcJuEZrw2149zcJ88XQ18hVEhWTkZ/BNEBujb9+M+QthIUUOPf6RplEX+DThq1KIuqbR0XBh71qThLM5ZfBjcvYS4429hpEP5DJo2FP0nqr9Ps8GX/hvIik33EXc4X3x16d649qqcRFwByb1DhE+NZVTiuu4WfljWXWBs+17ezkxxWazj3E9GtLBIL98fnMoOf4p9oTI8EgWe4RjcGqEaI6DWqlGquNgkc4IeqlzVkjWP4v90HoI7oegcDKtK/n+8pNaGqyBQizgf1NglM2gRBj3cZ9kt7cDX8p1KpmXrGsOSEK3mn6RAnjlsFQ2x7UjM7l980KCVKnqeguR0ZkCsvB+KM0AputjxlU+KrBgD', 'page_age': '3 days ago', 'title': 'San Diego, CA', 'type': 'web_search_result', 'url': 'https://www.weather.gov/sgx/'}, {'encrypted_content': 'EpkCCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDLXJ+1Ii8XIJ7AwW/xoMMbTKEdT8hw2J9bdSIjBYWJur7pQQqNijCyZjeN+VSYcaZe7xE/09hGS23TOjFLdvrOhGAMVSd3e2IDGUHCEqnAG6GJZO/sDcDEeEn/sobNJbNjM9VfNoJZEg+f/lZ+KXtMJELQ2Q14ot0iqQ0qKEjDxz3OMLkAYJg3uqeVMOq5QLgz6MNANEoCU+koTqIiYGZ++8Y0tKdtVD/Xrm0QW0fFkdJcN1PVt+6fN8aDJ5+95phOw5vEmRS9FRWg6aLDIwpxaNJ6z+Wbpff8zoSGUcPZFaFIUjAAU6qnx8kRoYAw==', 'page_age': None, 'title': 'San Diego, CA Weather Forecast | KGTV | kgtv.com', 'type': 'web_search_result', 'url': 'https://www.10news.com/weather'}, {'encrypted_content': 'EpQCCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDHL0i7qnzUCM4zRRAhoMAv3yQhl4BrqFyb0nIjBsyvNyrS90lUKCO/9admV9eU8x96+nDdrodoVAe9lpT2fNstMu4pS2Aer192MKKnwqlwGnu1DfFtpu/sSeugS3SUtYxT+ulZYw+ZQwhqLMOf+UadP2PrCAEDh5CM2pF4fMHRdt9GBYTgOA/3ug6W2Ci30q5QXwdiNC/7X2KQV6QrU83m//vy92K8PO9dwqv4B0T8uCSY18O+BtHHlZrzmzPgIWm4OTP2+Blh+f3X+yRubR9JiBehxtgS/IGmdWhzv6QjIbcFy5bhNDGAM=', 'page_age': '1 week ago', 'title': 'Hourly Weather Forecast for San Diego, CA - The Weather Channel | Weather.com', 'type': 'web_search_result', 'url': 'https://weather.com/weather/hourbyhour/l/San+Diego+CA?canonicalCityId=3b2b39ed755b459b725bf2a29c71d678'}, {'encrypted_content': 'Ev0LCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDEYX+2bALYXzQ6feEhoMZaW1cXK7efdUNoDNIjBW2ZS4AEu//SwypPKF8m5uvw2Ats1bCxXnLXTD3v2d/bwrwTPMRx5SPoC7QDtYQRgqgAu0Z3nSWGW4pXnpMfjQUN05yjt++RoCW35vjAN1oiSW4U+P+03Gsf+4z+zKLRKkuPCj4CQmd0X0Z7rqi3uW8+8KMBw5yl90QrjDjivFDwxAkyCTGImrhyWEX+/JT9sJ3bSqevgnd9GrILv0lrqdfgkoIgdEuEMuIIJpVxPDqDoeYDgDGF3FRs7iultqHndd68JhMXVShxi+lQaINVYRtLfX1HWrKlb2M1PySslVAdUWbQqeyvRsRYJotIIN5uAg3EoYcGQBwFA0ifvG70jlcOWDR5Kx5w2A4mISadBHz9mDhaDxJeOCssJdSo465wYGSRzXiyIFO7OOViZSIoHNcPEmuHgqXSzrF4NN+u5PbLaS1fmuUesVPOwvKi1g3MJN/LNvB9MWzpMNcnP0BpDSD/hKGDpPKnxAWYVz1v3Nqwi/IuEmtpa4qWlWA+7t47NfFyxF3l89uaMk81qFoUn6L/P2q6w7VeEAnXRxNkRyKqeQ1FOC5CfgBdvhYxGqxlQ6Z4zwZvJUQ4DUxqjOYroV/WV65cbJ0ZtRT0z/S9OzK9k7xL///oNTIcnAPw9FfXnEiG3Rz8kX06gcgdjDLRkwDy+tYO+VUCmSlZpu8XBszZ7dOGBWbXPjDjYg4t5eqIcLF+uw1hZYoo8xNTGnsk2d/2DpXd8seY5sa4gAUzCwfXwy4MiMmmEonIG6Ki3jNMQ22tjPJMKqgQGy1EdsEqcUephoIq0etHo/J2HsyDvoLxJLbhtm6FsgqrQ4ITzHEt6wDWHOh7+iQSObM674FaPyvzvSEomriGPV7aYynVUAum3MVl9eoeP2W2Xm0qxTnuT3gKnlz766nI3ghO7RHpXAZYpo1gzeq1ZrxMYO0kI9iTGYKf+z+WyO9s9FFKAR4OxS/2fI9W3VHiGSqDpqI87Ez3A3o3uqKqOhvQI0qG+QfZFI1+ll0Wr1CbrGos9dgezqJ9/7GFCNP+cCfV3Y27GsWBots76htL6GD1PE7RsyelyQ9TDXblEQLLDKkH1jnngYq+2RfNrZhKFvll+L2+oDVbk4n+Rb0+fLti1JQi91O8BqMSb7pD3Oa2sdMlSq0qoIFl0T6wanLUNgoIg5GE8R2QBukwWa9oW8jmaJDrKlqe79vWvCDjisPCdfo+X+h7YkRlMW/FoiDJ5X189IxckvoOlY7r6BVEdERcquxbsp0J0uB0JNuWdsa/XGlG1uecYGKmw8pGVwIkYTP2U+Bgfn0XuXKSLHxOAxbCWovcDrbjOA3yCyKQlCt3uyE7zpVlBGAMcUcSy+QbPYx5xdkz2mx/qkmUkjCvp70EbyjPeZehlcTlsqJ7ZIRi+rcH+b4fWoCUr90rUAqbcJMDM4tSLtqvVq4TXbj0pBseXFi9d5bnqByC5By6I3PiuQtkT+bxGYGFvhuEJhoC+CgCOobUIIcOPhZH5lIZTYMQcf3l3gfXhUbuu5WOglaOp66rjxNsaOZmsMfquyX1n+65uJSRpixbPiDDXv/Myig7vn2KdZtyoqz/E7tjcSFD0Vyvc6jKL73H3vs9nOWGDf0w6AJUoLXrhUW921N0+0A5bD4qUxLKZgBkFl33R+dKmKgtMs4iO4C81RPaQdLVSA/wm9jkSAOj6GKk1IZGFKOgiqMXMtItnmKktBbYSD+gJosUyeIAIgsUiP/r9uZA8AsKEMQ+qzQqIS3zSltWnMfN79ehN9MtGDnZc9pjMdXktpqKenYuF/QDttqgLfEVSJaQtXgiXPJtgXJtmxXuXWRLAaqsid07QEvP1N8DqeFIMKHOG33NDJigjxPFnUxbS7elt8ECcbRYn+gewDwydAb0jUCyL8nuE5ySll51eTQqFyfP3xnT092PTB5HRyFBUlD3mw5W168u2HGAM=', 'page_age': None, 'title': 'San Diego, CA 10-Day Weather Forecast | Weather Underground', 'type': 'web_search_result', 'url': 'https://www.wunderground.com/forecast/us/ca/san-diego'}, {'encrypted_content': 'Ev0ECioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDFqrWvXcDBaRhAEIERoMEMwkIlYRNrbpob8qIjAGpulVwN56DZ4z4+PuEB3gdYm6QZ5Qvq+6RFvOLnEGDg+mpsIvb2TL4iauDizcEsUqgAT3/Sza241GQ6OmRz38xfUdXYqE5zatMSVDZ8Pzsd11fgBJg8voUcxKfPRPQWlA8FYW8+K4vDvv5cahR9rbVN829R/VQxq7YdcMsD9D5pbk9WButOmQLwI5/MsvnKo0MJ2e6kVcI1DVTwwHxoF0AJdkXUm/9x5danZ35QmA3FIR+7AOBCgtlOmwwIO1nTB+x6+8gf8DB0Jsgv6scqI/PqYxTYH8pZUEs3sA0pXQWJIcbtbWPRqxvfr6KYTtBAKJcr4XmsOMdi4OhVxzXhed1OjB1Jvebhi7Z+CbOOEZBuL2T7inzxoNlHvd3rhuZoDzpb9IWEMx/29fjwWhy+ztWi4Fdl25QgpWokl9cjDtq+6DEkf97+5ks6oVZU1dKoKq2y6S7cT3SL30IOzpdNox9Nh9FrOZeui/aT2zD7imuB+dyx9ffHi07Ulje7R9UWwBvDzRPMP4Ilwe4nrcQWWloso80KTfIixUTmel1bPKxVdrag/2+4kD6ahHpm2cLazWqTc+GvVY5+IRb2C5Y6pve4tWPVZC584151GHbdDZB2FamZJsdBlVL5VAF7Cz2U2mukxcuFF7Vwh3lpvpuqkldp4yWf2UJVpGMOOgDMgRi9qn+fAqE9jEIKoqXRhrVnKlgAlMGpnFfxu1IvxOLQQRqCNRltm5whIy5YhZa+7bllx+NRgD', 'page_age': '3 days ago', 'title': 'San Diego, CA Weather Conditions | Weather Underground', 'type': 'web_search_result', 'url': 'https://www.wunderground.com/weather/us/ca/san-diego'}, {'encrypted_content': 'Ev8CCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDOOoeUPUoDED8O83ZhoM30uUue3UQ1WQ6At6IjD+k7S7lYoiPFc5urIX1kWyFxcLj14bmNmI9YackQTQAU27o6IGbFdwaU+40URG2xQqggLYvUzF4uC9bk9e+C5CbKLU1WAsE7Nsb3YpFYsFiwMKqPamqEVSZE/xxUGQZ9w5tbtftdchhIs0bupnPj+G3BgO+ivdO9VcHBrqJwOk+hQ+XhQp3kLRubgZ9ozPpTZDK0xhpuFh18mFwsHgi/dIH478C1yYA50B0d/qL5C4V6NdYfDYsOXL0Ce1y4L8JxlUi//BPq23m1FfJeVo0vPYKTWm0D2TGTEnLygV9ZI9/wUF5H+gDYimj/QJZW1MWWf7bUQl85I1AyroDE2h8pae6FT0VTVWWIUJiBOWr48xbjieS+LHRxP7/XhpZpI2x0zz3WLi1BYdxHH04yxnjxLcQILrOuoYAw==', 'page_age': '5 days ago', 'title': 'National Weather Service', 'type': 'web_search_result', 'url': 'https://forecast.weather.gov/zipcity.php?inputstring=San+Diego,CA/'}], 'tool_use_id': 'srvtoolu_01YazfLE5GfK4ET2Z4rsfcuz', 'type': 'web_search_tool_result'}, {'citations': None, 'text': "Based on the search results, here's the current weather information for San Diego:\n\n", 'type': 'text'}, {'citations': [{'cited_text': 'TomorrowSat 06/21 High · 67 °F · 14% Precip. ', 'encrypted_index': 'Eo8BCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDKwATF21Da6JaeprrRoMR4n2dYDzq6Grz6kOIjDubzeZ5yWRJE4JTY/En0I9Ue7hW3xNHVY1Nb651cmT84e3E/CK5IihYjOjT0ri+bMqEzkJobhLc+mcf18NFKDVD/eXWJkYBA==', 'title': 'San Diego, CA Weather Conditions | Weather Underground', 'type': 'web_search_result_location', 'url': 'https://www.wunderground.com/weather/us/ca/san-diego'}, {'cited_text': 'High 67F. ', 'encrypted_index': 'Eo8BCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDBZRJenhcEsF45RP3hoM9byW9q+/yaWr+G32IjAOpd1oMmv1j3abI8JHjvI1b5ZvEPvFR0RzxtY1jsxEyRv9IJkysuqnmbSwH3g32TgqE+VO+8ZZPNjG9foScv6WV79YDUAYBA==', 'title': 'San Diego, CA Weather Conditions | Weather Underground', 'type': 'web_search_result_location', 'url': 'https://www.wunderground.com/weather/us/ca/san-diego'}], 'text': 'Today (Saturday, June 21st) has a high of 67°F', 'type': 'text'}, {'citations': None, 'text': ' with ', 'type': 'text'}, {'citations': [{'cited_text': '/ 0.00 °in Cloudy early with partial sunshine expected late. ', 'encrypted_index': 'Eo8BCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDB4nMEZc/F7OchMulRoMGN8vERmCYSPIeM52IjBEWjKA8pyazlviIcAv3VdKXXstJzWI89Lth9GVQTgJe+aHBo6Z9RixGwe9H65I4iEqE6r+cdWvSki3A5y7liT1a2+EuPgYBA==', 'title': 'San Diego, CA Weather Conditions | Weather Underground', 'type': 'web_search_result_location', 'url': 'https://www.wunderground.com/weather/us/ca/san-diego'}], 'text': 'cloudy conditions early with partial sunshine expected later', 'type': 'text'}, {'citations': None, 'text': '. ', 'type': 'text'}, {'citations': [{'cited_text': 'Winds SSW at 10 to 15 mph. ', 'encrypted_index': 'Eo8BCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDB45Fg4fI2lZagCjPRoM44KF0iEojWBopwrHIjBhn7dgVM1Ff/cqtJ/lTjfQ/jwVGUPTMJqvlWxrNi2vlcn6nHSZw+cUefs/Ruz/GNgqE6jMHyEpfOkI5cEy1xxL1qwAZvIYBA==', 'title': 'San Diego, CA Weather Conditions | Weather Underground', 'type': 'web_search_result_location', 'url': 'https://www.wunderground.com/weather/us/ca/san-diego'}], 'text': 'Winds are from the SSW at 10 to 15 mph', 'type': 'text'}, {'citations': None, 'text': '.\n\n', 'type': 'text'}, {'citations': [{'cited_text': 'Low 62F. Winds SSW at 10 to 15 mph. ', 'encrypted_index': 'EpEBCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDGs1z0BKFApU+3H2sxoMHemxpcDkrIGd4oSRIjAWWpByOKdjFHplptGY/sqWHuZVPAxLushiCw0j+aLQ3+bpwzSikTDw6Eb075la0fYqFeOQNDFP6pV830agKs390gtIQ9hn2RgE', 'title': 'San Diego, CA Weather Conditions | Weather Underground', 'type': 'web_search_result_location', 'url': 'https://www.wunderground.com/weather/us/ca/san-diego'}], 'text': "Tonight's low will be around 62°F with overcast conditions and SSW winds at 10 to 15 mph", 'type': 'text'}, {'citations': None, 'text': '.\n\n', 'type': 'text'}, {'citations': [{'cited_text': 'Cooler today with highs around 4-7 degrees below normal for most areas, still slightly above normal in the lower deserts. ', 'encrypted_index': 'Eo8BCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDKmS4xmv51SRhiupjBoM1jB2H6k2FU08pQ3GIjAV+DJ6rRuV2b6Q7ignq8PgwpnBySIrcI0FjJyUkxWXMUqYQYSPaTtiNLaSUJi1kh4qE+SXxbI2WryAsUjDE9uQS3F/91QYBA==', 'title': 'San Diego, CA', 'type': 'web_search_result_location', 'url': 'https://www.weather.gov/sgx/'}], 'text': 'Temperatures are running about 4-7 degrees below normal for most areas', 'type': 'text'}, {'citations': None, 'text': ', making it a cooler day than typical for this time of year in San Diego.\n\n', 'type': 'text'}, {'citations': [{'cited_text': 'The air has reached a high level of pollution and is unhealthy for sensitive groups. Reduce time spent outside if you are feeling symptoms such as dif...', 'encrypted_index': 'EpEBCioIBBgCIiQ4ODk4YTFkYy0yMTNkLTRhNmYtOTljYi03ZTBlNTUzZDc0NWISDK8D4vc8KfCrlx9emxoMMLnROCL/VkErH3i/IjA/9/wpz9prNlBSXXcsTY2S+xdsPRDTNhPl7sYwMQoZ1OAvK8zbv5m0QT4Z0rVOkO8qFX/4Kq1l4tkCVlYlPmm9TE6ED9r0ABgE', 'title': 'San Diego, CA Weather Forecast | AccuWeather', 'type': 'web_search_result_location', 'url': 'https://www.accuweather.com/en/us/san-diego/92101/weather-forecast/347628'}], 'text': 'Air quality is currently at an unhealthy level for sensitive groups, so those with breathing sensitivities should reduce outdoor time if experiencing symptoms', 'type': 'text'}, {'citations': None, 'text': '.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 7302, 'output_tokens': 325, 'server_tool_use': {'web_search_requests': 1}, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<p>The <a href="https://claudette.answer.ai/core.html#search_conf"><code>search_conf()</code></a> function creates the necessary configuration for the web search tool. You can customize it with several parameters:</p>
+<div class="sourceCode" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>search_conf(</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>    max_uses<span class="op">=</span><span class="va">None</span>,               <span class="co"># Maximum number of searches Claude can perform</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>    allowed_domains<span class="op">=</span><span class="va">None</span>,        <span class="co"># List of domains to search within (e.g., ['wikipedia.org'])</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>    blocked_domains<span class="op">=</span><span class="va">None</span>,        <span class="co"># List of domains to exclude (e.g., ['twitter.com'])</span></span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>    user_location<span class="op">=</span><span class="va">None</span>           <span class="co"># Location context for search</span></span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>When Claude uses the web search tool, the response includes citations linking to the source information. Claudette automatically formats these citations and provides them as footnotes in the response.</p>
+<p>Web search usage is tracked separately from normal token usage in the <a href="https://claudette.answer.ai/core.html#usage"><code>usage</code></a> statistics:</p>
+<div id="af40ccce" class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>chat.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 7302; Out: 325; Cache create: 0; Cache read: 0; Total Tokens: 7627; Search: 1</code></pre>
+</div>
+</div>
+<p>Web search requests have their own pricing. As of May 2024, web searches cost $10 per 1,000 requests.</p>
+</section>
+<section id="text-editor-tool" class="level2">
+<h2 class="anchored" data-anchor-id="text-editor-tool">Text Editor Tool</h2>
+<p>Claudette provides support for Anthropic’s special Text Editor Tool, which allows Claude to view and modify files directly. Unlike regular function-calling tools, the text editor tool uses a predefined schema built into Claude’s model.</p>
+<p>Important notes about the text editor tool:</p>
+<ul>
+<li>It’s schema-less - you provide a configuration but not a schema</li>
+<li>It uses type identifiers like “text_editor_20250124” specific to Claude models</li>
+<li>You must implement a dispatcher function (in Claudette, it’s <a href="https://claudette.answer.ai/text_editor.html#str_replace_based_edit_tool"><code>str_replace_based_edit_tool</code></a>)</li>
+<li>Different commands route through this single dispatcher function</li>
+</ul>
+<p>The text editor tool allows Claude to:</p>
+<ul>
+<li>View file or directory contents</li>
+<li>Create new files</li>
+<li>Insert text at specific line numbers</li>
+<li>Replace text within files</li>
+</ul>
+<div id="2706443b" class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> claudette.text_editor <span class="im">import</span> text_editor_conf, str_replace_based_edit_tool</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> toolslm.funccall <span class="im">import</span> mk_ns</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a chat with the text editor tool</span></span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(model, sp<span class="op">=</span><span class="st">'Be concise in your responses.'</span>,</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>            tools<span class="op">=</span>[text_editor_conf[<span class="st">'sonnet'</span>]], ns<span class="op">=</span>mk_ns(str_replace_based_edit_tool))</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Now Claude can explore files</span></span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> o <span class="kw">in</span> chat.toolloop(<span class="st">'Please explain concisely what my _quarto.yml does. Use your tools, and explain before each usage what you are doing.'</span>):</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(o,<span class="bu">dict</span>): display(o)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>I’ll examine your _quarto.yml file to explain what it does. Let me start by looking at the current directory to locate the file.</p>
+<details>
+<ul>
+<li>id: <code>msg_01S59jijaZGLN9jq525KoDRu</code></li>
+<li>content: <code>[{'citations': None, 'text': "I'll examine your _quarto.yml file to explain what it does. Let me start by looking at the current directory to locate the file.", 'type': 'text'}, {'id': 'toolu_01NxKxWNHFroLYxTULzFnBAp', 'input': {'command': 'view', 'path': '.'}, 'name': 'str_replace_based_edit_tool', 'type': 'tool_use'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>tool_use</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 1120, 'output_tokens': 106, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Now I can see the _quarto.yml file exists. Let me examine its contents to understand what it configures.</p>
+<details>
+<ul>
+<li>id: <code>msg_015w8s5yw4RBs4dXgfLx2CDS</code></li>
+<li>content: <code>[{'citations': None, 'text': 'Now I can see the _quarto.yml file exists. Let me examine its contents to understand what it configures.', 'type': 'text'}, {'id': 'toolu_01ToUv8CSQH69Kx2ahBSwcGf', 'input': {'command': 'view', 'path': '/_Users/jhoward/aai-ws/claudette/_quarto.yml'}, 'name': 'str_replace_based_edit_tool', 'type': 'tool_use'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>tool_use</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 2738, 'output_tokens': 120, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Let me use the correct path:</p>
+<details>
+<ul>
+<li>id: <code>msg_01Baaa1otgra5CHimvP9Ja5s</code></li>
+<li>content: <code>[{'citations': None, 'text': 'Let me use the correct path:', 'type': 'text'}, {'id': 'toolu_01FTCbeJLRdAyfqqnq3pAQFa', 'input': {'command': 'view', 'path': '/Users/jhoward/aai-ws/claudette/_quarto.yml'}, 'name': 'str_replace_based_edit_tool', 'type': 'tool_use'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>tool_use</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 2896, 'output_tokens': 102, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p>Your <code>_quarto.yml</code> file configures a Quarto website project with the following key settings:</p>
+<p><strong>Project Configuration:</strong> - Sets up a website project type - Includes all <code>.txt</code> files as resources - Configures preview server on port 3000 without auto-opening browser</p>
+<p><strong>HTML Formatting:</strong> - Uses the “cosmo” theme with custom CSS from <code>styles.css</code> - Enables table of contents, code tools, and syntax highlighting - Sets a custom layout with wider body (1800px) and narrower sidebar (180px) - Uses “arrow” highlight style with custom code block styling - Keeps markdown files during rendering</p>
+<p><strong>Website Features:</strong> - Enables social media cards (Twitter and Open Graph) - Adds a search-enabled navbar with primary background - Uses a floating sidebar style - Links to GitHub issues via repo-actions</p>
+<p><strong>Metadata Sources:</strong> - Pulls additional configuration from <code>nbdev.yml</code> and <code>sidebar.yml</code> files</p>
+<p>This appears to be set up for a documentation website, likely for a Python package using nbdev (given the nbdev.yml reference), with a focus on displaying code and technical content with good readability and navigation.</p>
+<details>
+<ul>
+<li>id: <code>msg_01Ba23FNyw6xy7KdtTVnBdk6</code></li>
+<li>content: <code>[{'citations': None, 'text': 'Your</code>_quarto.yml<code>file configures a Quarto website project with the following key settings:\n\n**Project Configuration:**\n- Sets up a website project type\n- Includes all</code>.txt<code>files as resources\n- Configures preview server on port 3000 without auto-opening browser\n\n**HTML Formatting:**\n- Uses the "cosmo" theme with custom CSS from</code>styles.css<code>\n- Enables table of contents, code tools, and syntax highlighting\n- Sets a custom layout with wider body (1800px) and narrower sidebar (180px)\n- Uses "arrow" highlight style with custom code block styling\n- Keeps markdown files during rendering\n\n**Website Features:**\n- Enables social media cards (Twitter and Open Graph)\n- Adds a search-enabled navbar with primary background\n- Uses a floating sidebar style\n- Links to GitHub issues via repo-actions\n\n**Metadata Sources:**\n- Pulls additional configuration from</code>nbdev.yml<code>and</code>sidebar.yml<code>files\n\nThis appears to be set up for a documentation website, likely for a Python package using nbdev (given the nbdev.yml reference), with a focus on displaying code and technical content with good readability and navigation.', 'type': 'text'}]</code></li>
+<li>model: <code>claude-sonnet-4-20250514</code></li>
+<li>role: <code>assistant</code></li>
+<li>stop_reason: <code>end_turn</code></li>
+<li>stop_sequence: <code>None</code></li>
+<li>type: <code>message</code></li>
+<li>usage: <code>{'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'input_tokens': 3235, 'output_tokens': 267, 'server_tool_use': None, 'service_tier': 'standard'}</code></li>
+</ul>
+</details>
+</div>
+</div>
+<div id="79ae7fe9" class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>chat.use</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>In: 9989; Out: 595; Cache create: 0; Cache read: 0; Total Tokens: 10584; Search: 0</code></pre>
+</div>
+</div>
+</section>
+<section id="other-model-providers" class="level2">
+<h2 class="anchored" data-anchor-id="other-model-providers">Other model providers</h2>
+<p>You can also use 3rd party providers of Anthropic models, as shown here.</p>
+<section id="amazon-bedrock" class="level3">
+<h3 class="anchored" data-anchor-id="amazon-bedrock">Amazon Bedrock</h3>
+<p>These are the models available through Bedrock:</p>
+<div id="15478ddd" class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>models_aws</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>['anthropic.claude-sonnet-4-20250514-v1:0',
+ 'claude-3-5-haiku-20241022',
+ 'claude-3-7-sonnet-20250219',
+ 'anthropic.claude-3-opus-20240229-v1:0',
+ 'anthropic.claude-3-5-sonnet-20241022-v2:0']</code></pre>
+</div>
+</div>
+<p>To use them, call <code>AnthropicBedrock</code> with your access details, and pass that to <a href="https://claudette.answer.ai/core.html#client"><code>Client</code></a>:</p>
+<div id="9e91f36b" class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> anthropic <span class="im">import</span> AnthropicBedrock</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0ff95e32" class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>ab <span class="op">=</span> AnthropicBedrock(</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>    aws_access_key<span class="op">=</span>os.environ[<span class="st">'AWS_ACCESS_KEY'</span>],</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>    aws_secret_key<span class="op">=</span>os.environ[<span class="st">'AWS_SECRET_KEY'</span>],</span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> Client(models_aws[<span class="op">-</span><span class="dv">1</span>], ab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now create your <a href="https://claudette.answer.ai/core.html#chat"><code>Chat</code></a> object passing this client to the <code>cli</code> parameter – and from then on, everything is identical to the previous examples.</p>
+<div id="197d4721" class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(cli<span class="op">=</span>client)</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>chat(<span class="st">"I'm Jeremy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="google-vertex" class="level3">
+<h3 class="anchored" data-anchor-id="google-vertex">Google Vertex</h3>
+<p>These are the models available through Vertex:</p>
+<div id="fdb46839" class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>models_goog</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To use them, call <code>AnthropicVertex</code> with your access details, and pass that to <a href="https://claudette.answer.ai/core.html#client"><code>Client</code></a>:</p>
+<div id="85a3b1e8" class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> anthropic <span class="im">import</span> AnthropicVertex</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> google.auth</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c00ef664" class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># project_id = google.auth.default()[1]</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gv = AnthropicVertex(project_id=project_id, region="us-east5")</span></span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a><span class="co"># client = Client(models_goog[-1], gv)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="7d0481b5" class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> Chat(cli<span class="op">=</span>client)</span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>chat(<span class="st">"I'm Jeremy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="extensions" class="level2">
+<h2 class="anchored" data-anchor-id="extensions">Extensions</h2>
+<ul>
+<li><a href="https://github.com/tom-pollak/claudette-pydantic">Pydantic Structured Ouput</a></li>
+</ul>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>https://www.wunderground.com/weather/us/ca/san-diego “TomorrowSat 06/21 High · 67 °F · 14% Precip.”<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>https://www.wunderground.com/weather/us/ca/san-diego “High 67F.”<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>https://www.wunderground.com/weather/us/ca/san-diego “/ 0.00 °in Cloudy early with partial sunshine expected late.”<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>https://www.wunderground.com/weather/us/ca/san-diego “Winds SSW at 10 to 15 mph.”<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>https://www.wunderground.com/weather/us/ca/san-diego “Low 62F. Winds SSW at 10 to 15 mph.”<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>https://www.weather.gov/sgx/ “Cooler today with highs around 4-7 degrees below normal for most areas, still slightly above normal in the lower deserts.”<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>https://www.accuweather.com/en/us/san-diego/92101/weather-forecast/347628 “The air has reached a high level of pollution and is unhealthy for sensitive groups. Reduce time spent outside if you are feeling symptoms such as dif…”<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/claudette\.answer\.ai\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/AnswerDotAI/claudette/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
