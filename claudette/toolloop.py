@@ -7,6 +7,7 @@ __all__ = []
 from .core import *
 from fastcore.utils import *
 from fastcore.meta import delegates
+from fastcore.xtras import save_iter
 from functools import wraps
 
 from anthropic.types import TextBlock, Message, ToolUseBlock
@@ -24,20 +25,20 @@ def toolloop(self:Chat,
              final_prompt=_final_prompt, # Prompt to add if last message is a tool call
              **kwargs):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
-    class _Loop:
-        def __iter__(a):
-            init_n = len(self.h)
-            r = self(pr, **kwargs)
+    @save_iter
+    def _f(o):
+        init_n = len(self.h)
+        r = self(pr, **kwargs)
+        yield r
+        if len(self.last)>1: yield self.last[1]
+        for i in range(max_steps-1):
+            if self.c.stop_reason!='tool_use': break
+            r = self(final_prompt if i==max_steps-2 else None, **kwargs)
             yield r
             if len(self.last)>1: yield self.last[1]
-            for i in range(max_steps-1):
-                if self.c.stop_reason!='tool_use': break
-                r = self(final_prompt if i==max_steps-2 else None, **kwargs)
-                yield r
-                if len(self.last)>1: yield self.last[1]
-                if not cont_func(*self.h[-3:]): break
-            a.value = self.h[init_n+1:]
-    return _Loop()
+            if not cont_func(*self.h[-3:]): break
+        o.value = self.h[init_n+1:]
+    return _f()
 
 # %% ../01_toolloop.ipynb
 from .asink import AsyncChat
@@ -54,17 +55,17 @@ def toolloop(
     **kwargs
 ):
     "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
-    class _Loop:
-        async def __aiter__(a):
-            init_n = len(self.h)
-            r = await self(pr, **kwargs)
+    @save_iter
+    async def _f(o):
+        init_n = len(self.h)
+        r = await self(pr, **kwargs)
+        yield r
+        if len(self.last)>1: yield self.last[1]
+        for i in range(max_steps-1):
+            if self.c.stop_reason != 'tool_use': break
+            r = await self(final_prompt if i==max_steps-2 else None, **kwargs)
             yield r
             if len(self.last)>1: yield self.last[1]
-            for i in range(max_steps-1):
-                if self.c.stop_reason != 'tool_use': break
-                r = await self(final_prompt if i==max_steps-2 else None, **kwargs)
-                yield r
-                if len(self.last)>1: yield self.last[1]
-                if not cont_func(*self.h[-3:]): break
-            a.value = self.h[init_n+1:]
-    return _Loop()
+            if not cont_func(*self.h[-3:]): break
+        o.value = self.h[init_n+1:]
+    return _f()
