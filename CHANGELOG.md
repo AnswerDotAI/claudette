@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.2.1
+
+### New Features
+
+- Make full messages available after streaming ([#84](https://github.com/AnswerDotAI/claudette/issues/84))
+
+
 ## 0.2.0
 
 ### Breaking Changes
