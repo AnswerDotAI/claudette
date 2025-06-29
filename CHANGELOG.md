@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.0
+
+### Breaking Changes
+
+- Remove `obj` support ([#85](https://github.com/AnswerDotAI/claudette/issues/85))
+
+
 ## 0.2.2
 
 ### New Features
