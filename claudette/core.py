@@ -341,14 +341,12 @@ def mk_funcres(fc, ns):
 # %% ../00_core.ipynb
 def mk_toolres(
     r:abc.Mapping, # Tool use request response from Claude
-    ns:Optional[abc.Mapping]=None, # Namespace to search for tools
-    obj:Optional=None # Class to search for tools
+    ns:Optional[abc.Mapping]=None # Namespace to search for tools
     ):
     "Create a `tool_result` message from response `r`."
     cts = getattr(r, 'content', [])
     res = [mk_msg(r.model_dump(), role='assistant')]
     if ns is None: ns=globals()
-    if obj is not None: ns = mk_ns(obj)
     tcs = [mk_funcres(o, ns) for o in cts if isinstance(o,ToolUseBlock)]
     if tcs: res.append(mk_msg(tcs))
     return res
@@ -359,14 +357,12 @@ def mk_toolres(
 def structured(self:Client,
                msgs:list, # List of messages in the dialog
                tools:Optional[list]=None, # List of tools to make available to Claude
-               obj:Optional=None, # Class to search for tools
                ns:Optional[abc.Mapping]=None, # Namespace to search for tools
                **kwargs):
     "Return the value of all tool calls (generally used for structured outputs)"
     tools = listify(tools)
     res = self(msgs, tools=tools, tool_choice=tools, **kwargs)
     if ns is None: ns=mk_ns(*tools)
-    if obj is not None: ns = mk_ns(obj)
     cts = getattr(res, 'content', [])
     tcs = [call_func(o.name, o.input, ns=ns) for o in cts if isinstance(o,ToolUseBlock)]
     return tcs
