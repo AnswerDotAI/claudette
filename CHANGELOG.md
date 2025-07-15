@@ -2,6 +2,12 @@
 
 <!-- do not remove -->
 
+## 0.3.1
+
+### New Features
+
+- Use msglm 0.0.9 ([#87](https://github.com/AnswerDotAI/claudette/issues/87))
+
 
 ## 0.3.0
 
