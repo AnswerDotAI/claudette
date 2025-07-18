@@ -1,0 +1,74 @@
+# claudette Module Documentation
+
+## claudette.asink
+
+- `class AsyncClient`
+    - `def __init__(self, model, cli, log)`
+        Async Anthropic messages client.
+
+
+- `@patch @delegates(Client) def __call__(self, msgs, sp, temp, maxtok, prefill, stream, stop, **kwargs)`
+    Make an async call to Claude.
+
+- `@delegates() class AsyncChat`
+    - `def __init__(self, model, cli, **kwargs)`
+        Anthropic async chat client.
+
+
+## claudette.core
+
+- `def find_block(r, blk_type)`
+    Find the first block of type `blk_type` in `r.content`.
+
+- `def contents(r)`
+    Helper to get the contents from Claude response `r`.
+
+- `def usage(inp, out, cache_create, cache_read)`
+    Slightly more concise version of `Usage`.
+
+- `@patch def __add__(self, b)`
+    Add together each of `input_tokens` and `output_tokens`
+
+- `def mk_msgs(msgs, **kw)`
+    Helper to set 'assistant' role on alternate messages.
+
+- `class Client`
+    - `def __init__(self, model, cli, log)`
+        Basic Anthropic messages client.
+
+
+- `def mk_tool_choice(choose)`
+    Create a `tool_choice` dict that's 'auto' if `choose` is `None`, 'any' if it is True, or 'tool' otherwise
+
+- `def mk_funcres(tuid, res)`
+    Given tool use id and the tool result, create a tool_result response.
+
+- `def mk_toolres(r, ns, obj)`
+    Create a `tool_result` message from response `r`.
+
+- `@patch @delegates(messages.Messages.create) def __call__(self, msgs, sp, temp, maxtok, prefill, stream, stop, tools, tool_choice, **kwargs)`
+    Make a call to Claude.
+
+- `@patch @delegates(Client.__call__) def structured(self, msgs, tools, obj, ns, **kwargs)`
+    Return the value of all tool calls (generally used for structured outputs)
+
+- `class Chat`
+    - `def __init__(self, model, cli, sp, tools, temp, cont_pr)`
+        Anthropic chat client.
+
+    - `@property def use(self)`
+
+- `def img_msg(data, cache)`
+    Convert image `data` into an encoded `dict`
+
+- `def text_msg(s, cache)`
+    Convert `s` to a text message
+
+- `def mk_msg(content, role, cache, **kw)`
+    Helper to create a `dict` appropriate for a Claude message. `kw` are added as key/value pairs to the message
+
+## claudette.toolloop
+
+- `@patch @delegates(Chat.__call__) def toolloop(self, pr, max_steps, trace_func, cont_func, **kwargs)`
+    Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages
+
