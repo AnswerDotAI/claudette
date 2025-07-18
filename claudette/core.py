@@ -334,19 +334,22 @@ def _repr_markdown_(self:Client):
 | **Total** | **{self.use.total:,}** | **${self.cost:.6f}** |"""
 
 # %% ../00_core.ipynb
-@dataclass
-class ToolResult:
-    result_type: str
-    data: Any
+class ToolResult(BasicRepr):
+    def __init__(self, result_type: str, data): store_attr()
     def __str__(self): return str(self.data)
-    def __repr__(self): return f"ToolResult(result_type='{self.result_type}', data={self.data!r})"
 
 # %% ../00_core.ipynb
+def _img_content(b64data):
+    return [{"type": "image",
+             "source":{"type": "base64", "media_type": "image/png", "data": b64data}},
+            {"type": "text", "text": "Captured screenshot."}]
+
 def mk_funcres(fc, ns):
-    "Given tool use block `fc`, get tool result, and create a tool_result response."
+    "Given tool use block 'fc', get tool result, and create a tool_result response."
     res = call_func(fc.name, fc.input, ns=ns, raise_on_err=False)
-    if isinstance(res, ToolResult): return dict(type="tool_result", tool_use_id=fc.id, content=str(res.data))
-    else: return dict(type="tool_result", tool_use_id=fc.id, content=str(res))
+    if isinstance(res, ToolResult) and res.result_type=="image/png": res = _img_content(res.data) # list
+    else: res = str(res.data) if isinstance(res, ToolResult) else str(res)
+    return {"type": "tool_result", "tool_use_id": fc.id, "content": res}
 
 # %% ../00_core.ipynb
 def mk_toolres(
