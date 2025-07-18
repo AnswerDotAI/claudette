@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.2
+
+### New Features
+
+- Suport for tool functions returning `ToolResult` image values ([#88](https://github.com/AnswerDotAI/claudette/pull/88)), thanks to [@austinvhuang](https://github.com/austinvhuang)
+
+
 ## 0.3.1
 
 ### New Features
