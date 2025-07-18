@@ -5,13 +5,14 @@ __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models
            'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'has_extended_thinking_models',
            'pricing', 'server_tool_pricing', 'can_stream', 'can_set_system_prompt', 'can_set_temperature',
            'can_use_extended_thinking', 'find_block', 'server_tool_usage', 'usage', 'Client', 'get_types',
-           'mk_tool_choice', 'get_pricing', 'get_costs', 'mk_funcres', 'mk_toolres', 'tool', 'Chat', 'think_md',
-           'search_conf', 'find_blocks', 'blks2cited_txt', 'contents', 'mk_msg', 'mk_msgs']
+           'mk_tool_choice', 'get_pricing', 'get_costs', 'ToolResult', 'mk_funcres', 'mk_toolres', 'tool', 'Chat',
+           'think_md', 'search_conf', 'find_blocks', 'blks2cited_txt', 'contents', 'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
 from collections import abc
-from typing import get_type_hints
+from dataclasses import dataclass
+from typing import get_type_hints, Any
 from functools import wraps
 
 from anthropic import Anthropic, AnthropicBedrock, AnthropicVertex
@@ -333,10 +334,22 @@ def _repr_markdown_(self:Client):
 | **Total** | **{self.use.total:,}** | **${self.cost:.6f}** |"""
 
 # %% ../00_core.ipynb
+class ToolResult(BasicRepr):
+    def __init__(self, result_type: str, data): store_attr()
+    def __str__(self): return str(self.data)
+
+# %% ../00_core.ipynb
+def _img_content(b64data):
+    return [{"type": "image",
+             "source":{"type": "base64", "media_type": "image/png", "data": b64data}},
+            {"type": "text", "text": "Captured screenshot."}]
+
 def mk_funcres(fc, ns):
-    "Given tool use block `fc`, get tool result, and create a tool_result response."
+    "Given tool use block 'fc', get tool result, and create a tool_result response."
     res = call_func(fc.name, fc.input, ns=ns, raise_on_err=False)
-    return dict(type="tool_result", tool_use_id=fc.id, content=str(res))
+    if isinstance(res, ToolResult) and res.result_type=="image/png": res = _img_content(res.data) # list
+    else: res = str(res.data) if isinstance(res, ToolResult) else str(res)
+    return {"type": "tool_result", "tool_use_id": fc.id, "content": res}
 
 # %% ../00_core.ipynb
 def mk_toolres(
