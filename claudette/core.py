@@ -525,6 +525,8 @@ def find_blocks(r, blk_type=TextBlock, type='text'):
 # %% ../00_core.ipynb
 def blks2cited_txt(txt_blks):
     "Helper to get the contents from a list of `TextBlock`s, with citations."
+    def escape(s): return s.replace('"', '\\"')
+
     text_sections, citations = [], []
     for blk in txt_blks:
         if isinstance(blk, dict): blk = AttrDict(blk)
@@ -538,8 +540,8 @@ def blks2cited_txt(txt_blks):
         text_sections.append(section)
     body = "".join(text_sections)
     if citations:
-        refs = "\n\n".join(f"[^{i+1}]: {c.url}\n\t\"{c.cited_text.replace('\"', '\\\"')}\"" 
-                          for i, c in enumerate(citations))
+        refs = '\n\n'.join(f'[^{i+1}]: {c.url}\n\t\"{escape(c.cited_text)}\"'
+                           for i, c in enumerate(citations))
         body = f"{body}\n\n{refs}" if body else refs
     return body
 
