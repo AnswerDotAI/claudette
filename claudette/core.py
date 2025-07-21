@@ -533,12 +533,13 @@ def blks2cited_txt(txt_blks):
             markers = []
             for cit in blk.citations:
                 citations.append(cit)
-                markers.append(f"[^{len(citations)}]") # maintain global citation order
+                markers.append(f"[^{len(citations)}]")
             section = f"{section} " + " ".join(markers)
         text_sections.append(section)
     body = "".join(text_sections)
     if citations:
-        refs = "\n\n".join(f"[^{i+1}]: {c.url}\n\t\"{c.cited_text}\"" for i, c in enumerate(citations))
+        refs = "\n\n".join(f"[^{i+1}]: {c.url}\n\t\"{c.cited_text.replace('\"', '\\\"')}\"" 
+                          for i, c in enumerate(citations))
         body = f"{body}\n\n{refs}" if body else refs
     return body
 
