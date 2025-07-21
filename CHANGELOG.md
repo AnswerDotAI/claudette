@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.3
+
+### Bugs Squashed
+
+- Escape Quotes in markdown footnotes ([#90](https://github.com/AnswerDotAI/claudette/pull/90)), thanks to [@ncoop57](https://github.com/ncoop57)
+
+
 ## 0.3.2
 
 ### New Features
