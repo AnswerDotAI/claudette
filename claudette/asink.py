@@ -29,7 +29,7 @@ async def _astream(o, cm, prefill, cb):
         yield prefill
         async for x in s.text_stream: yield x
         o.value = await s.get_final_message()
-        cb(o.value)
+        await cb(o.value)
 
 # %% ../02_async.ipynb
 @patch
@@ -53,13 +53,13 @@ async def __call__(self:AsyncClient,
     m = self.c.messages
     f = m.stream if stream else m.create
     res = f(model=self.model, messages=msgs, **kwargs)
-    def _cb(v):
+    async def _cb(v):
         self._log(v, prefill=prefill, msgs=msgs, **kwargs)
-        if cb: cb(v)
+        if cb: await cb(v)
     if stream: return _astream(res, prefill, _cb)
     res = await res
     try: return res
-    finally: _cb(res)
+    finally: await _cb(res)
 
 # %% ../02_async.ipynb
 async def mk_funcres_async(fc, ns):
@@ -127,7 +127,7 @@ async def __call__(self:AsyncChat,
                    **kw):
     if temp is None: temp=self.temp
     await self._append_pr(pr)
-    def _cb(v):
-        self.last = mk_toolres(v, ns=self.ns)
+    async def _cb(v):
+        self.last = await mk_toolres_async(v, ns=self.ns)
         self.h += self.last
     return await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice, cb=_cb, **kw)
