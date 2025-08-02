@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.5
+
+### New Features
+
+- Support async functions in async toolloop ([#92](https://github.com/AnswerDotAI/claudette/issues/92))
+
+
 ## 0.3.4
 
 ### Bugs Squashed
