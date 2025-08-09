@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.6
+
+### New Features
+
+- Support opus 4.1 ([#93](https://github.com/AnswerDotAI/claudette/issues/93))
+
+
 ## 0.3.5
 
 ### New Features
