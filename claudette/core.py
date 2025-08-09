@@ -38,21 +38,24 @@ empty = inspect.Parameter.empty
 # %% ../00_core.ipynb
 model_types = {
     # Anthropic
-    'claude-opus-4-20250514': 'opus',
+    'claude-opus-4-1-20250805': 'opus',
     'claude-sonnet-4-20250514': 'sonnet',
+    'claude-opus-4-20250514': 'opus-4',
     'claude-3-opus-20240229': 'opus-3',
     'claude-3-7-sonnet-20250219': 'sonnet-3-7',
     'claude-3-5-sonnet-20241022': 'sonnet-3-5',
     'claude-3-haiku-20240307': 'haiku-3',
     'claude-3-5-haiku-20241022': 'haiku-3-5',
     # AWS
-    'anthropic.claude-3-opus-20240229-v1:0': 'opus',
+    'anthropic.claude-opus-4-1-20250805-v1:0': 'opus',
     'anthropic.claude-3-5-sonnet-20241022-v2:0': 'sonnet',
+    'anthropic.claude-3-opus-20240229-v1:0': 'opus-3',
     'anthropic.claude-3-sonnet-20240229-v1:0': 'sonnet',
     'anthropic.claude-3-haiku-20240307-v1:0': 'haiku',
     # Google
-    'claude-3-opus@20240229': 'opus',
+    'claude-opus-4-1@20250805': 'opus',
     'claude-3-5-sonnet-v2@20241022': 'sonnet',
+    'claude-3-opus@20240229': 'opus-3',
     'claude-3-sonnet@20240229': 'sonnet',
     'claude-3-haiku@20240307': 'haiku',
 }
@@ -60,10 +63,11 @@ model_types = {
 all_models = list(model_types)
 
 # %% ../00_core.ipynb
-models = all_models[:5]
+models = all_models[:8]
 
 # %% ../00_core.ipynb
 models_aws = [
+    'anthropic.claude-opus-4-1-20250805-v1:0',
     'anthropic.claude-sonnet-4-20250514-v1:0',
     'claude-3-5-haiku-20241022',
     'claude-3-7-sonnet-20250219',
@@ -72,12 +76,15 @@ models_aws = [
 ]
 
 # %% ../00_core.ipynb
-models_goog = ['anthropic.claude-3-sonnet-20240229-v1:0',
- 'anthropic.claude-3-haiku-20240307-v1:0',
- 'claude-3-opus@20240229',
- 'claude-3-5-sonnet-v2@20241022',
- 'claude-3-sonnet@20240229',
- 'claude-3-haiku@20240307']
+models_goog = [
+    'claude-opus-4-1@20250805',
+    'anthropic.claude-3-sonnet-20240229-v1:0',
+    'anthropic.claude-3-haiku-20240307-v1:0',
+    'claude-3-opus@20240229',
+    'claude-3-5-sonnet-v2@20241022',
+    'claude-3-sonnet@20240229',
+    'claude-3-haiku@20240307'
+]
 
 # %% ../00_core.ipynb
 text_only_models = ('claude-3-5-haiku-20241022',)
@@ -86,7 +93,9 @@ text_only_models = ('claude-3-5-haiku-20241022',)
 has_streaming_models = set(all_models)
 has_system_prompt_models = set(all_models)
 has_temperature_models = set(all_models)
-has_extended_thinking_models = {'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-3-7-sonnet-20250219'}
+has_extended_thinking_models = {
+    'claude-opus-4-1-20250805', 'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-3-7-sonnet-20250219'
+}
 
 # %% ../00_core.ipynb
 def can_stream(m): return m in has_streaming_models
