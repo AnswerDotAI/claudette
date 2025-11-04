@@ -39,9 +39,11 @@ empty = inspect.Parameter.empty
 model_types = {
     # Anthropic
     'claude-opus-4-1-20250805': 'opus',
-    'claude-sonnet-4-20250514': 'sonnet',
+    'claude-sonnet-4-5': 'sonnet',
+    'claude-haiku-4-5': 'haiku',
     'claude-opus-4-20250514': 'opus-4',
     'claude-3-opus-20240229': 'opus-3',
+    'claude-sonnet-4-20250514': 'sonnet-4',
     'claude-3-7-sonnet-20250219': 'sonnet-3-7',
     'claude-3-5-sonnet-20241022': 'sonnet-3-5',
     'claude-3-haiku-20240307': 'haiku-3',
@@ -94,7 +96,8 @@ has_streaming_models = set(all_models)
 has_system_prompt_models = set(all_models)
 has_temperature_models = set(all_models)
 has_extended_thinking_models = {
-    'claude-opus-4-1-20250805', 'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-3-7-sonnet-20250219'
+    'claude-opus-4-1-20250805', 'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-3-7-sonnet-20250219',
+    'sonnet-4-5', 'haiku-4-5'
 }
 
 # %% ../00_core.ipynb
@@ -285,6 +288,7 @@ def __call__(self:Client,
 pricing = {  # model type: $ / million tokens (input, output, cache write, cache read)
     'opus': (15, 75, 18.75, 1.5),
     'sonnet': (3, 15, 3.75, 0.3),
+    'haiku': (1, 5, 1.25, 0.1),
     'haiku-3': (0.25, 1.25, 0.3, 0.03),
     'haiku-3-5': (1, 3, 1.25, 0.1),
 }

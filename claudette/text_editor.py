@@ -91,7 +91,8 @@ def str_replace_based_edit_tool(**kwargs: dict[str, str]) -> str:
 
 # %% ../03_text_editor.ipynb
 text_editor_conf = {
-    'sonnet': {"type": "text_editor_20250429", "name": "str_replace_based_edit_tool"},
+    'sonnet': {"type": "text_editor_20250728", "name": "str_replace_based_edit_tool"},
+    'sonnet-4': {"type": "text_editor_20250429", "name": "str_replace_based_edit_tool"},
     'sonnet-3-7': {'type': 'text_editor_20250124', 'name': 'str_replace_editor'},
     'sonnet-3-5': {'type': 'text_editor_20241022', 'name': 'str_replace_editor'}
 }
