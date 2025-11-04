@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.7
+
+### New Features
+
+- Add Haiku and Sonnet 4.5 ([#95](https://github.com/AnswerDotAI/claudette/issues/95))
+
+
 ## 0.3.6
 
 ### New Features
