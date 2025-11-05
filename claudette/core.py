@@ -568,7 +568,7 @@ def contents(r, show_thk=True):
         if tk_blk: return think_md(content, tk_blk.thinking.strip())
     if not content:
         blk = find_block(r)
-        if not blk and getattr(r, "content", None): blk = r.content[0]
+        if not blk and getattr(r, "content", None): blk = r.content
         if hasattr(blk, "text"): content = blk.text.strip()
         elif hasattr(blk, "content"): content = blk.content.strip()
         elif hasattr(blk, "source"): content = f"*Media Type - {blk.type}*"
