@@ -2,6 +2,14 @@
 
 <!-- do not remove -->
 
+## 0.3.9
+
+### Bugs Squashed
+
+- `find_blocks` does not handle dicts ([#96](https://github.com/AnswerDotAI/claudette/issues/96))
+
+
+
 ## 0.3.7
 
 ### New Features
