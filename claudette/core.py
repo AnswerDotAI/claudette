@@ -531,8 +531,7 @@ def search_conf(max_uses:int=None, allowed_domains:list=None, blocked_domains:li
 # %% ../00_core.ipynb
 def find_blocks(r, blk_type=TextBlock, type='text'):
     "Helper to find all blocks of type `blk_type` in response `r`."
-    if isinstance(r, dict): f = lambda b: b.get('type') == 'text'
-    else: f = lambda b: isinstance(b, TextBlock)
+    def f(b): return (b.get('type')=='text') if isinstance(b, dict) else (isinstance(b, TextBlock))
     return [b for b in getattr(r, "content", []) if f(b)]
 
 # %% ../00_core.ipynb
