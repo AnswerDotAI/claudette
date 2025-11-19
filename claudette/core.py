@@ -19,6 +19,7 @@ from anthropic import Anthropic, AnthropicBedrock, AnthropicVertex
 from anthropic.types import (Usage, TextBlock, ServerToolUseBlock,
                              WebSearchToolResultBlock, Message, ToolUseBlock,
                              ThinkingBlock, ServerToolUsage)
+from anthropic.types.beta import (BetaMessage)
 from anthropic.resources import messages
 
 import toolslm
@@ -120,7 +121,7 @@ def find_block(r:abc.Mapping, # The message to look in
 
 # %% ../00_core.ipynb
 @patch
-def _repr_markdown_(self:(Message)):
+def _repr_markdown_(self:(Message,BetaMessage)):
     det = '\n- '.join(f'{k}: `{v}`' for k,v in self.model_dump().items())
     cts = re.sub(r'\$', '&#36;', contents(self))  # escape `$` for jupyter latex
     return f"""{cts}
@@ -187,7 +188,8 @@ class Client:
         self.model,self.use = model,usage()
         self.text_only = model in text_only_models
         self.log = [] if log else None
-        self.c = (cli or Anthropic(default_headers={'anthropic-beta': 'prompt-caching-2024-07-31'}))
+        betas = ['prompt-caching-2024-07-31', 'structured-outputs-2025-11-13']
+        self.c = (cli or Anthropic(default_headers={'anthropic-beta': ','.join(betas)}))
         self.cache = cache
 
 # %% ../00_core.ipynb
@@ -239,9 +241,10 @@ def mk_tool_choice(choose:Union[str,bool,None])->dict:
 # %% ../00_core.ipynb
 @patch
 def _precall(self:Client, msgs, prefill, sp, temp, maxtok, maxthinktok, stream,
-             stop, tools, tool_choice, kwargs):
+             stop, tools, tool_choice, output_format, kwargs):
     if tools: kwargs['tools'] = [get_schema(o) if callable(o) else o for o in listify(tools)]
     if tool_choice: kwargs['tool_choice'] = mk_tool_choice(tool_choice)
+    if output_format: kwargs['output_format'] = output_format
     if maxthinktok: 
         kwargs['thinking'] = {'type':'enabled', 'budget_tokens':maxthinktok} 
         temp,prefill = 1,''
@@ -269,12 +272,13 @@ def __call__(self:Client,
              stop=None, # Stop sequence
              tools:Optional[list]=None, # List of tools to make available to Claude
              tool_choice:Optional[dict]=None, # Optionally force use of some tool
+             output_format:Optional[dict]=None, # Optionally force output to conform with a JSON schema
              cb=None, # Callback to pass result to when complete
              **kwargs):
     "Make a call to Claude."
     msgs,kwargs = self._precall(msgs, prefill, sp, temp, maxtok, maxthinktok, stream,
-                                stop, tools, tool_choice, kwargs)
-    m = self.c.messages
+                                stop, tools, tool_choice, output_format, kwargs)
+    m = self.c.beta.messages if output_format else self.c.messages
     f = m.stream if stream else m.create
     res = f(model=self.model, messages=msgs, **kwargs)
     def _cb(v):
