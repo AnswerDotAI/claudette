@@ -553,7 +553,8 @@ def blks2cited_txt(txt_blks):
     body = "".join(text_sections)
     def _cite(i, cit):
         esc = cit.cited_text.replace('"', r'\"')
-        return f'[^{i+1}]: {cit.url}\n\t"{esc}"'
+        src = getattr(cit, 'url', None) or cit.document_title
+        return f'[^{i+1}]: {src}\n\t"{esc}"'
     if citations:
         refs = '\n\n'.join(L.enumerate(citations).starmap(_cite))
         body = f"{body}\n\n{refs}" if body else refs
