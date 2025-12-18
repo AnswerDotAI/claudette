@@ -369,23 +369,22 @@ def mk_funcres(fc, ns):
     return {"type": "tool_result", "tool_use_id": fc.id, "content": res}
 
 # %% ../00_core.ipynb
-def allowed_tools(specs: list[str|Callable]|None, choice: dict|str|None=None):
+def allowed_tools(specs: Optional[list[Union[str,abc.Callable]]], choice: Optional[Union[dict,str]]=None):
     if not isinstance(choice, dict): choice=mk_tool_choice(choice)
     if choice['type'] == 'tool': return {choice['name']}
     if choice['type'] == 'none': return set()
-    return {v['name'] if isinstance(v, dict) else v.__name__ for v in specs or {}}
+    return {v['name'] if isinstance(v, dict) else v.__name__ for v in specs or []}
 
 # %% ../00_core.ipynb
 def limit_ns(
     ns:Optional[abc.Mapping]=None, # Namespace to search for tools
-    specs:list[str|Callable]|None=None, # List of the tools that are allowed for llm to call
-    choice:dict|str|None=None # Tool choice as defined by Anthropic API
+    specs:Optional[list[Union[str,abc.Callable]]]=None, # List of the tools that are allowed for llm to call
+    choice:Optional[Union[dict,str]]=None # Tool choice as defined by Anthropic API
     ):
     "Filter namespace `ns` to only include tools allowed by `specs` and `choice`"
-    limit_to = allowed_tools(specs, choice)
     if ns is None: ns=globals()
     if not isinstance(ns, abc.Mapping): ns = mk_ns(ns)
-    if limit_to: ns = {k:ns[k] for k in limit_to if k in ns}
+    ns = {k:ns[k] for k in allowed_tools(specs, choice) if k in ns}
     return ns
 
 # %% ../00_core.ipynb
