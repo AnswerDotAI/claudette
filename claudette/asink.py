@@ -64,7 +64,8 @@ async def __call__(self:AsyncClient,
 # %% ../02_async.ipynb
 async def mk_funcres_async(fc, ns):
     "Given tool use block `fc`, get tool result, and create a tool_result response."
-    res = await call_func_async(fc.name, fc.input, ns=ns, raise_on_err=False)
+    try: res = await call_func_async(fc.name, fc.input, ns=ns, raise_on_err=False)
+    except KeyError: res = f"Error - tool not defined in the tool_schemas: {fc.name}"
     return dict(type="tool_result", tool_use_id=fc.id, content=str(res))
 
 # %% ../02_async.ipynb
@@ -128,6 +129,6 @@ async def __call__(self:AsyncChat,
     if temp is None: temp=self.temp
     await self._append_pr(pr)
     async def _cb(v):
-        self.last = await mk_toolres_async(v, ns=self.ns)
+        self.last = await mk_toolres_async(v, ns=limit_ns(self.ns, self.tools, tool_choice))
         self.h += self.last
     return await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok, tools=self.tools, tool_choice=tool_choice, cb=_cb, **kw)

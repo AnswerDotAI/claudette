@@ -5,14 +5,15 @@ __all__ = ['empty', 'model_types', 'all_models', 'models', 'models_aws', 'models
            'has_streaming_models', 'has_system_prompt_models', 'has_temperature_models', 'has_extended_thinking_models',
            'pricing', 'server_tool_pricing', 'can_stream', 'can_set_system_prompt', 'can_set_temperature',
            'can_use_extended_thinking', 'find_block', 'server_tool_usage', 'usage', 'Client', 'get_types',
-           'mk_tool_choice', 'get_pricing', 'get_costs', 'ToolResult', 'mk_funcres', 'allowed_tools', 'mk_toolres',
-           'tool', 'Chat', 'think_md', 'search_conf', 'find_blocks', 'blks2cited_txt', 'contents', 'mk_msg', 'mk_msgs']
+           'mk_tool_choice', 'get_pricing', 'get_costs', 'ToolResult', 'mk_funcres', 'allowed_tools', 'limit_ns',
+           'mk_toolres', 'tool', 'Chat', 'think_md', 'search_conf', 'find_blocks', 'blks2cited_txt', 'contents',
+           'mk_msg', 'mk_msgs']
 
 # %% ../00_core.ipynb
 import inspect, typing, json
 from collections import abc
 from dataclasses import dataclass
-from typing import get_type_hints, Any
+from typing import get_type_hints, Any, Callable
 from functools import wraps
 
 from anthropic import Anthropic, AnthropicBedrock, AnthropicVertex
@@ -368,24 +369,34 @@ def mk_funcres(fc, ns):
     return {"type": "tool_result", "tool_use_id": fc.id, "content": res}
 
 # %% ../00_core.ipynb
-def allowed_tools(specs:dict, choice:dict|str|None=None):
+def allowed_tools(specs: list[str|Callable]|None, choice: dict|str|None=None):
     if not isinstance(choice, dict): choice=mk_tool_choice(choice)
     if choice['type'] == 'tool': return {choice['name']}
     if choice['type'] == 'none': return set()
-    return {v['name'] if isinstance(v, dict) else v.__name__ for v in specs}
+    return {v['name'] if isinstance(v, dict) else v.__name__ for v in specs or {}}
+
+# %% ../00_core.ipynb
+def limit_ns(
+    ns:Optional[abc.Mapping]=None, # Namespace to search for tools
+    specs:list[str|Callable]|None=None, # List of the tools that are allowed for llm to call
+    choice:dict|str|None=None # Tool choice as defined by Anthropic API
+    ):
+    "Filter namespace `ns` to only include tools allowed by `specs` and `choice`"
+    limit_to = allowed_tools(specs, choice)
+    if ns is None: ns=globals()
+    if not isinstance(ns, abc.Mapping): ns = mk_ns(ns)
+    if limit_to: ns = {k:ns[k] for k in limit_to if k in ns}
+    return ns
 
 # %% ../00_core.ipynb
 def mk_toolres(
     r:abc.Mapping, # Tool use request response from Claude
     ns:Optional[abc.Mapping]=None, # Namespace to search for tools
-    limit_to:Optional[set[str]]=None # Limits the tool calls to specific names only
     ):
     "Create a `tool_result` message from response `r`."
     cts = getattr(r, 'content', [])
     res = [mk_msg(r.model_dump(), role='assistant')]
     if ns is None: ns=globals()
-    if not isinstance(ns, abc.Mapping): ns = mk_ns(ns)
-    if limit_to: ns = {k:v for k,v in ns.items() if k in limit_to}
     tcs = [mk_funcres(o, ns) for o in cts if isinstance(o,ToolUseBlock)]
     if tcs: res.append(mk_msg(tcs))
     return res
@@ -488,7 +499,7 @@ def __call__(self:Chat,
     if temp is None: temp=self.temp
     self._append_pr(pr)
     def _cb(v):
-        self.last = mk_toolres(v, ns=self.ns, limit_to=allowed_tools(self.tools, tool_choice))
+        self.last = mk_toolres(v, ns=limit_ns(self.ns, self.tools, tool_choice))
         self.h += self.last
     return self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, maxthinktok=maxthinktok,
                  tools=self.tools, tool_choice=tool_choice, cb=_cb, **kw)
