@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.11
+
+### New Features
+
+- Validate tool names returned by model against allowed tools ([#103](https://github.com/AnswerDotAI/claudette/pull/103)), thanks to [@PiotrCzapla](https://github.com/PiotrCzapla)
+
+
 ## 0.3.10
 
 ### Bugs Squashed
