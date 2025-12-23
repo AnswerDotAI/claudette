@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.12
+
+### Bugs Squashed
+
+- Fix `blks2cited_txt` crash for document-based citations ([#101](https://github.com/AnswerDotAI/claudette/pull/101)), thanks to [@erikgaas](https://github.com/erikgaas)
+
+
 ## 0.3.11
 
 ### New Features
