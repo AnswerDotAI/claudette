@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.13
+
+### Bugs Squashed
+
+- Use `r.model_dump(exclude_none=True)` ([#104](https://github.com/AnswerDotAI/claudette/issues/104))
+
+
 ## 0.3.12
 
 ### Bugs Squashed
