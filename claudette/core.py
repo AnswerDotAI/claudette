@@ -394,7 +394,7 @@ def mk_toolres(
     ):
     "Create a `tool_result` message from response `r`."
     cts = getattr(r, 'content', [])
-    res = [mk_msg(r.model_dump(), role='assistant')]
+    res = [mk_msg(r.model_dump(exclude_none=True), role='assistant')]
     if ns is None: ns=globals()
     tcs = [mk_funcres(o, ns) for o in cts if isinstance(o,ToolUseBlock)]
     if tcs: res.append(mk_msg(tcs))
