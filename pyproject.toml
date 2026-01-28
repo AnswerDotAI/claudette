@@ -3,19 +3,16 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name="claudette"
+name = "claudette"
 dynamic = ["version"]
 description = "Claudette is Claude's friend"
 readme = "README.md"
-requires-python=">=3.9"
+requires-python = ">=3.9"
 license = {text = "Apache-2.0"}
 authors = [{name = "Jeremy Howard", email = "j@fast.ai"}]
 keywords = ['nbdev', 'jupyter', 'notebook', 'python']
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-]
-dependencies = ["fastcore>=1.8.4","msglm>=0.0.13","anthropic>=0.52","toolslm>=0.3.0"]
+classifiers = ["Natural Language :: English", "Intended Audience :: Developers", "Development Status :: 4 - Beta", "Programming Language :: Python :: 3", "Programming Language :: Python :: 3 :: Only"]
+dependencies = ['fastcore>=1.8.4', 'msglm>=0.0.13', 'anthropic>=0.52', 'toolslm>=0.3.0']
 
 [project.urls]
 Repository = "https://github.com/AnswerDotAI/claudette"
@@ -24,14 +21,14 @@ Documentation = "https://claudette.answer.ai/"
 [project.entry-points.nbdev]
 claudette = "claudette._modidx:d"
 
+[project.optional-dependencies]
+dev = ['google-auth', 'pycachy']
+
 [tool.setuptools.dynamic]
 version = {attr = "claudette.__version__"}
 
 [tool.setuptools.packages.find]
 include = ["claudette"]
-
-[project.optional-dependencies]
-dev = ["google-auth","pycachy"]
 
 [tool.nbdev]
 nbs_path = '.'
