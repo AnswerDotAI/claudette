@@ -1,11 +1,37 @@
 [build-system]
-requires = ["setuptools>=64.0"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name="claudette"
+dynamic = ["version"]
+description = "Claudette is Claude's friend"
+readme = "README.md"
 requires-python=">=3.9"
-dynamic = [ "keywords", "description", "version", "dependencies", "optional-dependencies", "readme", "license", "authors", "classifiers", "entry-points", "scripts", "urls"]
+license = {text = "Apache-2.0"}
+authors = [{name = "Jeremy Howard", email = "j@fast.ai"}]
+keywords = ['nbdev', 'jupyter', 'notebook', 'python']
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = []
 
-[tool.uv]
-cache-keys = [{ file = "pyproject.toml" }, { file = "settings.ini" }, { file = "setup.py" }]
+[project.urls]
+Repository = "https://github.com/AnswerDotAI/claudette"
+Documentation = "https://claudette.answer.ai/"
+
+[project.entry-points.nbdev]
+claudette = "claudette._modidx:d"
+
+[tool.setuptools.dynamic]
+version = {attr = "claudette.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["claudette"]
+
+[tool.nbdev]
+nbs_path = '.'
+recursive = false
+jupyter_hooks = true
+custom_sidebar = false
