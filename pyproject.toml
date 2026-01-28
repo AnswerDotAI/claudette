@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
 ]
-dependencies = []
+dependencies = ["fastcore>=1.8.4","msglm>=0.0.13","anthropic>=0.52","toolslm>=0.3.0"]
 
 [project.urls]
 Repository = "https://github.com/AnswerDotAI/claudette"
@@ -29,6 +29,9 @@ version = {attr = "claudette.__version__"}
 
 [tool.setuptools.packages.find]
 include = ["claudette"]
+
+[project.optional-dependencies]
+dev = ["google-auth","pycachy"]
 
 [tool.nbdev]
 nbs_path = '.'
