@@ -1,0 +1,24 @@
+# Claudette
+
+> Claudette is a Python library that wraps Anthropic's Claude API to provide a higher-level interface for creating AI applications. It automates common patterns while maintaining full control, offering features like stateful chat, prefill support, image handling, and streamlined tool use.
+
+Things to remember when using Claudette:
+
+- You must set the `ANTHROPIC_API_KEY` environment variable with your Anthropic API key
+- Claudette is designed to work with Claude 3 models (Opus, Sonnet, Haiku) and supports multiple providers (Anthropic direct, AWS Bedrock, Google Vertex)
+- The library provides both synchronous and asynchronous interfaces
+- Use `Chat()` for maintaining conversation state and handling tool interactions
+- When using tools, the library automatically handles the request/response loop
+- Image support is built in but only available on compatible models (not Haiku)
+
+## Docs
+
+- [README](https://raw.githubusercontent.com/AnswerDotAI/claudette/refs/heads/main/README.md): Quick start guide and overview
+
+## API
+
+- [API List](https://raw.githubusercontent.com/AnswerDotAI/claudette/refs/heads/main/apilist.txt): A succint list of all functions and methods in claudette.
+
+## Optional
+- [Tool loop handling](https://claudette.answer.ai/toolloop.html.md): How to use the tool loop functionality for complex multi-step interactions
+- [Async support](https://claudette.answer.ai/async.html.md): Using Claudette with async/await
