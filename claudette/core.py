@@ -39,9 +39,11 @@ empty = inspect.Parameter.empty
 # %% ../00_core.ipynb #0fff8869
 model_types = {
     # Anthropic
-    'claude-opus-4-5': 'opus',
-    'claude-sonnet-4-5': 'sonnet',
+    'claude-opus-4-6': 'opus',
+    'claude-sonnet-4-6': 'sonnet',
     'claude-haiku-4-5': 'haiku',
+    'claude-opus-4-5': 'opus-4-5',
+    'claude-sonnet-4-5': 'sonnet-4-5',
     'claude-opus-4-1-20250805': 'opus-4-1',
     'claude-opus-4-20250514': 'opus-4',
     'claude-3-opus-20240229': 'opus-3',
@@ -98,9 +100,9 @@ has_streaming_models = set(all_models)
 has_system_prompt_models = set(all_models)
 has_temperature_models = set(all_models)
 has_extended_thinking_models = {
-    'claude-opus-4-5', 'claude-opus-4-1-20250805', 'claude-opus-4-20250514',
-    'claude-sonnet-4-20250514', 'claude-3-7-sonnet-20250219', 'sonnet-4-5',
-    'haiku-4-5'
+    'claude-opus-4-6', 'claude-sonnet-4-6',
+    'claude-opus-4-5', 'claude-sonnet-4-5', 'claude-haiku-4-5',
+    'claude-opus-4-1-20250805', 'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-3-7-sonnet-20250219'
 }
 
 # %% ../00_core.ipynb #12a68d54
@@ -135,9 +137,9 @@ def _repr_markdown_(self:(Message)):
 </details>"""
 
 # %% ../00_core.ipynb #56d7e83f
-def server_tool_usage(web_search_requests=0):
+def server_tool_usage(web_search_requests=0, web_fetch_requests=0):
     'Little helper to create a server tool usage object'
-    return ServerToolUsage(web_search_requests=web_search_requests)
+    return ServerToolUsage(web_search_requests=web_search_requests, web_fetch_requests=web_fetch_requests)
 
 # %% ../00_core.ipynb #b1a24f68
 def usage(inp=0, # input tokens
@@ -164,7 +166,7 @@ def __repr__(self:Usage):
     io_toks = f'In: {self.input_tokens}; Out: {self.output_tokens}'
     cache_toks = f'Cache create: {_dgetattr(self, "cache_creation_input_tokens",0)}; Cache read: {_dgetattr(self, "cache_read_input_tokens",0)}'
     server_tool_use = _dgetattr(self, "server_tool_use",server_tool_usage())
-    server_tool_use_str = f'Search: {server_tool_use.web_search_requests}'
+    server_tool_use_str = f'Search: {server_tool_use.web_search_requests}; Fetch: {server_tool_use.web_fetch_requests}'
     total_tok = f'Total Tokens: {self.total}'
     return f'{io_toks}; {cache_toks}; {total_tok}; {server_tool_use_str}'
 
@@ -172,7 +174,8 @@ def __repr__(self:Usage):
 @patch
 def __add__(self:ServerToolUsage, b):
     "Add together each of the server tool use counts"
-    return ServerToolUsage(web_search_requests=self.web_search_requests+b.web_search_requests)
+    return ServerToolUsage(web_search_requests=self.web_search_requests+b.web_search_requests,
+        web_fetch_requests=self.web_fetch_requests+b.web_fetch_requests)
 
 # %% ../00_core.ipynb #6c9025c6
 @patch
