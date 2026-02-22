@@ -2,6 +2,13 @@
 
 <!-- do not remove -->
 
+## 0.3.14
+
+### New Features
+
+- Add Claude 4.6 models, `web_fetch` support ([#109](https://github.com/AnswerDotAI/claudette/issues/109))
+
+
 ## 0.3.13
 
 ### Bugs Squashed
