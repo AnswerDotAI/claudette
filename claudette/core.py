@@ -118,9 +118,10 @@ def _type(x):
     try: return x.type
     except AttributeError: return x.get('type')
 
-def find_block(r:abc.Mapping, # The message to look in
-               blk_type:type|str=TextBlock  # The type of block to find
-              ):
+def find_block(
+    r:abc.Mapping, # The message to look in
+    blk_type:type|str=TextBlock  # The type of block to find
+):
     "Find the first block of type `blk_type` in `r.content`."
     f = (lambda x:_type(x)==blk_type) if isinstance(blk_type,str) else (lambda x:isinstance(x,blk_type))
     return first(o for o in r.content if f(o))
@@ -144,12 +145,13 @@ def server_tool_usage(web_search_requests=0, web_fetch_requests=0):
     return ServerToolUsage(web_search_requests=web_search_requests, web_fetch_requests=web_fetch_requests)
 
 # %% ../nbs/00_core.ipynb #b1a24f68
-def usage(inp=0, # input tokens
-          out=0,  # Output tokens
-          cache_create=0, # Cache creation tokens
-          cache_read=0, # Cache read tokens
-          server_tool_use=server_tool_usage() # server tool use
-         ):
+def usage(
+    inp=0, # input tokens
+    out=0,  # Output tokens
+    cache_create=0, # Cache creation tokens
+    cache_read=0, # Cache read tokens
+    server_tool_use=server_tool_usage() # server tool use
+):
     'Slightly more concise version of `Usage`.'
     return Usage(input_tokens=inp, output_tokens=out, cache_creation_input_tokens=cache_create,
                  cache_read_input_tokens=cache_read, server_tool_use=server_tool_use)
@@ -266,19 +268,21 @@ def _precall(self:Client, msgs, prefill, sp, temp, maxtok, maxthinktok, stream,
 # %% ../nbs/00_core.ipynb #95bddb45
 @patch
 @delegates(messages.Messages.create)
-def __call__(self:Client,
-             msgs:list, # List of messages in the dialog
-             sp='', # The system prompt
-             temp=0, # Temperature
-             maxtok=4096, # Maximum tokens
-             maxthinktok=0, # Maximum thinking tokens
-             prefill='', # Optional prefill to pass to Claude as start of its response
-             stream:bool=False, # Stream response?
-             stop=None, # Stop sequence
-             tools:Optional[list]=None, # List of tools to make available to Claude
-             tool_choice:Optional[dict]=None, # Optionally force use of some tool
-             cb=None, # Callback to pass result to when complete
-             **kwargs):
+def __call__(
+    self:Client,
+    msgs:list, # List of messages in the dialog
+    sp='', # The system prompt
+    temp=0, # Temperature
+    maxtok=4096, # Maximum tokens
+    maxthinktok=0, # Maximum thinking tokens
+    prefill='', # Optional prefill to pass to Claude as start of its response
+    stream:bool=False, # Stream response?
+    stop=None, # Stop sequence
+    tools:Optional[list]=None, # List of tools to make available to Claude
+    tool_choice:Optional[dict]=None, # Optionally force use of some tool
+    cb=None, # Callback to pass result to when complete
+    **kwargs
+):
     "Make a call to Claude."
     msgs,kwargs = self._precall(msgs, prefill, sp, temp, maxtok, maxthinktok, stream,
                                 stop, tools, tool_choice, kwargs)
@@ -385,7 +389,7 @@ def limit_ns(
     ns:Optional[abc.Mapping]=None, # Namespace to search for tools
     specs:Optional[list[Union[str,abc.Callable]]]=None, # List of the tools that are allowed for llm to call
     choice:Optional[Union[dict,str]]=None # Tool choice as defined by Anthropic API
-    ):
+):
     "Filter namespace `ns` to only include tools allowed by `specs` and `choice`"
     if ns is None: ns=globals()
     if not isinstance(ns, abc.Mapping): ns = mk_ns(ns)
@@ -396,7 +400,7 @@ def limit_ns(
 def mk_toolres(
     r:abc.Mapping, # Tool use request response from Claude
     ns:Optional[abc.Mapping]=None, # Namespace to search for tools
-    ):
+):
     "Create a `tool_result` message from response `r`."
     cts = getattr(r, 'content', [])
     res = [mk_msg(r.model_dump(exclude_none=True), role='assistant')]
@@ -408,11 +412,13 @@ def mk_toolres(
 # %% ../nbs/00_core.ipynb #b3564424
 @patch
 @delegates(Client.__call__)
-def structured(self:Client,
-               msgs:list, # List of messages in the dialog
-               tools:list[abc.Callable]=None, # List of tools to make available to Claude
-               ns:Optional[abc.Mapping]=None, # Namespace to search for tools
-               **kwargs):
+def structured(
+    self:Client,
+    msgs:list, # List of messages in the dialog
+    tools:list[abc.Callable]=None, # List of tools to make available to Claude
+    ns:Optional[abc.Mapping]=None, # Namespace to search for tools
+    **kwargs
+):
     "Return the value of all tool calls (generally used for structured outputs)"
     tools = listify(tools)
     res = self(msgs, tools=tools, tool_choice=tools, **kwargs)
@@ -427,8 +433,10 @@ def _is_builtin(tp: type):
     return (tp in (str, int, float, bool, complex) or tp is None
         or getattr(tp, '__origin__', None) is not None)  # Pass through all container types
 
-def _convert(val: Dict, # dictionary argument being passed in
-            tp: type): # type of the tool function input
+def _convert(
+    val: Dict, # dictionary argument being passed in
+    tp: type # type of the tool function input
+):
     "Convert converts a single argument"
     if val is None or _is_builtin(tp) or not isinstance(val, dict): return val
     return tp(**val)
@@ -446,17 +454,18 @@ def tool(func):
 
 # %% ../nbs/00_core.ipynb #755dd2a1
 class Chat:
-    def __init__(self,
-                 model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
-                 cli:Optional[Client]=None, # Client to use (leave empty if passing `model`)
-                 sp='', # Optional system prompt
-                 tools:Optional[list]=None, # List of tools to make available to Claude
-                 temp=0, # Temperature
-                 cont_pr:Optional[str]=None, # User prompt to continue an assistant response
-                 cache: bool = False,  # Use Claude cache?
-                 hist: list = None,  # Initialize history
-                 ns:Optional[abc.Mapping]=None # Namespace to search for tools
-                ):
+    def __init__(
+        self,
+        model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
+        cli:Optional[Client]=None, # Client to use (leave empty if passing `model`)
+        sp='', # Optional system prompt
+        tools:Optional[list]=None, # List of tools to make available to Claude
+        temp=0, # Temperature
+        cont_pr:Optional[str]=None, # User prompt to continue an assistant response
+        cache: bool = False,  # Use Claude cache?
+        hist: list = None,  # Initialize history
+        ns:Optional[abc.Mapping]=None # Namespace to search for tools
+    ):
         "Anthropic chat client."
         assert model or cli
         assert cont_pr != "", "cont_pr may not be an empty string"
@@ -491,15 +500,17 @@ def _append_pr(self:Chat, pr=None):
 
 # %% ../nbs/00_core.ipynb #a9bcc67a
 @patch
-def __call__(self:Chat,
-             pr=None,  # Prompt / message
-             temp=None, # Temperature
-             maxtok=4096, # Maximum tokens
-             maxthinktok=0, # Maximum thinking tokens
-             stream=False, # Stream response?
-             prefill='', # Optional prefill to pass to Claude as start of its response
-             tool_choice:Optional[dict]=None, # Optionally force use of some tool
-             **kw):
+def __call__(
+    self:Chat,
+    pr=None,  # Prompt / message
+    temp=None, # Temperature
+    maxtok=4096, # Maximum tokens
+    maxthinktok=0, # Maximum thinking tokens
+    stream=False, # Stream response?
+    prefill='', # Optional prefill to pass to Claude as start of its response
+    tool_choice:Optional[dict]=None, # Optionally force use of some tool
+    **kw
+):
     if temp is None: temp=self.temp
     self._append_pr(pr)
     def _cb(v):
@@ -582,7 +593,7 @@ def blks2cited_txt(txt_blks):
         src = getattr(cit, 'url', None) or cit.document_title
         return f'[^{i+1}]: {src}\n\t"{esc}"'
     if citations:
-        refs = '\n\n'.join(L.enumerate(citations).starmap(_cite))
+        refs = '\n\n'.join(L.enumerate(citations).map(star(_cite)))
         body = f"{body}\n\n{refs}" if body else refs
     return body
 
