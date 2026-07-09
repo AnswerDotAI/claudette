@@ -33,7 +33,6 @@ include = ["claudette"]
 [tool.nbdev]
 allowed_metadata_keys = ['solveit']
 allowed_cell_metadata_keys = ['solveit_ai']
-nbs_path = '.'
 recursive = false
 jupyter_hooks = true
 custom_sidebar = false
