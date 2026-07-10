@@ -22,7 +22,7 @@ Documentation = "https://claudette.answer.ai/"
 claudette = "claudette._modidx:d"
 
 [project.optional-dependencies]
-dev = ['google-auth', 'pycachy']
+dev = ['google-auth', 'pycachy', 'pysymbol_llm>=0.0.6']
 
 [tool.setuptools.dynamic]
 version = {attr = "claudette.__version__"}
