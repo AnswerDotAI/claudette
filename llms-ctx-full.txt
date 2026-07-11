@@ -1,0 +1,2054 @@
+<project title="Claudette" summary="Claudette is a Python library that wraps Anthropic's Claude API to provide a higher-level interface for creating AI applications. It automates common patterns while maintaining full control, offering features like stateful chat, prefill support, image handling, and streamlined tool use.">Things to remember when using Claudette:
+
+- You must set the `ANTHROPIC_API_KEY` environment variable with your Anthropic API key
+- Claudette is designed to work with Claude 3 models (Opus, Sonnet, Haiku) and supports multiple providers (Anthropic direct, AWS Bedrock, Google Vertex)
+- The library provides both synchronous and asynchronous interfaces
+- Use `Chat()` for maintaining conversation state and handling tool interactions
+- When using tools, the library automatically handles the request/response loop
+- Image support is built in but only available on compatible models (not Haiku)<docs><doc title="README" desc="Quick start guide and overview"># claudette
+
+
+
+> **NB**: If you are reading this in GitHub’s readme, we recommend you
+> instead read the much more nicely formatted [documentation
+> format](https://claudette.answer.ai/) of this tutorial.
+
+*Claudette* is a wrapper for Anthropic’s [Python
+SDK](https://github.com/anthropics/anthropic-sdk-python).
+
+The SDK works well, but it is quite low level – it leaves the developer
+to do a lot of stuff manually. That’s a lot of extra work and
+boilerplate! Claudette automates pretty much everything that can be
+automated, whilst providing full control. Amongst the features provided:
+
+- A [`Chat`](https://claudette.answer.ai/core.html#chat) class that
+  creates stateful dialogs
+- Support for *prefill*, which tells Claude what to use as the first few
+  words of its response
+- Convenient image support
+- Simple and convenient support for Claude’s new Tool Use API.
+
+You’ll need to set the `ANTHROPIC_API_KEY` environment variable to the
+key provided to you by Anthropic in order to use this library.
+
+Note that this library is the first ever “literate nbdev” project. That
+means that the actual source code for the library is a rendered Jupyter
+Notebook which includes callout notes and tips, HTML tables and images,
+detailed explanations, and teaches *how* and *why* the code is written
+the way it is. Even if you’ve never used the Anthropic Python SDK or
+Claude API before, you should be able to read the source code. Click
+[Claudette’s Source](https://claudette.answer.ai/core.html) to read it,
+or clone the git repo and execute the notebook yourself to see every
+step of the creation process in action. The tutorial below includes
+links to API details which will take you to relevant parts of the
+source. The reason this project is a new kind of literal program is
+because we take seriously Knuth’s call to action, that we have a “*moral
+commitment*” to never write an “*illiterate program*” – and so we have a
+commitment to making literate programming and easy and pleasant
+experience. (For more on this, see [this
+talk](https://www.youtube.com/watch?v=rX1yGxJijsI) from Hamel Husain.)
+
+> “*Let us change our traditional attitude to the construction of
+> programs: Instead of imagining that our main task is to instruct a
+> **computer** what to do, let us concentrate rather on explaining to
+> **human beings** what we want a computer to do.*” Donald E. Knuth,
+> [Literate
+> Programming](https://www.cs.tufts.edu/~nr/cs257/archive/literate-programming/01-knuth-lp.pdf)
+> (1984)
+
+## Install
+
+``` sh
+pip install claudette
+```
+
+## Getting started
+
+Anthropic’s Python SDK will automatically be installed with Claudette,
+if you don’t already have it.
+
+``` python
+import os
+# os.environ['ANTHROPIC_LOG'] = 'debug'
+```
+
+To print every HTTP request and response in full, uncomment the above
+line.
+
+``` python
+from claudette import *
+```
+
+Claudette only exports the symbols that are needed to use the library,
+so you can use `import *` to import them. Alternatively, just use:
+
+``` python
+import claudette
+```
+
+…and then add the prefix `claudette.` to any usages of the module.
+
+Claudette provides `models`, which is a list of models currently
+available from the SDK.
+
+``` python
+models
+```
+
+    ['claude-3-opus-20240229',
+     'claude-3-5-sonnet-20241022',
+     'claude-3-haiku-20240307']
+
+For these examples, we’ll use Sonnet 3.5, since it’s awesome!
+
+``` python
+model = models[1]
+```
+
+## Chat
+
+The main interface to Claudette is the
+[`Chat`](https://claudette.answer.ai/core.html#chat) class, which
+provides a stateful interface to Claude:
+
+``` python
+chat = Chat(model, sp="""You are a helpful and concise assistant.""")
+chat("I'm Jeremy")
+```
+
+Hello Jeremy, nice to meet you.
+
+<details>
+
+- id: `msg_015oK9jEcra3TEKHUGYULjWB`
+- content:
+  `[{'text': 'Hello Jeremy, nice to meet you.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 19, 'output_tokens': 11, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+r = chat("What's my name?")
+r
+```
+
+Your name is Jeremy.
+
+<details>
+
+- id: `msg_01Si8sTFJe8d8vq7enanbAwj`
+- content: `[{'text': 'Your name is Jeremy.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 38, 'output_tokens': 8, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+r = chat("What's my name?")
+r
+```
+
+Your name is Jeremy.
+
+<details>
+
+- id: `msg_01BHWRoAX8eBsoLn2bzpBkvx`
+- content: `[{'text': 'Your name is Jeremy.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 54, 'output_tokens': 8, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+As you see above, displaying the results of a call in a notebook shows
+just the message contents, with the other details hidden behind a
+collapsible section. Alternatively you can `print` the details:
+
+``` python
+print(r)
+```
+
+    Message(id='msg_01BHWRoAX8eBsoLn2bzpBkvx', content=[TextBlock(text='Your name is Jeremy.', type='text')], model='claude-3-5-sonnet-20241022', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=In: 54; Out: 8; Cache create: 0; Cache read: 0; Total: 62)
+
+Claude supports adding an extra `assistant` message at the end, which
+contains the *prefill* – i.e. the text we want Claude to assume the
+response starts with. Let’s try it out:
+
+``` python
+chat("Concisely, what is the meaning of life?",
+     prefill='According to Douglas Adams,')
+```
+
+According to Douglas Adams,42. Philosophically, it’s to find personal
+meaning through relationships, purpose, and experiences.
+
+<details>
+
+- id: `msg_01R9RvMdFwea9iRX5uYSSHG7`
+- content:
+  `[{'text': "According to Douglas Adams,42. Philosophically, it's to find personal meaning through relationships, purpose, and experiences.", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 82, 'output_tokens': 23, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+You can add `stream=True` to stream the results as soon as they arrive
+(although you will only see the gradual generation if you execute the
+notebook yourself, of course!)
+
+``` python
+for o in chat("Concisely, what book was that in?", prefill='It was in', stream=True):
+    print(o, end='')
+```
+
+    It was in "The Hitchhiker's Guide to the Galaxy" by Douglas Adams.
+
+### Async
+
+Alternatively, you can use
+[`AsyncChat`](https://claudette.answer.ai/async.html#asyncchat) (or
+[`AsyncClient`](https://claudette.answer.ai/async.html#asyncclient)) for
+the async versions, e.g:
+
+``` python
+chat = AsyncChat(model)
+await chat("I'm Jeremy")
+```
+
+Hi Jeremy! Nice to meet you. I’m Claude, an AI assistant created by
+Anthropic. How can I help you today?
+
+<details>
+
+- id: `msg_016Q8cdc3sPWBS8eXcNj841L`
+- content:
+  `[{'text': "Hi Jeremy! Nice to meet you. I'm Claude, an AI assistant created by Anthropic. How can I help you today?", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 10, 'output_tokens': 31, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+Remember to use `async for` when streaming in this case:
+
+``` python
+async for o in await chat("Concisely, what is the meaning of life?",
+                          prefill='According to Douglas Adams,', stream=True):
+    print(o, end='')
+```
+
+    According to Douglas Adams,  it's 42. But in my view, there's no single universal meaning - each person must find their own purpose through relationships, personal growth, contribution to others, and pursuit of what they find meaningful.
+
+## Prompt caching
+
+If you use `mk_msg(msg, cache=True)`, then the message is cached using
+Claude’s [prompt
+caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)
+feature. For instance, here we use caching when asking about Claudette’s
+readme file:
+
+``` python
+chat = Chat(model, sp="""You are a helpful and concise assistant.""")
+```
+
+``` python
+nbtxt = Path('README.txt').read_text()
+msg = f'''<README>
+{nbtxt}
+</README>
+In brief, what is the purpose of this project based on the readme?'''
+r = chat(mk_msg(msg, cache=True))
+r
+```
+
+Claudette is a high-level wrapper for Anthropic’s Python SDK that
+automates common tasks and provides additional functionality. Its main
+features include:
+
+1.  A Chat class for stateful dialogs
+2.  Support for prefill (controlling Claude’s initial response words)
+3.  Convenient image handling
+4.  Simple tool use API integration
+5.  Support for multiple model providers (Anthropic, AWS Bedrock, Google
+    Vertex)
+
+The project is notable for being the first “literate nbdev” project,
+meaning its source code is written as a detailed, readable Jupyter
+Notebook that includes explanations, examples, and teaching material
+alongside the functional code.
+
+The goal is to simplify working with Claude’s API while maintaining full
+control, reducing boilerplate code and manual work that would otherwise
+be needed with the base SDK.
+
+<details>
+
+- id: `msg_014rVQnYoZXZuyWUCMELG1QW`
+- content:
+  `[{'text': 'Claudette is a high-level wrapper for Anthropic\'s Python SDK that automates common tasks and provides additional functionality. Its main features include:\n\n1. A Chat class for stateful dialogs\n2. Support for prefill (controlling Claude\'s initial response words)\n3. Convenient image handling\n4. Simple tool use API integration\n5. Support for multiple model providers (Anthropic, AWS Bedrock, Google Vertex)\n\nThe project is notable for being the first "literate nbdev" project, meaning its source code is written as a detailed, readable Jupyter Notebook that includes explanations, examples, and teaching material alongside the functional code.\n\nThe goal is to simplify working with Claude\'s API while maintaining full control, reducing boilerplate code and manual work that would otherwise be needed with the base SDK.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 4, 'output_tokens': 179, 'cache_creation_input_tokens': 7205, 'cache_read_input_tokens': 0}`
+
+</details>
+
+The response records the a cache has been created using these input
+tokens:
+
+``` python
+print(r.usage)
+```
+
+    Usage(input_tokens=4, output_tokens=179, cache_creation_input_tokens=7205, cache_read_input_tokens=0)
+
+We can now ask a followup question in this chat:
+
+``` python
+r = chat('How does it make tool use more ergonomic?')
+r
+```
+
+According to the README, Claudette makes tool use more ergonomic in
+several ways:
+
+1.  It uses docments to make Python function definitions more
+    user-friendly - each parameter and return value should have a type
+    and description
+
+2.  It handles the tool calling process automatically - when Claude
+    returns a tool_use message, Claudette manages calling the tool with
+    the provided parameters behind the scenes
+
+3.  It provides a `toolloop` method that can handle multiple tool calls
+    in a single step to solve more complex problems
+
+4.  It allows you to pass a list of tools to the Chat constructor and
+    optionally force Claude to always use a specific tool via
+    `tool_choice`
+
+Here’s a simple example from the README:
+
+``` python
+def sums(
+    a:int,  # First thing to sum 
+    b:int=1 # Second thing to sum
+) -> int: # The sum of the inputs
+    "Adds a + b."
+    print(f"Finding the sum of {a} and {b}")
+    return a + b
+
+chat = Chat(model, sp=sp, tools=[sums], tool_choice='sums')
+```
+
+This makes it much simpler compared to manually handling all the tool
+use logic that would be required with the base SDK.
+
+<details>
+
+- id: `msg_01EdUvvFBnpPxMtdLRCaSZAU`
+- content:
+  `[{'text': 'According to the README, Claudette makes tool use more ergonomic in several ways:\n\n1. It uses docments to make Python function definitions more user-friendly - each parameter and return value should have a type and description\n\n2. It handles the tool calling process automatically - when Claude returns a tool_use message, Claudette manages calling the tool with the provided parameters behind the scenes\n\n3. It provides a`toolloop`method that can handle multiple tool calls in a single step to solve more complex problems\n\n4. It allows you to pass a list of tools to the Chat constructor and optionally force Claude to always use a specific tool via`tool_choice```` \n\nHere\'s a simple example from the README:\n\n```python\ndef sums(\n    a:int,  # First thing to sum \n    b:int=1 # Second thing to sum\n) -> int: # The sum of the inputs\n    "Adds a + b."\n    print(f"Finding the sum of {a} and {b}")\n    return a + b\n\nchat = Chat(model, sp=sp, tools=[sums], tool_choice=\'sums\')\n```\n\nThis makes it much simpler compared to manually handling all the tool use logic that would be required with the base SDK.', 'type': 'text'}] ````
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 197, 'output_tokens': 280, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 7205}`
+
+</details>
+
+We can see that this only used ~200 regular input tokens – the 7000+
+context tokens have been read from cache.
+
+``` python
+print(r.usage)
+```
+
+    Usage(input_tokens=197, output_tokens=280, cache_creation_input_tokens=0, cache_read_input_tokens=7205)
+
+``` python
+chat.use
+```
+
+    In: 201; Out: 459; Cache create: 7205; Cache read: 7205; Total: 15070
+
+## Tool use
+
+[Tool use](https://docs.anthropic.com/claude/docs/tool-use) lets Claude
+use external tools.
+
+We use [docments](https://fastcore.fast.ai/docments.html) to make
+defining Python functions as ergonomic as possible. Each parameter (and
+the return value) should have a type, and a docments comment with the
+description of what it is. As an example we’ll write a simple function
+that adds numbers together, and will tell us when it’s being called:
+
+``` python
+def sums(
+    a:int,  # First thing to sum
+    b:int=1 # Second thing to sum
+) -> int: # The sum of the inputs
+    "Adds a + b."
+    print(f"Finding the sum of {a} and {b}")
+    return a + b
+```
+
+Sometimes Claude will say something like “according to the `sums` tool
+the answer is” – generally we’d rather it just tells the user the
+answer, so we can use a system prompt to help with this:
+
+``` python
+sp = "Never mention what tools you use."
+```
+
+We’ll get Claude to add up some long numbers:
+
+``` python
+a,b = 604542,6458932
+pr = f"What is {a}+{b}?"
+pr
+```
+
+    'What is 604542+6458932?'
+
+To use tools, pass a list of them to
+[`Chat`](https://claudette.answer.ai/core.html#chat):
+
+``` python
+chat = Chat(model, sp=sp, tools=[sums])
+```
+
+To force Claude to always answer using a tool, set `tool_choice` to that
+function name. When Claude needs to use a tool, it doesn’t return the
+answer, but instead returns a `tool_use` message, which means we have to
+call the named tool with the provided parameters.
+
+``` python
+r = chat(pr, tool_choice='sums')
+r
+```
+
+    Finding the sum of 604542 and 6458932
+
+ToolUseBlock(id=‘toolu_014ip2xWyEq8RnAccVT4SySt’, input={‘a’: 604542,
+‘b’: 6458932}, name=‘sums’, type=‘tool_use’)
+
+<details>
+
+- id: `msg_014xrPyotyiBmFSctkp1LZHk`
+- content:
+  `[{'id': 'toolu_014ip2xWyEq8RnAccVT4SySt', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `tool_use`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 442, 'output_tokens': 53, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+Claudette handles all that for us – we just call it again, and it all
+happens automatically:
+
+``` python
+chat()
+```
+
+The sum of 604542 and 6458932 is 7063474.
+
+<details>
+
+- id: `msg_01151puJxG8Fa6k6QSmzwKQA`
+- content:
+  `[{'text': 'The sum of 604542 and 6458932 is 7063474.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 524, 'output_tokens': 23, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+You can see how many tokens have been used at any time by checking the
+`use` property. Note that (as of May 2024) tool use in Claude uses a
+*lot* of tokens, since it automatically adds a large system prompt.
+
+``` python
+chat.use
+```
+
+    In: 966; Out: 76; Cache create: 0; Cache read: 0; Total: 1042
+
+We can do everything needed to use tools in a single step, by using
+[`Chat.toolloop`](https://claudette.answer.ai/toolloop.html#chat.toolloop).
+This can even call multiple tools as needed solve a problem. For
+example, let’s define a tool to handle multiplication:
+
+``` python
+def mults(
+    a:int,  # First thing to multiply
+    b:int=1 # Second thing to multiply
+) -> int: # The product of the inputs
+    "Multiplies a * b."
+    print(f"Finding the product of {a} and {b}")
+    return a * b
+```
+
+Now with a single call we can calculate `(a+b)*2` – by passing
+`show_trace` we can see each response from Claude in the process:
+
+``` python
+chat = Chat(model, sp=sp, tools=[sums,mults])
+pr = f'Calculate ({a}+{b})*2'
+pr
+```
+
+    'Calculate (604542+6458932)*2'
+
+``` python
+chat.toolloop(pr, trace_func=print)
+```
+
+    Finding the sum of 604542 and 6458932
+    [{'role': 'user', 'content': [{'type': 'text', 'text': 'Calculate (604542+6458932)*2'}]}, {'role': 'assistant', 'content': [TextBlock(text="I'll help you break this down into steps:\n\nFirst, let's add those numbers:", type='text'), ToolUseBlock(id='toolu_01St5UKxYUU4DKC96p2PjgcD', input={'a': 604542, 'b': 6458932}, name='sums', type='tool_use')]}, {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'toolu_01St5UKxYUU4DKC96p2PjgcD', 'content': '7063474'}]}]
+    Finding the product of 7063474 and 2
+    [{'role': 'assistant', 'content': [TextBlock(text="Now, let's multiply this result by 2:", type='text'), ToolUseBlock(id='toolu_01FpmRG4ZskKEWN1gFZzx49s', input={'a': 7063474, 'b': 2}, name='mults', type='tool_use')]}, {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'toolu_01FpmRG4ZskKEWN1gFZzx49s', 'content': '14126948'}]}]
+    [{'role': 'assistant', 'content': [TextBlock(text='The final result is 14,126,948.', type='text')]}]
+
+The final result is 14,126,948.
+
+<details>
+
+- id: `msg_0162teyBcJHriUzZXMPz4r5d`
+- content:
+  `[{'text': 'The final result is 14,126,948.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 741, 'output_tokens': 15, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+## Structured data
+
+If you just want the immediate result from a single tool, use
+[`Client.structured`](https://claudette.answer.ai/core.html#client.structured).
+
+``` python
+cli = Client(model)
+```
+
+``` python
+def sums(
+    a:int,  # First thing to sum
+    b:int=1 # Second thing to sum
+) -> int: # The sum of the inputs
+    "Adds a + b."
+    print(f"Finding the sum of {a} and {b}")
+    return a + b
+```
+
+``` python
+cli.structured("What is 604542+6458932", sums)
+```
+
+    Finding the sum of 604542 and 6458932
+
+    [7063474]
+
+This is particularly useful for getting back structured information,
+e.g:
+
+``` python
+class President:
+    "Information about a president of the United States"
+    def __init__(self, 
+                first:str, # first name
+                last:str, # last name
+                spouse:str, # name of spouse
+                years_in_office:str, # format: "{start_year}-{end_year}"
+                birthplace:str, # name of city
+                birth_year:int # year of birth, `0` if unknown
+        ):
+        assert re.match(r'\d{4}-\d{4}', years_in_office), "Invalid format: `years_in_office`"
+        store_attr()
+
+    __repr__ = basic_repr('first, last, spouse, years_in_office, birthplace, birth_year')
+```
+
+``` python
+cli.structured("Provide key information about the 3rd President of the United States", President)
+```
+
+    [President(first='Thomas', last='Jefferson', spouse='Martha Wayles', years_in_office='1801-1809', birthplace='Shadwell', birth_year=1743)]
+
+## Images
+
+Claude can handle image data as well. As everyone knows, when testing
+image APIs you have to use a cute puppy.
+
+``` python
+fn = Path('samples/puppy.jpg')
+display.Image(filename=fn, width=200)
+```
+
+<img src="index_files/figure-commonmark/cell-35-output-1.jpeg"
+width="200" />
+
+We create a [`Chat`](https://claudette.answer.ai/core.html#chat) object
+as before:
+
+``` python
+chat = Chat(model)
+```
+
+Claudette expects images as a list of bytes, so we read in the file:
+
+``` python
+img = fn.read_bytes()
+```
+
+Prompts to Claudette can be lists, containing text, images, or both, eg:
+
+``` python
+chat([img, "In brief, what color flowers are in this image?"])
+```
+
+In this adorable puppy photo, there are purple/lavender colored flowers
+(appears to be asters or similar daisy-like flowers) in the background.
+
+<details>
+
+- id: `msg_01LHjGv1WwFvDsWUbyLmTEKT`
+- content:
+  `[{'text': 'In this adorable puppy photo, there are purple/lavender colored flowers (appears to be asters or similar daisy-like flowers) in the background.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 110, 'output_tokens': 37, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+The image is included as input tokens.
+
+``` python
+chat.use
+```
+
+    In: 110; Out: 37; Cache create: 0; Cache read: 0; Total: 147
+
+Alternatively, Claudette supports creating a multi-stage chat with
+separate image and text prompts. For instance, you can pass just the
+image as the initial prompt (in which case Claude will make some general
+comments about what it sees), and then follow up with questions in
+additional prompts:
+
+``` python
+chat = Chat(model)
+chat(img)
+```
+
+What an adorable Cavalier King Charles Spaniel puppy! The photo captures
+the classic brown and white coloring of the breed, with those soulful
+dark eyes that are so characteristic. The puppy is lying in the grass,
+and there are lovely purple asters blooming in the background, creating
+a beautiful natural setting. The combination of the puppy’s sweet
+expression and the delicate flowers makes for a charming composition.
+Cavalier King Charles Spaniels are known for their gentle, affectionate
+nature, and this little one certainly seems to embody those traits with
+its endearing look.
+
+<details>
+
+- id: `msg_01Ciyymq44uwp2iYwRZdKWNN`
+- content:
+  `[{'text': "What an adorable Cavalier King Charles Spaniel puppy! The photo captures the classic brown and white coloring of the breed, with those soulful dark eyes that are so characteristic. The puppy is lying in the grass, and there are lovely purple asters blooming in the background, creating a beautiful natural setting. The combination of the puppy's sweet expression and the delicate flowers makes for a charming composition. Cavalier King Charles Spaniels are known for their gentle, affectionate nature, and this little one certainly seems to embody those traits with its endearing look.", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 98, 'output_tokens': 130, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+chat('What direction is the puppy facing?')
+```
+
+The puppy is facing towards the left side of the image. Its head is
+positioned so we can see its right side profile, though it appears to be
+looking slightly towards the camera, giving us a good view of its
+distinctive brown and white facial markings and one of its dark eyes.
+The puppy is lying down with its white chest/front visible against the
+green grass.
+
+<details>
+
+- id: `msg_01AeR9eWjbxa788YF97iErtN`
+- content:
+  `[{'text': 'The puppy is facing towards the left side of the image. Its head is positioned so we can see its right side profile, though it appears to be looking slightly towards the camera, giving us a good view of its distinctive brown and white facial markings and one of its dark eyes. The puppy is lying down with its white chest/front visible against the green grass.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 239, 'output_tokens': 79, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+chat('What color is it?')
+```
+
+The puppy has a classic Cavalier King Charles Spaniel coat with a rich
+chestnut brown (sometimes called Blenheim) coloring on its ears and
+patches on its face, combined with a bright white base color. The white
+is particularly prominent on its face (creating a distinctive blaze down
+the center) and chest area. This brown and white combination is one of
+the most recognizable color patterns for the breed.
+
+<details>
+
+- id: `msg_01R91AqXG7pLc8hK24F5mc7x`
+- content:
+  `[{'text': 'The puppy has a classic Cavalier King Charles Spaniel coat with a rich chestnut brown (sometimes called Blenheim) coloring on its ears and patches on its face, combined with a bright white base color. The white is particularly prominent on its face (creating a distinctive blaze down the center) and chest area. This brown and white combination is one of the most recognizable color patterns for the breed.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 326, 'output_tokens': 92, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+Note that the image is passed in again for every input in the dialog, so
+that number of input tokens increases quickly with this kind of chat.
+(For large images, using prompt caching might be a good idea.)
+
+``` python
+chat.use
+```
+
+    In: 663; Out: 301; Cache create: 0; Cache read: 0; Total: 964
+
+## Other model providers
+
+You can also use 3rd party providers of Anthropic models, as shown here.
+
+### Amazon Bedrock
+
+These are the models available through Bedrock:
+
+``` python
+models_aws
+```
+
+    ['anthropic.claude-3-opus-20240229-v1:0',
+     'anthropic.claude-3-5-sonnet-20241022-v2:0',
+     'anthropic.claude-3-sonnet-20240229-v1:0',
+     'anthropic.claude-3-haiku-20240307-v1:0']
+
+To use them, call `AnthropicBedrock` with your access details, and pass
+that to [`Client`](https://claudette.answer.ai/core.html#client):
+
+``` python
+from anthropic import AnthropicBedrock
+```
+
+``` python
+ab = AnthropicBedrock(
+    aws_access_key=os.environ['AWS_ACCESS_KEY'],
+    aws_secret_key=os.environ['AWS_SECRET_KEY'],
+)
+client = Client(models_aws[-1], ab)
+```
+
+Now create your [`Chat`](https://claudette.answer.ai/core.html#chat)
+object passing this client to the `cli` parameter – and from then on,
+everything is identical to the previous examples.
+
+``` python
+chat = Chat(cli=client)
+chat("I'm Jeremy")
+```
+
+It’s nice to meet you, Jeremy! I’m Claude, an AI assistant created by
+Anthropic. How can I help you today?
+
+<details>
+
+- id: `msg_bdrk_01V3B5RF2Pyzmh3NeR8xMMpq`
+- content:
+  `[{'text': "It's nice to meet you, Jeremy! I'm Claude, an AI assistant created by Anthropic. How can I help you today?", 'type': 'text'}]`
+- model: `claude-3-haiku-20240307`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage: `{'input_tokens': 10, 'output_tokens': 32}`
+
+</details>
+
+### Google Vertex
+
+These are the models available through Vertex:
+
+``` python
+models_goog
+```
+
+    ['claude-3-opus@20240229',
+     'claude-3-5-sonnet-v2@20241022',
+     'claude-3-sonnet@20240229',
+     'claude-3-haiku@20240307']
+
+To use them, call `AnthropicVertex` with your access details, and pass
+that to [`Client`](https://claudette.answer.ai/core.html#client):
+
+``` python
+from anthropic import AnthropicVertex
+import google.auth
+```
+
+``` python
+project_id = google.auth.default()[1]
+gv = AnthropicVertex(project_id=project_id, region="us-east5")
+client = Client(models_goog[-1], gv)
+```
+
+``` python
+chat = Chat(cli=client)
+chat("I'm Jeremy")
+```
+
+## Extensions
+
+- [Pydantic Structured
+  Ouput](https://github.com/tom-pollak/claudette-pydantic)</doc></docs><api><doc title="API List" desc="A succint list of all functions and methods in claudette.">404: Not Found</doc></api><optional><doc title="Tool loop handling" desc="How to use the tool loop functionality for complex multi-step interactions"># Tool loop
+
+
+
+``` python
+import os
+# os.environ['ANTHROPIC_LOG'] = 'debug'
+```
+
+``` python
+model = models[-1]
+```
+
+Anthropic provides an [interesting
+example](https://github.com/anthropics/anthropic-cookbook/blob/main/tool_use/customer_service_agent.ipynb)
+of using tools to mock up a hypothetical ordering system. We’re going to
+take it a step further, and show how we can dramatically simplify the
+process, whilst completing more complex tasks.
+
+We’ll start by defining the same mock customer/order data as in
+Anthropic’s example, plus create a entity relationship between customers
+and orders:
+
+``` python
+orders = {
+    "O1": dict(id="O1", product="Widget A", quantity=2, price=19.99, status="Shipped"),
+    "O2": dict(id="O2", product="Gadget B", quantity=1, price=49.99, status="Processing"),
+    "O3": dict(id="O3", product="Gadget B", quantity=2, price=49.99, status="Shipped")}
+
+customers = {
+    "C1": dict(name="John Doe", email="john@example.com", phone="123-456-7890",
+               orders=[orders['O1'], orders['O2']]),
+    "C2": dict(name="Jane Smith", email="jane@example.com", phone="987-654-3210",
+               orders=[orders['O3']])
+}
+```
+
+We can now define the same functions from the original example – but
+note that we don’t need to manually create the large JSON schema, since
+Claudette handles all that for us automatically from the functions
+directly. We’ll add some extra functionality to update order details
+when cancelling too.
+
+``` python
+def get_customer_info(
+    customer_id:str # ID of the customer
+): # Customer's name, email, phone number, and list of orders
+    "Retrieves a customer's information and their orders based on the customer ID"
+    print(f'- Retrieving customer {customer_id}')
+    return customers.get(customer_id, "Customer not found")
+
+def get_order_details(
+    order_id:str # ID of the order
+): # Order's ID, product name, quantity, price, and order status
+    "Retrieves the details of a specific order based on the order ID"
+    print(f'- Retrieving order {order_id}')
+    return orders.get(order_id, "Order not found")
+
+def cancel_order(
+    order_id:str # ID of the order to cancel
+)->bool: # True if the cancellation is successful
+    "Cancels an order based on the provided order ID"
+    print(f'- Cancelling order {order_id}')
+    if order_id not in orders: return False
+    orders[order_id]['status'] = 'Cancelled'
+    return True
+```
+
+We’re now ready to start our chat.
+
+``` python
+tools = [get_customer_info, get_order_details, cancel_order]
+chat = Chat(model, tools=tools)
+```
+
+We’ll start with the same request as Anthropic showed:
+
+``` python
+r = chat('Can you tell me the email address for customer C1?')
+print(r.stop_reason)
+r.content
+```
+
+    - Retrieving customer C1
+    tool_use
+
+    [ToolUseBlock(id='toolu_0168sUZoEUpjzk5Y8WN3q9XL', input={'customer_id': 'C1'}, name='get_customer_info', type='tool_use')]
+
+Claude asks us to use a tool. Claudette handles that automatically by
+just calling it again:
+
+``` python
+r = chat()
+contents(r)
+```
+
+    'The email address for customer C1 is john@example.com.'
+
+Let’s consider a more complex case than in the original example – what
+happens if a customer wants to cancel all of their orders?
+
+``` python
+chat = Chat(model, tools=tools)
+r = chat('Please cancel all orders for customer C1 for me.')
+print(r.stop_reason)
+r.content
+```
+
+    - Retrieving customer C1
+    tool_use
+
+    [TextBlock(text="Okay, let's cancel all orders for customer C1:", type='text'),
+     ToolUseBlock(id='toolu_01ADr1rEp7NLZ2iKWfLp7vz7', input={'customer_id': 'C1'}, name='get_customer_info', type='tool_use')]
+
+This is the start of a multi-stage tool use process. Doing it manually
+step by step is inconvenient, so let’s write a function to handle this
+for us:
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/toolloop.py#L16"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### Chat.toolloop
+
+>      Chat.toolloop (pr, max_steps=10, trace_func:Optional[<built-
+>                     infunctioncallable>]=None, cont_func:Optional[<built-
+>                     infunctioncallable>]=<function noop>, temp=None,
+>                     maxtok=4096, stream=False, prefill='',
+>                     tool_choice:Optional[dict]=None)
+
+*Add prompt `pr` to dialog and get a response from Claude, automatically
+following up with `tool_use` messages*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pr</td>
+<td></td>
+<td></td>
+<td>Prompt to pass to Claude</td>
+</tr>
+<tr class="even">
+<td>max_steps</td>
+<td>int</td>
+<td>10</td>
+<td>Maximum number of tool requests to loop through</td>
+</tr>
+<tr class="odd">
+<td>trace_func</td>
+<td>Optional</td>
+<td>None</td>
+<td>Function to trace tool use steps (e.g <code>print</code>)</td>
+</tr>
+<tr class="even">
+<td>cont_func</td>
+<td>Optional</td>
+<td>noop</td>
+<td>Function that stops loop if returns False</td>
+</tr>
+<tr class="odd">
+<td>temp</td>
+<td>NoneType</td>
+<td>None</td>
+<td>Temperature</td>
+</tr>
+<tr class="even">
+<td>maxtok</td>
+<td>int</td>
+<td>4096</td>
+<td>Maximum tokens</td>
+</tr>
+<tr class="odd">
+<td>stream</td>
+<td>bool</td>
+<td>False</td>
+<td>Stream response?</td>
+</tr>
+<tr class="even">
+<td>prefill</td>
+<td>str</td>
+<td></td>
+<td>Optional prefill to pass to Claude as start of its response</td>
+</tr>
+<tr class="odd">
+<td>tool_choice</td>
+<td>Optional</td>
+<td>None</td>
+<td>Optionally force use of some tool</td>
+</tr>
+</tbody>
+</table>
+
+<details open class="code-fold">
+<summary>Exported source</summary>
+
+``` python
+@patch
+@delegates(Chat.__call__)
+def toolloop(self:Chat,
+             pr, # Prompt to pass to Claude
+             max_steps=10, # Maximum number of tool requests to loop through
+             trace_func:Optional[callable]=None, # Function to trace tool use steps (e.g `print`)
+             cont_func:Optional[callable]=noop, # Function that stops loop if returns False
+             **kwargs):
+    "Add prompt `pr` to dialog and get a response from Claude, automatically following up with `tool_use` messages"
+    n_msgs = len(self.h)
+    r = self(pr, **kwargs)
+    for i in range(max_steps):
+        if r.stop_reason!='tool_use': break
+        if trace_func: trace_func(self.h[n_msgs:]); n_msgs = len(self.h)
+        r = self(**kwargs)
+        if not (cont_func or noop)(self.h[-2]): break
+    if trace_func: trace_func(self.h[n_msgs:])
+    return r
+```
+
+</details>
+
+We’ll start by re-running our previous request - we shouldn’t have to
+manually pass back the `tool_use` message any more:
+
+``` python
+chat = Chat(model, tools=tools)
+r = chat.toolloop('Can you tell me the email address for customer C1?')
+r
+```
+
+    - Retrieving customer C1
+
+The email address for customer C1 is john@example.com.
+
+<details>
+
+- id: `msg_01Fm2CY76dNeWief4kUW6r71`
+- content:
+  `[{'text': 'The email address for customer C1 is john@example.com.', 'type': 'text'}]`
+- model: `claude-3-haiku-20240307`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 720, 'output_tokens': 19, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+Let’s see if it can handle the multi-stage process now – we’ll add
+`trace_func=print` to see each stage of the process:
+
+``` python
+chat = Chat(model, tools=tools)
+r = chat.toolloop('Please cancel all orders for customer C1 for me.', trace_func=print)
+r
+```
+
+    - Retrieving customer C1
+    [{'role': 'user', 'content': [{'type': 'text', 'text': 'Please cancel all orders for customer C1 for me.'}]}, {'role': 'assistant', 'content': [TextBlock(text="Okay, let's cancel all orders for customer C1:", type='text'), ToolUseBlock(id='toolu_01SvivKytaRHEdKixEY9dUDz', input={'customer_id': 'C1'}, name='get_customer_info', type='tool_use')]}, {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'toolu_01SvivKytaRHEdKixEY9dUDz', 'content': "{'name': 'John Doe', 'email': 'john@example.com', 'phone': '123-456-7890', 'orders': [{'id': 'O1', 'product': 'Widget A', 'quantity': 2, 'price': 19.99, 'status': 'Shipped'}, {'id': 'O2', 'product': 'Gadget B', 'quantity': 1, 'price': 49.99, 'status': 'Processing'}]}"}]}]
+    - Cancelling order O1
+    [{'role': 'assistant', 'content': [TextBlock(text="Based on the customer information, it looks like there are 2 orders for customer C1:\n- Order O1 for Widget A\n- Order O2 for Gadget B\n\nLet's cancel each of these orders:", type='text'), ToolUseBlock(id='toolu_01DoGVUPVBeDYERMePHDzUoT', input={'order_id': 'O1'}, name='cancel_order', type='tool_use')]}, {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'toolu_01DoGVUPVBeDYERMePHDzUoT', 'content': 'True'}]}]
+    - Cancelling order O2
+    [{'role': 'assistant', 'content': [ToolUseBlock(id='toolu_01XNwS35yY88Mvx4B3QqDeXX', input={'order_id': 'O2'}, name='cancel_order', type='tool_use')]}, {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'toolu_01XNwS35yY88Mvx4B3QqDeXX', 'content': 'True'}]}]
+    [{'role': 'assistant', 'content': [TextBlock(text="I've successfully cancelled both orders O1 and O2 for customer C1. Please let me know if you need anything else!", type='text')]}]
+
+I’ve successfully cancelled both orders O1 and O2 for customer C1.
+Please let me know if you need anything else!
+
+<details>
+
+- id: `msg_01K1QpUZ8nrBVUHYTrH5QjSF`
+- content:
+  `[{'text': "I've successfully cancelled both orders O1 and O2 for customer C1. Please let me know if you need anything else!", 'type': 'text'}]`
+- model: `claude-3-haiku-20240307`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 921, 'output_tokens': 32, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+OK Claude thinks the orders were cancelled – let’s check one:
+
+``` python
+chat.toolloop('What is the status of order O2?')
+```
+
+    - Retrieving order O2
+
+The status of order O2 is now ‘Cancelled’ since I successfully cancelled
+that order earlier.
+
+<details>
+
+- id: `msg_01XcXpFDwoZ3u1bFDf5mY8x1`
+- content:
+  `[{'text': "The status of order O2 is now 'Cancelled' since I successfully cancelled that order earlier.", 'type': 'text'}]`
+- model: `claude-3-haiku-20240307`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 1092, 'output_tokens': 26, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+## Code interpreter
+
+Here is an example of using `toolloop` to implement a simple code
+interpreter with additional tools.
+
+``` python
+from toolslm.shell import get_shell
+from fastcore.meta import delegates
+import traceback
+```
+
+``` python
+@delegates()
+class CodeChat(Chat):
+    imps = 'os, warnings, time, json, re, math, collections, itertools, functools, dateutil, datetime, string, types, copy, pprint, enum, numbers, decimal, fractions, random, operator, typing, dataclasses'
+    def __init__(self, model: Optional[str] = None, ask:bool=True, **kwargs):
+        super().__init__(model=model, **kwargs)
+        self.ask = ask
+        self.tools.append(self.run_cell)
+        self.shell = get_shell()
+        self.shell.run_cell('import '+self.imps)
+```
+
+We have one additional parameter to creating a `CodeChat` beyond what we
+pass to [`Chat`](https://claudette.answer.ai/core.html#chat), which is
+`ask` – if that’s `True`, we’ll prompt the user before running code.
+
+``` python
+@patch
+def run_cell(
+    self:CodeChat,
+    code:str,   # Code to execute in persistent IPython session
+): # Result of expression on last line (if exists); '#DECLINED#' if user declines request to execute
+    "Asks user for permission, and if provided, executes python `code` using persistent IPython session."
+    confirm = f'Press Enter to execute, or enter "n" to skip?\n```\n{code}\n```\n'
+    if self.ask and input(confirm): return '#DECLINED#'
+    try: res = self.shell.run_cell(code)
+    except Exception as e: return traceback.format_exc()
+    return res.stdout if res.result is None else res.result
+```
+
+We just pass along requests to run code to the shell’s implementation.
+Claude often prints results instead of just using the last expression,
+so we capture stdout in those cases.
+
+``` python
+sp = f'''You are a knowledgable assistant. Do not use tools unless needed.
+Don't do complex calculations yourself -- use code for them.
+The following modules are pre-imported for `run_cell` automatically:
+
+{CodeChat.imps}
+
+Never mention what tools you are using. Note that `run_cell` interpreter state is *persistent* across calls.
+
+If a tool returns `#DECLINED#` report to the user that the attempt was declined and no further progress can be made.'''
+```
+
+``` python
+def get_user(ignored:str='' # Unused parameter
+            ): # Username of current user
+    "Get the username of the user running this session"
+    print("Looking up username")
+    return 'Jeremy'
+```
+
+In order to test out multi-stage tool use, we create a mock function
+that Claude can call to get the current username.
+
+``` python
+model = models[1]
+```
+
+``` python
+chat = CodeChat(model, tools=[get_user], sp=sp, ask=True, temp=0.3)
+```
+
+Claude gets confused sometimes about how tools work, so we use examples
+to remind it:
+
+``` python
+chat.h = [
+    'Calculate the square root of `10332`', 'math.sqrt(10332)',
+    '#DECLINED#', 'I am sorry but the request to execute that was declined and no further progress can be made.'
+]
+```
+
+Providing a callable to toolloop’s `trace_func` lets us print out
+information during the loop:
+
+``` python
+def _show_cts(h):
+    for r in h:
+        for o in r.get('content'):
+            if hasattr(o,'text'): print(o.text)
+            nm = getattr(o, 'name', None)
+            if nm=='run_cell': print(o.input['code'])
+            elif nm: print(f'{o.name}({o.input})')
+```
+
+…and toolloop’s `cont_func` callable let’s us provide a function which,
+if it returns `False`, stops the loop:
+
+``` python
+def _cont_decline(c):
+    return nested_idx(c, 'content', 'content') != '#DECLINED#'
+```
+
+Now we can try our code interpreter. We start by asking for a function
+to be created, which we’ll use in the next prompt to test that the
+interpreter is persistent.
+
+``` python
+pr = '''Create a 1-line function `checksum` for a string `s`,
+that multiplies together the ascii values of each character in `s` using `reduce`.'''
+chat.toolloop(pr, temp=0.2, trace_func=_show_cts, cont_func=_cont_decline)
+```
+
+    Press Enter to execute, or enter "n" to skip?
+    ```
+    checksum = lambda s: functools.reduce(lambda x, y: x * ord(y), s, 1)
+    ```
+
+    Create a 1-line function `checksum` for a string `s`,
+    that multiplies together the ascii values of each character in `s` using `reduce`.
+    Let me help you create that function using `reduce` and `functools`.
+    checksum = lambda s: functools.reduce(lambda x, y: x * ord(y), s, 1)
+    The function has been created. Let me explain how it works:
+    1. It takes a string `s` as input
+    2. Uses `functools.reduce` to multiply together all ASCII values
+    3. `ord(y)` gets the ASCII value of each character
+    4. The initial value is 1 (the third parameter to reduce)
+    5. The lambda function multiplies the accumulator (x) with each new ASCII value
+
+    You can test it with any string. For example, you could try `checksum("hello")` to see it in action.
+
+The function has been created. Let me explain how it works: 1. It takes
+a string `s` as input 2. Uses `functools.reduce` to multiply together
+all ASCII values 3. `ord(y)` gets the ASCII value of each character 4.
+The initial value is 1 (the third parameter to reduce) 5. The lambda
+function multiplies the accumulator (x) with each new ASCII value
+
+You can test it with any string. For example, you could try
+`checksum("hello")` to see it in action.
+
+<details>
+
+- id: `msg_011pcGY9LbYqvRSfDPgCqUkT`
+- content:
+  `[{'text': 'The function has been created. Let me explain how it works:\n1. It takes a string`s`as input\n2. Uses`functools.reduce`to multiply together all ASCII values\n3.`ord(y)`gets the ASCII value of each character\n4. The initial value is 1 (the third parameter to reduce)\n5. The lambda function multiplies the accumulator (x) with each new ASCII value\n\nYou can test it with any string. For example, you could try`checksum(“hello”)`to see it in action.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 824, 'output_tokens': 125, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+By asking for a calculation to be done on the username, we force it to
+use multiple steps:
+
+``` python
+pr = 'Use it to get the checksum of the username of this session.'
+chat.toolloop(pr, trace_func=_show_cts)
+```
+
+    Looking up username
+    Use it to get the checksum of the username of this session.
+    I'll first get the username using `get_user` and then apply our `checksum` function to it.
+    get_user({'ignored': ''})
+    Press Enter to execute, or enter "n" to skip?
+    ```
+    print(checksum("Jeremy"))
+    ```
+
+    Now I'll calculate the checksum of "Jeremy":
+    print(checksum("Jeremy"))
+    The checksum of the username "Jeremy" is 1134987783204. This was calculated by multiplying together the ASCII values of each character in "Jeremy".
+
+The checksum of the username “Jeremy” is 1134987783204. This was
+calculated by multiplying together the ASCII values of each character in
+“Jeremy”.
+
+<details>
+
+- id: `msg_01UXvtcLzzykZpnQUT35v4uD`
+- content:
+  `[{'text': 'The checksum of the username "Jeremy" is 1134987783204. This was calculated by multiplying together the ASCII values of each character in "Jeremy".', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20241022`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 1143, 'output_tokens': 38, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details></doc><doc title="Async support" desc="Using Claudette with async/await"># The async version
+
+
+
+## Setup
+
+## Async SDK
+
+``` python
+model = models[1]
+cli = AsyncAnthropic()
+```
+
+``` python
+m = {'role': 'user', 'content': "I'm Jeremy"}
+r = await cli.messages.create(messages=[m], model=model, max_tokens=100)
+r
+```
+
+Hello Jeremy! It’s nice to meet you. How can I assist you today? Is
+there anything specific you’d like to talk about or any questions you
+have?
+
+<details>
+
+- id: `msg_019gsEQs5dqb3kgwNJbTH27M`
+- content:
+  `[{'text': "Hello Jeremy! It's nice to meet you. How can I assist you today? Is there anything specific you'd like to talk about or any questions you have?", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage: `{'input_tokens': 10, 'output_tokens': 36}`
+
+</details>
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/asink.py#L19"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### AsyncClient
+
+>      AsyncClient (model, cli=None, log=False)
+
+*Async Anthropic messages client.*
+
+<details open class="code-fold">
+<summary>Exported source</summary>
+
+``` python
+class AsyncClient(Client):
+    def __init__(self, model, cli=None, log=False):
+        "Async Anthropic messages client."
+        super().__init__(model,cli,log)
+        if not cli: self.c = AsyncAnthropic(default_headers={'anthropic-beta': 'prompt-caching-2024-07-31'})
+```
+
+</details>
+
+``` python
+c = AsyncClient(model)
+```
+
+``` python
+c._r(r)
+c.use
+```
+
+    In: 10; Out: 36; Total: 46
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/asink.py#L36"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### AsyncClient.\_\_call\_\_
+
+>      AsyncClient.__call__ (msgs:list, sp='', temp=0, maxtok=4096, prefill='',
+>                            stream:bool=False, stop=None, cli=None, log=False)
+
+*Make an async call to Claude.*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>msgs</td>
+<td>list</td>
+<td></td>
+<td>List of messages in the dialog</td>
+</tr>
+<tr class="even">
+<td>sp</td>
+<td>str</td>
+<td></td>
+<td>The system prompt</td>
+</tr>
+<tr class="odd">
+<td>temp</td>
+<td>int</td>
+<td>0</td>
+<td>Temperature</td>
+</tr>
+<tr class="even">
+<td>maxtok</td>
+<td>int</td>
+<td>4096</td>
+<td>Maximum tokens</td>
+</tr>
+<tr class="odd">
+<td>prefill</td>
+<td>str</td>
+<td></td>
+<td>Optional prefill to pass to Claude as start of its response</td>
+</tr>
+<tr class="even">
+<td>stream</td>
+<td>bool</td>
+<td>False</td>
+<td>Stream response?</td>
+</tr>
+<tr class="odd">
+<td>stop</td>
+<td>NoneType</td>
+<td>None</td>
+<td>Stop sequence</td>
+</tr>
+<tr class="even">
+<td>cli</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>log</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<details open class="code-fold">
+<summary>Exported source</summary>
+
+``` python
+@patch
+async def _stream(self:AsyncClient, msgs:list, prefill='', **kwargs):
+    async with self.c.messages.stream(model=self.model, messages=mk_msgs(msgs), **kwargs) as s:
+        if prefill: yield prefill
+        async for o in s.text_stream: yield o
+        self._log(await s.get_final_message(), prefill, msgs, kwargs)
+```
+
+</details>
+<details open class="code-fold">
+<summary>Exported source</summary>
+
+``` python
+@patch
+@delegates(Client)
+async def __call__(self:AsyncClient,
+             msgs:list, # List of messages in the dialog
+             sp='', # The system prompt
+             temp=0, # Temperature
+             maxtok=4096, # Maximum tokens
+             prefill='', # Optional prefill to pass to Claude as start of its response
+             stream:bool=False, # Stream response?
+             stop=None, # Stop sequence
+             **kwargs):
+    "Make an async call to Claude."
+    msgs = self._precall(msgs, prefill, stop, kwargs)
+    if stream: return self._stream(msgs, prefill=prefill, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
+    res = await self.c.messages.create(
+        model=self.model, messages=msgs, max_tokens=maxtok, system=sp, temperature=temp, **kwargs)
+    return self._log(res, prefill, msgs, maxtok, sp, temp, stream=stream, stop=stop, **kwargs)
+```
+
+</details>
+
+``` python
+c = AsyncClient(model, log=True)
+c.use
+```
+
+    In: 0; Out: 0; Total: 0
+
+``` python
+c.model = models[1]
+await c('Hi')
+```
+
+Hello! How can I assist you today? Feel free to ask any questions or let
+me know if you need help with anything.
+
+<details>
+
+- id: `msg_01L9vqP9r1LcmvSk8vWGLbPo`
+- content:
+  `[{'text': 'Hello! How can I assist you today? Feel free to ask any questions or let me know if you need help with anything.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 8, 'output_tokens': 29, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+c.use
+```
+
+    In: 8; Out: 29; Total: 37
+
+``` python
+q = "Concisely, what is the meaning of life?"
+pref = 'According to Douglas Adams,'
+await c(q, prefill=pref)
+```
+
+According to Douglas Adams, the meaning of life is 42. More seriously,
+there’s no universally agreed upon meaning of life. Many philosophers
+and religions have proposed different answers, but it remains an open
+question that individuals must grapple with for themselves.
+
+<details>
+
+- id: `msg_01KAJbCneA2oCRPVm9EkyDXF`
+- content:
+  `[{'text': "According to Douglas Adams,  the meaning of life is 42. More seriously, there's no universally agreed upon meaning of life. Many philosophers and religions have proposed different answers, but it remains an open question that individuals must grapple with for themselves.", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 24, 'output_tokens': 51, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+async for o in (await c('Hi', stream=True)): print(o, end='')
+```
+
+    Hello! How can I assist you today? Feel free to ask any questions or let me know if you need help with anything.
+
+``` python
+c.use
+```
+
+    In: 40; Out: 109; Total: 149
+
+``` python
+async for o in (await c(q, prefill=pref, stream=True)): print(o, end='')
+```
+
+    According to Douglas Adams,  the meaning of life is 42. More seriously, there's no universally agreed upon meaning of life. Many philosophers and religions have proposed different answers, but it remains an open question that individuals must grapple with for themselves.
+
+``` python
+c.use
+```
+
+    In: 64; Out: 160; Total: 224
+
+``` python
+def sums(
+    a:int,  # First thing to sum
+    b:int=1 # Second thing to sum
+) -> int: # The sum of the inputs
+    "Adds a + b."
+    print(f"Finding the sum of {a} and {b}")
+    return a + b
+```
+
+``` python
+a,b = 604542,6458932
+pr = f"What is {a}+{b}?"
+sp = "You are a summing expert."
+```
+
+``` python
+tools=[get_schema(sums)]
+choice = mk_tool_choice('sums')
+```
+
+``` python
+tools = [get_schema(sums)]
+msgs = mk_msgs(pr)
+r = await c(msgs, sp=sp, tools=tools, tool_choice=choice)
+tr = mk_toolres(r, ns=globals())
+msgs += tr
+contents(await c(msgs, sp=sp, tools=tools))
+```
+
+    Finding the sum of 604542 and 6458932
+
+    'As a summing expert, I\'m happy to help you with this addition. The sum of 604542 and 6458932 is 7063474.\n\nTo break it down:\n604542 (first number)\n+ 6458932 (second number)\n= 7063474 (total sum)\n\nThis result was calculated using the "sums" function, which adds two numbers together. Is there anything else you\'d like me to sum for you?'
+
+## AsyncChat
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/asink.py#L54"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### AsyncChat
+
+>      AsyncChat (model:Optional[str]=None,
+>                 cli:Optional[claudette.core.Client]=None, sp='',
+>                 tools:Optional[list]=None, temp=0, cont_pr:Optional[str]=None)
+
+*Anthropic async chat client.*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>model</td>
+<td>Optional</td>
+<td>None</td>
+<td>Model to use (leave empty if passing <code>cli</code>)</td>
+</tr>
+<tr class="even">
+<td>cli</td>
+<td>Optional</td>
+<td>None</td>
+<td>Client to use (leave empty if passing <code>model</code>)</td>
+</tr>
+<tr class="odd">
+<td>sp</td>
+<td>str</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>tools</td>
+<td>Optional</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>temp</td>
+<td>int</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>cont_pr</td>
+<td>Optional</td>
+<td>None</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<details open class="code-fold">
+<summary>Exported source</summary>
+
+``` python
+@delegates()
+class AsyncChat(Chat):
+    def __init__(self,
+                 model:Optional[str]=None, # Model to use (leave empty if passing `cli`)
+                 cli:Optional[Client]=None, # Client to use (leave empty if passing `model`)
+                 **kwargs):
+        "Anthropic async chat client."
+        super().__init__(model, cli, **kwargs)
+        if not cli: self.c = AsyncClient(model)
+```
+
+</details>
+
+``` python
+sp = "Never mention what tools you use."
+chat = AsyncChat(model, sp=sp)
+chat.c.use, chat.h
+```
+
+    (In: 0; Out: 0; Total: 0, [])
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/AnswerDotAI/claudette/blob/main/claudette/asink.py#L78"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### AsyncChat.\_\_call\_\_
+
+>      AsyncChat.__call__ (pr=None, temp=0, maxtok=4096, stream=False,
+>                          prefill='', **kw)
+
+*Call self as a function.*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pr</td>
+<td>NoneType</td>
+<td>None</td>
+<td>Prompt / message</td>
+</tr>
+<tr class="even">
+<td>temp</td>
+<td>int</td>
+<td>0</td>
+<td>Temperature</td>
+</tr>
+<tr class="odd">
+<td>maxtok</td>
+<td>int</td>
+<td>4096</td>
+<td>Maximum tokens</td>
+</tr>
+<tr class="even">
+<td>stream</td>
+<td>bool</td>
+<td>False</td>
+<td>Stream response?</td>
+</tr>
+<tr class="odd">
+<td>prefill</td>
+<td>str</td>
+<td></td>
+<td>Optional prefill to pass to Claude as start of its response</td>
+</tr>
+<tr class="even">
+<td>kw</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<details open class="code-fold">
+<summary>Exported source</summary>
+
+``` python
+@patch
+async def _stream(self:AsyncChat, res):
+    async for o in res: yield o
+    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
+```
+
+</details>
+<details open class="code-fold">
+<summary>Exported source</summary>
+
+``` python
+@patch
+async def _append_pr(self:AsyncChat, pr=None):
+    prev_role = nested_idx(self.h, -1, 'role') if self.h else 'assistant' # First message should be 'user' if no history
+    if pr and prev_role == 'user': await self()
+    self._post_pr(pr, prev_role)
+```
+
+</details>
+<details open class="code-fold">
+<summary>Exported source</summary>
+
+``` python
+@patch
+async def __call__(self:AsyncChat,
+        pr=None,  # Prompt / message
+        temp=0, # Temperature
+        maxtok=4096, # Maximum tokens
+        stream=False, # Stream response?
+        prefill='', # Optional prefill to pass to Claude as start of its response
+        **kw):
+    await self._append_pr(pr)
+    if self.tools: kw['tools'] = [get_schema(o) for o in self.tools]
+    res = await self.c(self.h, stream=stream, prefill=prefill, sp=self.sp, temp=temp, maxtok=maxtok, **kw)
+    if stream: return self._stream(res)
+    self.h += mk_toolres(self.c.result, ns=self.tools, obj=self)
+    return res
+```
+
+</details>
+
+``` python
+await chat("I'm Jeremy")
+await chat("What's my name?")
+```
+
+Your name is Jeremy, as you mentioned in your previous message.
+
+<details>
+
+- id: `msg_01NMugMXWpDP9iuTXeLkHarn`
+- content:
+  `[{'text': 'Your name is Jeremy, as you mentioned in your previous message.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 64, 'output_tokens': 16, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+q = "Concisely, what is the meaning of life?"
+pref = 'According to Douglas Adams,'
+await chat(q, prefill=pref)
+```
+
+According to Douglas Adams, the meaning of life is 42. More seriously,
+there’s no universally agreed upon answer. Common philosophical
+perspectives include:
+
+1.  Finding personal fulfillment
+2.  Serving others
+3.  Pursuing happiness
+4.  Creating meaning through our choices
+5.  Experiencing and appreciating existence
+
+Ultimately, many believe each individual must determine their own life’s
+meaning.
+
+<details>
+
+- id: `msg_01VPWUQn5Do1Kst8RYUDQvCu`
+- content:
+  `[{'text': "According to Douglas Adams,  the meaning of life is 42. More seriously, there's no universally agreed upon answer. Common philosophical perspectives include:\n\n1. Finding personal fulfillment\n2. Serving others\n3. Pursuing happiness\n4. Creating meaning through our choices\n5. Experiencing and appreciating existence\n\nUltimately, many believe each individual must determine their own life's meaning.", 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 100, 'output_tokens': 82, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+chat = AsyncChat(model, sp=sp)
+async for o in (await chat("I'm Jeremy", stream=True)): print(o, end='')
+```
+
+    Hello Jeremy! It's nice to meet you. How are you doing today? Is there anything in particular you'd like to chat about or any questions I can help you with?
+
+``` python
+pr = f"What is {a}+{b}?"
+chat = AsyncChat(model, sp=sp, tools=[sums])
+r = await chat(pr)
+r
+```
+
+    Finding the sum of 604542 and 6458932
+
+To answer this question, I can use the “sums” function to add these two
+numbers together. Let me do that for you.
+
+<details>
+
+- id: `msg_015z1rffSWFxvj7rSpzc43ZE`
+- content:
+  `[{'text': 'To answer this question, I can use the "sums" function to add these two numbers together. Let me do that for you.', 'type': 'text'}, {'id': 'toolu_01SNKhtfnDQBC4RGY4mUCq1v', 'input': {'a': 604542, 'b': 6458932}, 'name': 'sums', 'type': 'tool_use'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `tool_use`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 428, 'output_tokens': 101, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+await chat()
+```
+
+The sum of 604542 and 6458932 is 7063474.
+
+<details>
+
+- id: `msg_018KAsE2YGiXWjUJkLPrXpb2`
+- content:
+  `[{'text': 'The sum of 604542 and 6458932 is 7063474.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 543, 'output_tokens': 23, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details>
+
+``` python
+fn = Path('samples/puppy.jpg')
+img = fn.read_bytes()
+```
+
+``` python
+q = "In brief, what color flowers are in this image?"
+msg = mk_msg([img_msg(img), text_msg(q)])
+await c([msg])
+```
+
+The flowers in this image are purple. They appear to be small,
+daisy-like flowers, possibly asters or some type of purple daisy,
+blooming in the background behind the adorable puppy in the foreground.
+
+<details>
+
+- id: `msg_017qgZggLjUY915mWbWCkb9X`
+- content:
+  `[{'text': 'The flowers in this image are purple. They appear to be small, daisy-like flowers, possibly asters or some type of purple daisy, blooming in the background behind the adorable puppy in the foreground.', 'type': 'text'}]`
+- model: `claude-3-5-sonnet-20240620`
+- role: `assistant`
+- stop_reason: `end_turn`
+- stop_sequence: `None`
+- type: `message`
+- usage:
+  `{'input_tokens': 110, 'output_tokens': 50, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0}`
+
+</details></doc></optional></project>
