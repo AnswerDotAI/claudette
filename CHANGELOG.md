@@ -2,6 +2,11 @@
 
 <!-- do not remove -->
 
+## 0.3.15
+
+- Move funccall to fastcore
+
+
 ## 0.3.14
 
 ### New Features
@@ -267,4 +272,3 @@
 ## 0.0.1
 
 - Initial release
-
