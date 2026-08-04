@@ -24,8 +24,7 @@ from anthropic.types import (Usage, TextBlock, ServerToolUseBlock,
                              ThinkingBlock, ServerToolUsage)
 from anthropic.resources import messages
 
-import toolslm
-from toolslm.funccall import *
+from fastcore.funccall import *
 
 from fastcore.meta import delegates
 from fastcore.utils import *

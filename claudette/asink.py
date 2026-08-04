@@ -11,7 +11,7 @@ from collections import abc
 
 from anthropic import AsyncAnthropic
 from anthropic.types import ToolUseBlock
-from toolslm.funccall import get_schema, mk_ns, call_func, call_func_async
+from fastcore.funccall import get_schema, mk_ns, call_func, call_func_async
 from fastcore.meta import delegates
 from fastcore.utils import *
 from .core import *
